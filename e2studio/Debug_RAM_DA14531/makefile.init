@@ -1,0 +1,10 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+arg1 = $(1)
+export PATH=C:\Renesas\e2_studio\toolchains\llvm_arm\LLVMEmbeddedToolchainForArm-17.0.1-Windows-x86_64\bin\;C:\Renesas\e2_studio\eclipse\plugins\com.renesas.ide.exttools.busybox.win32.x86_64_1.3.6.v20230615-0931\bin\;C:\Renesas\e2_studio\eclipse\plugins\com.renesas.ide.exttools.gnumake.win32.x86_64_4.3.1.v20240909-0854\mk\;C:\Renesas\e2_studio\eclipse\plugins\com.renesas.ide.exttools.scandep.win32.x86_64_1.0.0.v20230915-1033\sd\;C:/Renesas/e2_studio/eclipse//plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.9.v20251105-0741/jre/bin/server;C:/Renesas/e2_studio/eclipse//plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_21.0.9.v20251105-0741/jre/bin;;C:\ProgramData\LLVM for Renesas RL78 17.0.1.202512\binC:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\ProgramData\LLVM for Renesas RL78 17.0.1.202512\bin;C:\ProgramData\GCC for Renesas RX 8.3.0.202411-GNURX-ELF\rx-elf\rx-elf\bin;C:\Users\gegio\AppData\Local\Microsoft\WindowsApps;C:\Users\gegio\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\gegio\AppData\Local\Python\bin;C:\Renesas\e2_studio\eclipse
+export TCINSTALL=C:\Renesas\e2_studio\toolchains\llvm_arm\LLVMEmbeddedToolchainForArm-17.0.1-Windows-x86_64$(call arg1,\)
+export CWD=$(CURDIR)
+export TC_VERSION=17.0.1
+export PWD=$(CURDIR)

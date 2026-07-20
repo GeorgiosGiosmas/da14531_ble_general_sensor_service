@@ -44,7 +44,7 @@
 #include "custs1_task.h"
 #include "user_custs1_def.h"
 #include "user_custs1_impl.h"
-#include "user_empty_peripheral_template.h"
+#include "user_peripheral.h"
 #include "user_periph_setup.h"
 
 /*

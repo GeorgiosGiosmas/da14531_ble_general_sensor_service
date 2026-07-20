@@ -73,34 +73,4 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security_task.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_api.h \
-  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm_task.h \
-  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_task.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_entry_point.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
-  ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_prf_perm_types.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_easy_security.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_mid.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\llm\llm.h \
-  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_math.h \
-  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_buf.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\llm\llm_task.h \
-  ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
-  ..\..\..\..\..\sdk\ble_stack\ea\api\ea.h \
-  ..\src\config\user_callback_config.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_bass.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_findme.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_proxr.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_suotar.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_prf_types.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_bond_db.h \
-  ..\src\config\user_periph_setup.h \
-  ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
-  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
-  ..\src\user_empty_peripheral_template.h \
-  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h
+  ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h

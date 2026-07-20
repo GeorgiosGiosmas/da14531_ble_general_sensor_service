@@ -73,7 +73,6 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1.h \
   ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \

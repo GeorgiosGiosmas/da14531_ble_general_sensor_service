@@ -72,6 +72,5 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\third_party\hash\hash.h

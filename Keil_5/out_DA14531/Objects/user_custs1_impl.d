@@ -1,5 +1,5 @@
-./out_da14531/objects/app.o: \
-  ..\..\..\..\..\sdk\app_modules\src\app_common\app.c \
+./out_da14531/objects/user_custs1_impl.o: \
+  ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c \
   ..\src\config\da1458x_config_basic.h \
   ..\src\config\da14531_config_basic.h \
   ..\..\..\..\..\sdk\common_project_files\da1458x_stack_config.h \
@@ -73,13 +73,11 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_task.h \
-  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_math.h \
   ..\..\..\..\..\sdk\app_modules\api\app_api.h \
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm_task.h \
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_task.h \
   ..\..\..\..\..\sdk\app_modules\api\app_entry_point.h \
   ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
   ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
@@ -87,19 +85,25 @@
   ..\..\..\..\..\sdk\app_modules\api\app_easy_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_mid.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llm\llm.h \
+  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_math.h \
   ..\..\..\..\..\sdk\platform\core_modules\common\api\co_buf.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llm\llm_task.h \
   ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
   ..\..\..\..\..\sdk\ble_stack\ea\api\ea.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_prf_types.h \
-  ..\src\config\user_callback_config.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_bass.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_findme.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_proxr.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_suotar.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_bond_db.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\prf_utils.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\custom\custom_common.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
+  ..\src\custom_profile\user_custs1_def.h \
+  ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.h \
+  ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_empty_peripheral_template.h \
   ..\src\config\user_periph_setup.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
   ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
-  ..\src\user_empty_peripheral_template.h \
-  ..\src\custom_profile\user_custs_config.h
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h

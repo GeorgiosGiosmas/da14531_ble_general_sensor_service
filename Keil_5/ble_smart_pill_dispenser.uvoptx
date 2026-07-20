@@ -2979,7 +2979,7 @@
 
   <Group>
     <GroupName>user_platform</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -3022,8 +3022,20 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\..\src\user_empty_peripheral_template.c</PathWithFileName>
-      <FilenameWithoutPath>user_empty_peripheral_template.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</PathWithFileName>
+      <FilenameWithoutPath>user_custs1_impl.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>173</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\ble_smart_pill_dispenser.c</PathWithFileName>
+      <FilenameWithoutPath>ble_smart_pill_dispenser.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

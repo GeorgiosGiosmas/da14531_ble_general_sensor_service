@@ -10,7 +10,7 @@
       <TargetName>DA14585</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -1898,9 +1898,14 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_empty_peripheral_template.c</FileName>
+              <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\..\src\user_empty_peripheral_template.c</FilePath>
+              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1910,7 +1915,7 @@
       <TargetName>DA14586</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6180000::V6.18::ARMCLANG</pCCUsed>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -3798,9 +3803,14 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_empty_peripheral_template.c</FileName>
+              <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\..\src\user_empty_peripheral_template.c</FilePath>
+              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -5596,9 +5606,14 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_empty_peripheral_template.c</FileName>
+              <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\..\src\user_empty_peripheral_template.c</FilePath>
+              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -5608,7 +5623,7 @@
       <TargetName>DA14531_01</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6180000::V6.18::ARMCLANG</pCCUsed>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -7394,9 +7409,14 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_empty_peripheral_template.c</FileName>
+              <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\..\src\user_empty_peripheral_template.c</FilePath>
+              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -7406,7 +7426,7 @@
       <TargetName>DA14535</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6180000::V6.18::ARMCLANG</pCCUsed>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -9192,9 +9212,14 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_empty_peripheral_template.c</FileName>
+              <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\..\src\user_empty_peripheral_template.c</FilePath>
+              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
             </File>
           </Files>
         </Group>

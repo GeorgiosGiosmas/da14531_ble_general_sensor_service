@@ -73,7 +73,6 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\sdk\platform\arch\main\arch_hibernation.h \
   ..\..\..\..\..\sdk\platform\arch\main\arch_ram.h \
@@ -98,4 +97,9 @@
   ..\..\..\..\..\sdk\platform\core_modules\ke\api\ke_event.h \
   ..\src\config\user_periph_setup.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
-  ..\..\..\..\..\sdk\platform\driver\dma\dma.h
+  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h

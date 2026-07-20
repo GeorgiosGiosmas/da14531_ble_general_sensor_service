@@ -72,7 +72,6 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\sdk\platform\core_modules\ke\api\ke_event.h \
   ..\..\..\..\..\sdk\platform\core_modules\common\api\co_buf.h \
@@ -108,6 +107,11 @@
   ..\..\..\..\..\sdk\platform\driver\adc\adc.h \
   ..\..\..\..\..\sdk\platform\driver\adc\adc_531.h \
   ..\src\config\user_periph_setup.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
   ..\..\..\..\..\sdk\platform\arch\main\arch_system.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc_util.h \
   ..\..\..\..\..\sdk\platform\driver\ble\reg_ble_em_rx_desc.h \

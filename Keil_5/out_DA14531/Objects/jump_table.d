@@ -73,7 +73,6 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
   ..\..\..\..\..\sdk\ble_stack\controller\em\em_map_ble.h \
@@ -119,5 +118,4 @@
   ..\..\..\..\..\sdk\app_modules\api\app_entry_point.h \
   ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
   ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_prf_perm_types.h \
-  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h
+  ..\..\..\..\..\sdk\app_modules\api\app_prf_perm_types.h

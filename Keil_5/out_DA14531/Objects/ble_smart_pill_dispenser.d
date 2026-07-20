@@ -1,6 +1,5 @@
-./out_da14531/objects/arch_main.o: \
-  ..\..\..\..\..\sdk\platform\arch\main\arch_main.c \
-  ..\src\config\da1458x_config_basic.h \
+./out_da14531/objects/ble_smart_pill_dispenser.o: \
+  ..\src\ble_smart_pill_dispenser.c ..\src\config\da1458x_config_basic.h \
   ..\src\config\da14531_config_basic.h \
   ..\..\..\..\..\sdk\common_project_files\da1458x_stack_config.h \
   ..\src\config\user_profiles_config.h \
@@ -73,63 +72,12 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
-  ..\..\..\..\..\sdk\platform\arch\boot\boot.h \
-  ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
-  ..\..\..\..\..\sdk\platform\driver\syscntl\syscntl.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\em\em_map_ble.h \
-  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_buf.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_tx_desc.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_tx_buffer.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_rx_desc.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_rx_buffer.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_wpb.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_wpv.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_ble_em_cs.h \
-  ..\..\..\..\..\sdk\platform\core_modules\ke\api\ke_event.h \
-  ..\src\config\user_periph_setup.h \
-  ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
-  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
-  ..\..\..\..\..\sdk\platform\core_modules\rf\api\rf.h \
-  ..\..\..\..\..\sdk\platform\core_modules\dbg\api\dbg.h \
-  ..\..\..\..\..\sdk\platform\core_modules\dbg\api\dbg_swdiag.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\lld\lld_sleep.h \
-  ..\..\..\..\..\sdk\platform\core_modules\rf\api\rf_585.h \
-  ..\..\..\..\..\sdk\platform\driver\hw_otpc\hw_otpc.h \
-  ..\..\..\..\..\sdk\platform\driver\hw_otpc\hw_otpc_531.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\lld\lld_evt.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\reg_blecore.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_blecore.h \
-  ..\..\..\..\..\sdk\platform\driver\reg\reg_access.h \
-  ..\..\..\..\..\sdk\ble_stack\em\api\em_map.h \
-  ..\..\..\..\..\sdk\platform\driver\ble\_reg_common_em_et.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\llm\llm.h \
-  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_math.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\llm\llm_task.h \
-  ..\..\..\..\..\sdk\ble_stack\ea\api\ea.h \
-  ..\..\..\..\..\sdk\ble_stack\controller\llc\llc_task.h \
-  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
-  ..\..\..\..\..\sdk\platform\arch\main\arch_system.h \
-  ..\src\config\user_callback_config.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_api.h \
-  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm_task.h \
-  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm.h \
+  ..\src\ble_smart_pill_dispenser.h \
   ..\..\..\..\..\sdk\app_modules\api\app_task.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_entry_point.h \
   ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
   ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_prf_perm_types.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_easy_security.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_mid.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_bass.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_findme.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_proxr.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_suotar.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_prf_types.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_bond_db.h \
-  ..\src\user_empty_peripheral_template.h \
-  ..\..\..\..\..\sdk\platform\arch\main\arch_ram.h \
-  ..\..\..\..\..\sdk\platform\include\sdk_defs.h \
-  ..\..\..\..\..\sdk\platform\driver\adc\adc.h \
-  ..\..\..\..\..\sdk\platform\driver\adc\adc_531.h
+  ..\src\user_custs1_impl.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \
+  ..\src\custom_profile\user_custs1_def.h

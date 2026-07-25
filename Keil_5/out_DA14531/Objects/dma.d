@@ -72,4 +72,5 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h
+  ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
+  ..\..\..\..\..\sdk\platform\driver\dma\dma.h

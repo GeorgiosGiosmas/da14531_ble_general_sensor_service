@@ -54,7 +54,7 @@
 /****************************************************************************************************************/
 /* Enables WatchDog timer.                                                                                      */
 /****************************************************************************************************************/
-#define CFG_WDOG
+#undef CFG_WDOG
 
 /****************************************************************************************************************/
 /* Determines maximum concurrent connections supported by application. It configures the heap memory allocated  */
@@ -82,7 +82,7 @@
 /* If CFG_PRINTF_UART2 is defined, then serial interface logging mechanism is implented using UART2, else UART1 */
 /* will be used.                                                                                                */
 /****************************************************************************************************************/
-#undef CFG_PRINTF
+#define CFG_PRINTF
 #ifdef CFG_PRINTF
     #define CFG_PRINTF_UART2
 #endif
@@ -99,7 +99,7 @@
 /* SPI FLASH  (#define CFG_SPI_FLASH_ENABLE)                                                                    */
 /* I2C EEPROM (#define CFG_I2C_EEPROM_ENABLE)                                                                   */
 /****************************************************************************************************************/
-#undef CFG_SPI_FLASH_ENABLE
+#define CFG_SPI_FLASH_ENABLE
 #undef CFG_I2C_EEPROM_ENABLE
 
 /****************************************************************************************************************/
@@ -109,7 +109,7 @@
 /*     - I2C                                                                                                    */
 /*     - ADC                                                                                                    */
 /****************************************************************************************************************/
-#undef CFG_UART_DMA_SUPPORT
+#define CFG_UART_DMA_SUPPORT
 #undef CFG_SPI_DMA_SUPPORT
 #undef CFG_I2C_DMA_SUPPORT
 #undef CFG_ADC_DMA_SUPPORT

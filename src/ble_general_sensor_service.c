@@ -47,7 +47,7 @@
 #include "gattc_task.h"
 #include "gap.h"
 #include "app_easy_timer.h"
-#include "ble_smart_pill_dispenser.h"
+#include "ble_general_sensor_service.h"
 #include "user_custs1_impl.h"
 #include "user_custs1_def.h"
 #include "co_bt.h"

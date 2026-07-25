@@ -1903,9 +1903,9 @@
               <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
             </File>
             <File>
-              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
+              <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3808,9 +3808,9 @@
               <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
             </File>
             <File>
-              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
+              <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -5611,9 +5611,9 @@
               <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
             </File>
             <File>
-              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
+              <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -7414,9 +7414,9 @@
               <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
             </File>
             <File>
-              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
+              <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -9217,9 +9217,9 @@
               <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
             </File>
             <File>
-              <FileName>ble_smart_pill_dispenser.c</FileName>
+              <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ble_smart_pill_dispenser.c</FilePath>
+              <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
           </Files>
         </Group>

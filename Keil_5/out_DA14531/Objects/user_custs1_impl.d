@@ -98,8 +98,7 @@
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
   ..\src\custom_profile\user_custs1_def.h \
   ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.h \
-  ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_empty_peripheral_template.h \
-  ..\src\config\user_periph_setup.h \
+  ..\src\ble_general_sensor_service.h ..\src\config\user_periph_setup.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
   ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
   ..\..\..\..\..\sdk\platform\driver\spi\spi.h \

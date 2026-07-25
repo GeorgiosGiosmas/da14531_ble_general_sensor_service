@@ -308,6 +308,7 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->handle)
             {
+								/*
                 case SVC1_IDX_CONTROL_POINT_VAL:
                     user_svc1_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
@@ -335,7 +336,7 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
                 case SVC1_IDX_LONG_VALUE_VAL:
                     user_svc1_long_val_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
-
+								*/
                 default:
                     break;
             }
@@ -347,6 +348,7 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->handle)
             {
+								/*
                 case SVC1_IDX_ADC_VAL_1_VAL:
                     break;
 
@@ -355,7 +357,7 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
                 case SVC1_IDX_LONG_VALUE_VAL:
                     break;
-
+	              */
                 default:
                     break;
             }
@@ -367,9 +369,10 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->handle)
             {
+								/*
                 case SVC1_IDX_INDICATEABLE_VAL:
                     break;
-
+								*/
                 default:
                     break;
              }
@@ -381,10 +384,10 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->att_idx)
             {
-                case SVC1_IDX_LONG_VALUE_VAL:
+                /*case SVC1_IDX_LONG_VALUE_VAL:
                     user_svc1_long_val_att_info_req_handler(msgid, msg_param, dest_id, src_id);
                     break;
-
+								*/
                 default:
                     user_svc1_rest_att_info_req_handler(msgid, msg_param, dest_id, src_id);
                     break;
@@ -411,11 +414,11 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->att_idx)
             {
-                case SVC3_IDX_READ_4_VAL:
+                /*case SVC3_IDX_READ_4_VAL:
                 {
                     user_svc3_read_non_db_val_handler(msgid, msg_param, dest_id, src_id);
                 } break;
-
+								*/
                 default:
                 {
                     // Send Error message

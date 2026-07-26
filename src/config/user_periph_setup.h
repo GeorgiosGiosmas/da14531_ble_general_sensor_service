@@ -59,7 +59,7 @@
 // Define UART2 Tx Pad
 #if defined (__DA14531__)
     #define UART2_TX_PORT           GPIO_PORT_0
-    #define UART2_TX_PIN            GPIO_PIN_6
+    #define UART2_TX_PIN            GPIO_PIN_5
 #else
     #define UART2_TX_PORT           GPIO_PORT_0
     #define UART2_TX_PIN            GPIO_PIN_4
@@ -117,6 +117,43 @@
     #define SPI_DI_PORT             GPIO_PORT_0
     #define SPI_DI_PIN              GPIO_PIN_5
 #endif
+
+// Define SPI Configuration
+#define SPI_MS_MODE             SPI_MS_MODE_MASTER
+#define SPI_CP_MODE             SPI_CP_MODE_0
+#define SPI_WSZ                 SPI_MODE_8BIT
+#define SPI_CS                  SPI_CS_0
+
+#if defined (__DA14531__)
+    #define SPI_SPEED_MODE          SPI_SPEED_MODE_4MHz
+    #define SPI_EDGE_CAPTURE        SPI_MASTER_EDGE_CAPTURE
+#else // (DA14585, DA14586)
+    #define SPI_SPEED_MODE          SPI_SPEED_MODE_4MHz
+#endif
+
+/****************************************************************************************/
+/* SPI Flash configuration                                                              */
+/****************************************************************************************/
+#if !defined (__DA14586__)
+#define SPI_FLASH_DEV_SIZE          (256 * 1024)
+#endif
+
+/****************************************************************************************/
+/* I2C configuration                                                                    */
+/****************************************************************************************/
+// Define I2C Pads
+#define I2C_SCL_PORT                GPIO_PORT_0
+#define I2C_SCL_PIN                 GPIO_PIN_2
+
+#define I2C_SDA_PORT                GPIO_PORT_0
+#define I2C_SDA_PIN                 GPIO_PIN_8
+
+// Define I2C Configuration
+#define I2C_SLAVE_ADDRESS_ADXL345           (0x50)
+#define I2C_SLAVE_ADDRESS_MCP9808           (0x18)
+#define I2C_SPEED_MODE              				I2C_SPEED_FAST
+#define I2C_ADDRESS_MODE            				I2C_ADDRESSING_7B
+#define I2C_ADDRESS_SIZE            				I2C_2BYTES_ADDR
 
 /***************************************************************************************/
 /* Production debug output configuration                                               */

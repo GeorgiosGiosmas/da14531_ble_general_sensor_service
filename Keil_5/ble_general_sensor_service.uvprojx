@@ -1907,6 +1907,16 @@
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
+            <File>
+              <FileName>ADXL345.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ADXL345.c</FilePath>
+            </File>
+            <File>
+              <FileName>MCP9808.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -3812,6 +3822,16 @@
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
+            <File>
+              <FileName>ADXL345.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ADXL345.c</FilePath>
+            </File>
+            <File>
+              <FileName>MCP9808.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -5614,6 +5634,16 @@
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADXL345.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ADXL345.c</FilePath>
+            </File>
+            <File>
+              <FileName>MCP9808.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MCP9808.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -7418,6 +7448,16 @@
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
             </File>
+            <File>
+              <FileName>ADXL345.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ADXL345.c</FilePath>
+            </File>
+            <File>
+              <FileName>MCP9808.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -9220,6 +9260,16 @@
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADXL345.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\ADXL345.c</FilePath>
+            </File>
+            <File>
+              <FileName>MCP9808.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\MCP9808.c</FilePath>
             </File>
           </Files>
         </Group>

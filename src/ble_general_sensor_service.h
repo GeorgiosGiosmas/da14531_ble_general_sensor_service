@@ -78,7 +78,7 @@
 #define APP_AD_MSD_COMPANY_ID_LEN   (2)
 #define APP_AD_MSD_DATA_LEN         (sizeof(uint16_t))
 
-#define APP_PERIPHERAL_CTRL_TIMER_DELAY 100
+#define I2C_DATA_CAPTURE_PERIOD							(2000)
 
 /*
  * TYPE DEFINITIONS

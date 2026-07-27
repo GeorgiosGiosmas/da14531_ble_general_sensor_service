@@ -308,35 +308,14 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->handle)
             {
-								/*
-                case SVC1_IDX_CONTROL_POINT_VAL:
+                case SVC1_IDX_CONTROL_POINT_1_VAL:
                     user_svc1_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
-
-                case SVC1_IDX_LED_STATE_VAL:
-                    user_svc1_led_wr_ind_handler(msgid, msg_param, dest_id, src_id);
+								case SVC2_IDX_CONTROL_POINT_2_VAL:
+                    user_svc2_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
 
-                case SVC1_IDX_ADC_VAL_1_NTF_CFG:
-                    user_svc1_adc_val_1_cfg_ind_handler(msgid, msg_param, dest_id, src_id);
-                    break;
-
-                case SVC1_IDX_BUTTON_STATE_NTF_CFG:
-                    user_svc1_button_cfg_ind_handler(msgid, msg_param, dest_id, src_id);
-                    break;
-
-                case SVC1_IDX_INDICATEABLE_IND_CFG:
-                    user_svc1_long_val_cfg_ind_handler(msgid, msg_param, dest_id, src_id);
-                    break;
-
-                case SVC1_IDX_LONG_VALUE_NTF_CFG:
-                    user_svc1_long_val_cfg_ind_handler(msgid, msg_param, dest_id, src_id);
-                    break;
-
-                case SVC1_IDX_LONG_VALUE_VAL:
-                    user_svc1_long_val_wr_ind_handler(msgid, msg_param, dest_id, src_id);
-                    break;
-								*/
+                
                 default:
                     break;
             }

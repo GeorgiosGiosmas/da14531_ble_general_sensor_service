@@ -44,7 +44,7 @@
 #include "custs1_task.h"
 #include "user_custs1_def.h"
 #include "user_custs1_impl.h"
-#include "user_peripheral.h"
+#include "ble_general_sensor_service.h" 
 #include "user_periph_setup.h"
 
 /*
@@ -52,9 +52,10 @@
  ****************************************************************************************
  */
 
-ke_msg_id_t timer_used      __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint16_t indication_counter __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint16_t non_db_val_counter __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+ke_msg_id_t timer_adxl345_used      __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+ke_msg_id_t timer_mcp9808_used      __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+uint16_t indication_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+uint16_t non_db_val_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
 /*
  * FUNCTION DEFINITIONS
@@ -69,35 +70,39 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     uint8_t val = 0;
     memcpy(&val, &param->value[0], param->length);
 
-    if (val != CUSTS1_CP_ADC_VAL1_DISABLE)
+    if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-        timer_used = app_easy_timer(APP_PERIPHERAL_CTRL_TIMER_DELAY, app_adcval1_timer_cb_handler);
+        timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD, capture_adxl345_data_cb_handler);
     }
-    else
+    else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
-        if (timer_used != EASY_TIMER_INVALID_TIMER)
+        if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
         {
-            app_easy_timer_cancel(timer_used);
-            timer_used = EASY_TIMER_INVALID_TIMER;
+            app_easy_timer_cancel(timer_adxl345_used);
+            timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
         }
     }
 }
 
-void user_svc1_led_wr_ind_handler(ke_msg_id_t const msgid,
-                                     struct custs1_val_write_ind const *param,
-                                     ke_task_id_t const dest_id,
-                                     ke_task_id_t const src_id)
+void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
+                                      struct custs1_val_write_ind const *param,
+                                      ke_task_id_t const dest_id,
+                                      ke_task_id_t const src_id)
 {
     uint8_t val = 0;
     memcpy(&val, &param->value[0], param->length);
 
-    if (val == CUSTS1_LED_ON)
+    if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-        GPIO_SetActive(GPIO_LED_PORT, GPIO_LED_PIN);
+        timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD, capture_mcp9808_data_cb_handler);
     }
-    else if (val == CUSTS1_LED_OFF)
+    else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
-        GPIO_SetInactive(GPIO_LED_PORT, GPIO_LED_PIN);
+        if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
+        {
+            app_easy_timer_cancel(timer_mcp9808_used);
+            timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+        }
     }
 }
 
@@ -118,7 +123,7 @@ void user_svc1_long_val_cfg_ind_handler(ke_msg_id_t const msgid,
                                                           sizeof(indication_counter));
 
         req->conidx = app_env[conidx].conidx;
-        req->handle = SVC1_IDX_INDICATEABLE_VAL;
+        //req->handle = SVC1_IDX_INDICATEABLE_VAL;
         req->length = sizeof(indication_counter);
         req->value[0] = (indication_counter >> 8) & 0xFF;
         req->value[1] = indication_counter & 0xFF;
@@ -185,72 +190,57 @@ void user_svc1_indicateable_ind_cfm_handler(ke_msg_id_t const msgid,
 {
 }
 
-void user_svc1_long_val_att_info_req_handler(ke_msg_id_t const msgid,
-                                                struct custs1_att_info_req const *param,
-                                                ke_task_id_t const dest_id,
-                                                ke_task_id_t const src_id)
-{
-    struct custs1_att_info_rsp *rsp = KE_MSG_ALLOC(CUSTS1_ATT_INFO_RSP,
-                                                   src_id,
-                                                   dest_id,
-                                                   custs1_att_info_rsp);
-    // Provide the connection index.
-    rsp->conidx  = app_env[param->conidx].conidx;
-    // Provide the attribute index.
-    rsp->att_idx = param->att_idx;
-    // Provide the current length of the attribute.
-    rsp->length  = 0;
-    // Provide the ATT error code.
-    rsp->status  = ATT_ERR_NO_ERROR;
-
-    KE_MSG_SEND(rsp);
-}
-
-void user_svc1_rest_att_info_req_handler(ke_msg_id_t const msgid,
-                                            struct custs1_att_info_req const *param,
-                                            ke_task_id_t const dest_id,
-                                            ke_task_id_t const src_id)
-{
-    struct custs1_att_info_rsp *rsp = KE_MSG_ALLOC(CUSTS1_ATT_INFO_RSP,
-                                                   src_id,
-                                                   dest_id,
-                                                   custs1_att_info_rsp);
-    // Provide the connection index.
-    rsp->conidx  = app_env[param->conidx].conidx;
-    // Provide the attribute index.
-    rsp->att_idx = param->att_idx;
-    // Force current length to zero.
-    rsp->length  = 0;
-    // Provide the ATT error code.
-    rsp->status  = ATT_ERR_WRITE_NOT_PERMITTED;
-
-    KE_MSG_SEND(rsp);
-}
-
-void app_adcval1_timer_cb_handler()
+void capture_adxl345_data_cb_handler()
 {
     struct custs1_val_ntf_ind_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
                                                           prf_get_task_from_id(TASK_ID_CUSTS1),
                                                           TASK_APP,
                                                           custs1_val_ntf_ind_req,
-                                                          DEF_SVC1_ADC_VAL_1_CHAR_LEN);
+                                                          0 /*DEF_SVC1_ADC_VAL_1_CHAR_LEN*/);
 
-    // ADC value to be sampled
+    // ADXL345 Data capturing
     static uint16_t sample      __SECTION_ZERO("retention_mem_area0");
     sample = (sample <= 0xffff) ? (sample + 1) : 0;
 
     //req->conhdl = app_env->conhdl;
-    req->handle = SVC1_IDX_ADC_VAL_1_VAL;
-    req->length = DEF_SVC1_ADC_VAL_1_CHAR_LEN;
+    //req->handle = SVC1_IDX_ADC_VAL_1_VAL;
+    //req->length = DEF_SVC1_ADC_VAL_1_CHAR_LEN;
     req->notification = true;
-    memcpy(req->value, &sample, DEF_SVC1_ADC_VAL_1_CHAR_LEN);
+    //memcpy(req->value, &sample, DEF_SVC1_ADC_VAL_1_CHAR_LEN);
 
     KE_MSG_SEND(req);
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
         // Set it once again until Stop command is received in Control Characteristic
-        timer_used = app_easy_timer(APP_PERIPHERAL_CTRL_TIMER_DELAY, app_adcval1_timer_cb_handler);
+        timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD, capture_adxl345_data_cb_handler);
+    }
+}
+
+void capture_mcp9808_data_cb_handler()
+{
+    struct custs1_val_ntf_ind_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+                                                          prf_get_task_from_id(TASK_ID_CUSTS1),
+                                                          TASK_APP,
+                                                          custs1_val_ntf_ind_req,
+                                                          0 /*DEF_SVC1_ADC_VAL_1_CHAR_LEN*/);
+
+    // MCP9808 Data Capturing
+    static uint16_t sample      __SECTION_ZERO("retention_mem_area0");
+    sample = (sample <= 0xffff) ? (sample + 1) : 0;
+
+    //req->conhdl = app_env->conhdl;
+    //req->handle = SVC1_IDX_ADC_VAL_1_VAL;
+    //req->length = DEF_SVC1_ADC_VAL_1_CHAR_LEN;
+    req->notification = true;
+    //memcpy(req->value, &sample, DEF_SVC1_ADC_VAL_1_CHAR_LEN);
+
+    KE_MSG_SEND(req);
+
+    if (ke_state_get(TASK_APP) == APP_CONNECTED)
+    {
+        // Set it once again until Stop command is received in Control Characteristic
+        timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD, capture_mcp9808_data_cb_handler);
     }
 }
 
@@ -266,7 +256,7 @@ void user_svc3_read_non_db_val_handler(ke_msg_id_t const msgid,
                                                         prf_get_task_from_id(TASK_ID_CUSTS1),
                                                         TASK_APP,
                                                         custs1_value_req_rsp,
-                                                        DEF_SVC3_READ_VAL_4_CHAR_LEN);
+                                                        0 /*DEF_SVC3_READ_VAL_4_CHAR_LEN*/);
 
     // Provide the connection index.
     rsp->conidx  = app_env[param->conidx].conidx;

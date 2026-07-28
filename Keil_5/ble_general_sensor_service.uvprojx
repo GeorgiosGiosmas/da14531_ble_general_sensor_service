@@ -1898,11 +1898,6 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_custs1_impl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
-            </File>
-            <File>
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
@@ -1916,6 +1911,11 @@
               <FileName>MCP9808.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_custs1_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3813,11 +3813,6 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_custs1_impl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
-            </File>
-            <File>
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
@@ -3831,6 +3826,11 @@
               <FileName>MCP9808.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_custs1_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -5626,11 +5626,6 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_custs1_impl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
-            </File>
-            <File>
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
@@ -5644,6 +5639,11 @@
               <FileName>MCP9808.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_custs1_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -7439,11 +7439,6 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_custs1_impl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
-            </File>
-            <File>
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
@@ -7457,6 +7452,11 @@
               <FileName>MCP9808.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_custs1_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -9252,11 +9252,6 @@
           <GroupName>user_app</GroupName>
           <Files>
             <File>
-              <FileName>user_custs1_impl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</FilePath>
-            </File>
-            <File>
               <FileName>ble_general_sensor_service.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\ble_general_sensor_service.c</FilePath>
@@ -9270,6 +9265,11 @@
               <FileName>MCP9808.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\MCP9808.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_custs1_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
           </Files>
         </Group>

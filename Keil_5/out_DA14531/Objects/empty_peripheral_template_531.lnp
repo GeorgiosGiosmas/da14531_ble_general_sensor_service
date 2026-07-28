@@ -150,10 +150,10 @@
 ".\out_da14531\objects\user_custs1_def.o"
 ".\out_da14531\objects\user_periph_setup.o"
 ".\out_da14531\objects\fpga.o"
-".\out_da14531\objects\user_custs1_impl.o"
 ".\out_da14531\objects\ble_general_sensor_service.o"
 ".\out_da14531\objects\adxl345.o"
 ".\out_da14531\objects\mcp9808.o"
+".\out_da14531\objects\user_custs1_impl.o"
 --library_type=microlib --strict --scatter "..\..\..\..\..\sdk\common_project_files\scatterfiles\DA14531_armclang.sct"
 .\..\..\..\..\..\sdk\common_project_files\misc\da14531_symbols.txt --symdefs=empty_peripheral_template_531_symdef.txt --any_placement=best_fit --datacompressor off --userlibpath ..\..\..\..\..\sdk\platform\system_library\output\Keil_5\ da14531.lib --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

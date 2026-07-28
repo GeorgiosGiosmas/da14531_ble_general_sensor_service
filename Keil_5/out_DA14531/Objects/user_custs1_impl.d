@@ -1,5 +1,4 @@
-./out_da14531/objects/user_custs1_impl.o: \
-  ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c \
+./out_da14531/objects/user_custs1_impl.o: ..\src\user_custs1_impl.c \
   ..\src\config\da1458x_config_basic.h \
   ..\src\config\da14531_config_basic.h \
   ..\..\..\..\..\sdk\common_project_files\da1458x_stack_config.h \
@@ -96,8 +95,7 @@
   ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custom_common.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
-  ..\src\custom_profile\user_custs1_def.h \
-  ..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.h \
+  ..\src\custom_profile\user_custs1_def.h ..\src\user_custs1_impl.h \
   ..\src\ble_general_sensor_service.h ..\src\config\user_periph_setup.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
   ..\..\..\..\..\sdk\platform\driver\dma\dma.h \

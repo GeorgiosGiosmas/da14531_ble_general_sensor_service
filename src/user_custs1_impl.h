@@ -52,15 +52,10 @@
 
 enum
 {
-    CUSTS1_CP_ADC_VAL1_DISABLE = 0,
-    CUSTS1_CP_ADC_VAL1_ENABLE,
+    ENABLE_SENSOR_DATA_CAPTURING = 0,
+    DISABLE_SENSOR_DATA_CAPTURING,
 };
 
-enum
-{
-    CUSTS1_LED_OFF = 0,
-    CUSTS1_LED_ON,
-};
 
 /*
  * INCLUDE FILES
@@ -92,108 +87,31 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
 /**
  ****************************************************************************************
- * @brief Led state value write indication handler.
+ * @brief Control point write indication handler.
  * @param[in] msgid   Id of the message received.
  * @param[in] param   Pointer to the parameters of the message.
  * @param[in] dest_id ID of the receiving task instance.
  * @param[in] src_id  ID of the sending task instance.
  ****************************************************************************************
 */
-void user_svc1_led_wr_ind_handler(ke_msg_id_t const msgid,
-                                  struct custs1_val_write_ind const *param,
-                                  ke_task_id_t const dest_id,
-                                  ke_task_id_t const src_id);
+void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
+                                   struct custs1_val_write_ind const *param,
+                                   ke_task_id_t const dest_id,
+                                   ke_task_id_t const src_id);
 
 /**
  ****************************************************************************************
- * @brief Long value configuration indication handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
-*/
-void user_svc1_long_val_cfg_ind_handler(ke_msg_id_t const msgid,
-                                        struct custs1_val_write_ind const *param,
-                                        ke_task_id_t const dest_id,
-                                        ke_task_id_t const src_id);
-
-/**
- ****************************************************************************************
- * @brief Long value write indication handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
-*/
-void user_svc1_long_val_wr_ind_handler(ke_msg_id_t const msgid,
-                                       struct custs1_val_write_ind const *param,
-                                       ke_task_id_t const dest_id,
-                                       ke_task_id_t const src_id);
-
-/**
- ****************************************************************************************
- * @brief ADC value 1 configuration indication handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
-*/
-void user_svc1_adc_val_1_cfg_ind_handler(ke_msg_id_t const msgid,
-                                         struct custs1_val_write_ind const *param,
-                                         ke_task_id_t const dest_id,
-                                         ke_task_id_t const src_id);
-
-/**
- ****************************************************************************************
- * @brief Button configuration indication handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
-*/
-void user_svc1_button_cfg_ind_handler(ke_msg_id_t const msgid,
-                                      struct custs1_val_write_ind const *param,
-                                      ke_task_id_t const dest_id,
-                                      ke_task_id_t const src_id);
-
-/**
- ****************************************************************************************
- * @brief Long value attribute info request handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
-*/
-void user_svc1_long_val_att_info_req_handler(ke_msg_id_t const msgid,
-                                             struct custs1_att_info_req const *param,
-                                             ke_task_id_t const dest_id,
-                                             ke_task_id_t const src_id);
-
-/**
- ****************************************************************************************
- * @brief Remaining attribute info request handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
-*/
-void user_svc1_rest_att_info_req_handler(ke_msg_id_t const msgid,
-                                         struct custs1_att_info_req const *param,
-                                         ke_task_id_t const dest_id,
-                                         ke_task_id_t const src_id);
-
-/**
- ****************************************************************************************
- * @brief ADC sampling timer callback handler.
+ * @brief ADXL345 Data Capture Initiation callback handler.
  ****************************************************************************************
  */
-void app_adcval1_timer_cb_handler(void);
+void capture_adxl345_data_cb_handler(void);
+																				 
+/**
+ ****************************************************************************************
+ * @brief MCP9808 Data Capture Initiation callback handler.
+ ****************************************************************************************
+ */
+void capture_mcp9808_data_cb_handler(void);																				 
 
 /**
  ****************************************************************************************

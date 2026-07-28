@@ -314,8 +314,28 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 								case SVC2_IDX_CONTROL_POINT_2_VAL:
                     user_svc2_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
+								case SVC1_IDX_ACCELEROMETER_X_NTF_CFG:
+										if(msg_param->value[0] == 0x01)
+												arch_puts("Enabled Notifications for Accelerometer X\r\n");
+										else
+												arch_puts("Disabled Notifications for Accelerometer X\r\n");
+										break;
+								case SVC1_IDX_ACCELEROMETER_Y_NTF_CFG:
+										if(msg_param->value[0] == 0x01)
+												arch_puts("Enabled Notifications for Accelerometer Y\r\n");
+										else
+												arch_puts("Disabled Notifications for Accelerometer Y\r\n");
+										break;
+								case SVC1_IDX_ACCELEROMETER_Z_NTF_CFG:
+										arch_puts("Enabled Notifications for Accelerometer Z\r\n");
+										break;
+								case SVC1_IDX_GYROSCOPE_NTF_CFG:
+										arch_puts("Enabled Notifications for Gyroscope\r\n");
+										break;
+								case SVC2_IDX_TEMPERATURE_NTF_CFG:
+										arch_puts("Enabled Notifications for Temperature\r\n");
+										break;
 
-                
                 default:
                     break;
             }
@@ -348,27 +368,7 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->handle)
             {
-								/*
-                case SVC1_IDX_INDICATEABLE_VAL:
-                    break;
-								*/
                 default:
-                    break;
-             }
-        } break;
-
-        case CUSTS1_ATT_INFO_REQ:
-        {
-            struct custs1_att_info_req const *msg_param = (struct custs1_att_info_req const *)param;
-
-            switch (msg_param->att_idx)
-            {
-                /*case SVC1_IDX_LONG_VALUE_VAL:
-                    user_svc1_long_val_att_info_req_handler(msgid, msg_param, dest_id, src_id);
-                    break;
-								*/
-                default:
-                    user_svc1_rest_att_info_req_handler(msgid, msg_param, dest_id, src_id);
                     break;
              }
         } break;
@@ -393,11 +393,6 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
             switch (msg_param->att_idx)
             {
-                /*case SVC3_IDX_READ_4_VAL:
-                {
-                    user_svc3_read_non_db_val_handler(msgid, msg_param, dest_id, src_id);
-                } break;
-								*/
                 default:
                 {
                     // Send Error message
@@ -418,15 +413,6 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
                     KE_MSG_SEND(rsp);
                 } break;
              }
-        } break;
-
-        case GATTC_EVENT_REQ_IND:
-        {
-            // Confirm unhandled indication to avoid GATT timeout
-            struct gattc_event_ind const *ind = (struct gattc_event_ind const *) param;
-            struct gattc_event_cfm *cfm = KE_MSG_ALLOC(GATTC_EVENT_CFM, src_id, dest_id, gattc_event_cfm);
-            cfm->handle = ind->handle;
-            KE_MSG_SEND(cfm);
         } break;
 
         default:

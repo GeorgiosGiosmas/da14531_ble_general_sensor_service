@@ -3027,18 +3027,6 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\..\..\..\Downloads\SDK_6.0.24.1464\DA145xx_SDK\6.0.24.1464\projects\target_apps\template\empty_peripheral_template\src\user_custs1_impl.c</PathWithFileName>
-      <FilenameWithoutPath>user_custs1_impl.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>13</GroupNumber>
-      <FileNumber>173</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
       <PathWithFileName>..\src\ble_general_sensor_service.c</PathWithFileName>
       <FilenameWithoutPath>ble_general_sensor_service.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -3046,7 +3034,7 @@
     </File>
     <File>
       <GroupNumber>13</GroupNumber>
-      <FileNumber>174</FileNumber>
+      <FileNumber>173</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3058,13 +3046,25 @@
     </File>
     <File>
       <GroupNumber>13</GroupNumber>
-      <FileNumber>175</FileNumber>
+      <FileNumber>174</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\src\MCP9808.c</PathWithFileName>
       <FilenameWithoutPath>MCP9808.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>13</GroupNumber>
+      <FileNumber>175</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\src\user_custs1_impl.c</PathWithFileName>
+      <FilenameWithoutPath>user_custs1_impl.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

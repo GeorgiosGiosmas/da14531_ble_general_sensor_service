@@ -96,11 +96,12 @@
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custom_common.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
   ..\src\custom_profile\user_custs1_def.h ..\src\user_custs1_impl.h \
-  ..\src\ble_general_sensor_service.h ..\src\config\user_periph_setup.h \
+  ..\src\ble_general_sensor_service.h \
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
+  ..\src\config\user_periph_setup.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
   ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
   ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
   ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
   ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
-  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
-  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h

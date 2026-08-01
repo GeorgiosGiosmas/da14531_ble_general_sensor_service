@@ -85,5 +85,5 @@
   ..\..\..\..\..\sdk\app_modules\api\app_entry_point.h \
   ..\src\ble_general_sensor_service.h \
   ..\..\..\..\..\sdk\app_modules\api\app_task.h \
-  ..\src\custom_profile\user_custs_config.h \
-  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
+  ..\src\custom_profile\user_custs_config.h

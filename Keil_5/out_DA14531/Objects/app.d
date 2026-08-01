@@ -94,4 +94,5 @@
   ..\..\..\..\..\sdk\app_modules\api\app_security.h \
   ..\src\config\user_callback_config.h \
   ..\src\ble_general_sensor_service.h \
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
   ..\src\custom_profile\user_custs_config.h

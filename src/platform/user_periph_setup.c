@@ -123,6 +123,30 @@ static const uart_cfg_t uart_cfg = {
 };
 #endif
 
+static const spi_cfg_t spi_cfg = {
+    .spi_ms = SPI_MS_MODE,
+    .spi_cp = SPI_CP_MODE,
+    .spi_speed = SPI_SPEED_MODE,
+    .spi_wsz = SPI_WSZ,
+    .spi_cs = SPI_CS,
+    .cs_pad.port = SPI_EN_PORT,
+    .cs_pad.pin = SPI_EN_PIN,
+    .spi_capture = SPI_EDGE_CAPTURE,
+#if defined (CFG_SPI_DMA_SUPPORT)
+    .spi_dma_channel = SPI_DMA_CHANNEL_01,
+    .spi_dma_priority = DMA_PRIO_0,
+#endif
+};
+
+/* SPI flash configuration - assumes use of a Macronix MXR2035F as this is
+   present on the DA145xx PRO development kit */
+static const spi_flash_cfg_t spi_flash_cfg = {
+    .dev_index = MX25R2035F_DEV_INDEX,
+    .jedec_id  = MX25V2035F_JEDEC_ID,
+    .chip_size = MX25V2035F_CHIP_SIZE,
+};
+
+
 const i2c_cfg_t i2c_cfg_MCP9808 = {
     .clock_cfg.ss_hcnt = I2C_SS_SCL_HCNT_REG_RESET,
     .clock_cfg.ss_lcnt = I2C_SS_SCL_LCNT_REG_RESET,
@@ -149,29 +173,6 @@ const i2c_cfg_t i2c_cfg_ADXL345 = {
     .address = I2C_SLAVE_ADDRESS_ADXL345,
     .tx_fifo_level = 1,
     .rx_fifo_level = 1,
-};
-
-static const spi_cfg_t spi_cfg = {
-    .spi_ms = SPI_MS_MODE,
-    .spi_cp = SPI_CP_MODE,
-    .spi_speed = SPI_SPEED_MODE,
-    .spi_wsz = SPI_WSZ,
-    .spi_cs = SPI_CS,
-    .cs_pad.port = SPI_EN_PORT,
-    .cs_pad.pin = SPI_EN_PIN,
-    .spi_capture = SPI_EDGE_CAPTURE,
-#if defined (CFG_SPI_DMA_SUPPORT)
-    .spi_dma_channel = SPI_DMA_CHANNEL_01,
-    .spi_dma_priority = DMA_PRIO_0,
-#endif
-};
-
-/* SPI flash configuration - assumes use of a Macronix MXR2035F as this is
-   present on the DA145xx PRO development kit */
-static const spi_flash_cfg_t spi_flash_cfg = {
-    .dev_index = MX25R2035F_DEV_INDEX,
-    .jedec_id  = MX25V2035F_JEDEC_ID,
-    .chip_size = MX25V2035F_CHIP_SIZE,
 };
 
 void periph_init(void)

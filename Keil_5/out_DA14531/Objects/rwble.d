@@ -111,7 +111,6 @@
   ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
   ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
   ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
-  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
   ..\..\..\..\..\sdk\platform\arch\main\arch_system.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc_util.h \
   ..\..\..\..\..\sdk\platform\driver\ble\reg_ble_em_rx_desc.h \

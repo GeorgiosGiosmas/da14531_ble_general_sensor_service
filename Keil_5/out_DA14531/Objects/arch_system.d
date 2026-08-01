@@ -84,7 +84,6 @@
   ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
   ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
   ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
-  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
   ..\src\config\user_callback_config.h \
   ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
   ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
@@ -93,6 +92,7 @@
   ..\..\..\..\..\sdk\app_modules\api\app_prf_types.h \
   ..\src\ble_general_sensor_service.h \
   ..\..\..\..\..\sdk\app_modules\api\app_task.h \
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
   ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc_task.h \

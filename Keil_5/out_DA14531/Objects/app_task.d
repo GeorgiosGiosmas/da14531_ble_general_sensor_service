@@ -91,4 +91,5 @@
   ..\src\config\user_callback_config.h \
   ..\..\..\..\..\sdk\app_modules\api\app_prf_types.h \
   ..\src\ble_general_sensor_service.h \
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
   ..\src\config\user_modules_config.h

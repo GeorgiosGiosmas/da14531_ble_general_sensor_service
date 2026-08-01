@@ -44,9 +44,6 @@
 #include "spi.h"
 #include "spi_flash.h"
 #include "i2c.h"
-#include "i2c_eeprom.h"
-
-
 
 /*
  * DEFINES
@@ -167,7 +164,6 @@
     #define PRODUCTION_DEBUG_PIN    GPIO_PIN_5
 #endif
 #endif
-
 
 /*
  * FUNCTION DECLARATIONS

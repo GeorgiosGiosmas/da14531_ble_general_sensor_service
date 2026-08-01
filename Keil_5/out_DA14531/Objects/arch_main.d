@@ -94,7 +94,6 @@
   ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
   ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
   ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
-  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
   ..\..\..\..\..\sdk\platform\core_modules\rf\api\rf.h \
   ..\..\..\..\..\sdk\platform\core_modules\dbg\api\dbg.h \
   ..\..\..\..\..\sdk\platform\core_modules\dbg\api\dbg_swdiag.h \

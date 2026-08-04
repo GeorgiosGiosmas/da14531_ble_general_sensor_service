@@ -35,7 +35,7 @@
  * INCLUDE FILES
  ****************************************************************************************
  */
-
+#include <stdint.h>
 #include "gpio.h"
 #include "app_api.h"
 #include "app.h"
@@ -46,6 +46,8 @@
 #include "user_custs1_impl.h"
 #include "ble_general_sensor_service.h" 
 #include "user_periph_setup.h"
+#include "ADXL345.h"
+#include "MCP9808.h"
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -56,6 +58,9 @@ ke_msg_id_t timer_adxl345_used      __SECTION_ZERO("retention_mem_area0"); //@RE
 ke_msg_id_t timer_mcp9808_used      __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t indication_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t non_db_val_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+
+extern const i2c_cfg_t i2c_cfg_MCP9808;
+extern const i2c_cfg_t i2c_cfg_adxl345;
 
 /*
  * FUNCTION DEFINITIONS
@@ -106,88 +111,33 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     }
 }
 
-void user_svc1_long_val_cfg_ind_handler(ke_msg_id_t const msgid,
-                                           struct custs1_val_write_ind const *param,
-                                           ke_task_id_t const dest_id,
-                                           ke_task_id_t const src_id)
+// Function that initiates ADXL345 and captures data
+static void adxl345_capture(int *x, int *y, int *z, uint8_t *xyz)
 {
-    // Generate indication when the central subscribes to it
-    if (param->value[0])
-    {
-        uint8_t conidx = KE_IDX_GET(src_id);
+		i2c_init(&i2c_cfg_adxl345);
+	
+		ADXL345_init();
+	
+		*x = ADXL345_read_X();
+		*y = ADXL345_read_Y();
+		*z = ADXL345_read_Z();
+		ADXL345_read_XYZ(xyz);
+		
+		i2c_release();
+}	
 
-        struct custs1_val_ind_req* req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_IND_REQ,
-                                                          prf_get_task_from_id(TASK_ID_CUSTS1),
-                                                          TASK_APP,
-                                                          custs1_val_ind_req,
-                                                          sizeof(indication_counter));
-
-        req->conidx = app_env[conidx].conidx;
-        //req->handle = SVC1_IDX_INDICATEABLE_VAL;
-        req->length = sizeof(indication_counter);
-        req->value[0] = (indication_counter >> 8) & 0xFF;
-        req->value[1] = indication_counter & 0xFF;
-
-        indication_counter++;
-
-        KE_MSG_SEND(req);
-    }
-}
-
-void user_svc1_long_val_wr_ind_handler(ke_msg_id_t const msgid,
-                                          struct custs1_val_write_ind const *param,
-                                          ke_task_id_t const dest_id,
-                                          ke_task_id_t const src_id)
+// Function that initiates MCP9808 and captures data
+static void mcp9808_capture(int *temp_int, int *temp_frac)
 {
-}
-
-void user_svc1_long_val_ntf_cfm_handler(ke_msg_id_t const msgid,
-                                           struct custs1_val_write_ind const *param,
-                                           ke_task_id_t const dest_id,
-                                           ke_task_id_t const src_id)
-{
-}
-
-void user_svc1_adc_val_1_cfg_ind_handler(ke_msg_id_t const msgid,
-                                            struct custs1_val_write_ind const *param,
-                                            ke_task_id_t const dest_id,
-                                            ke_task_id_t const src_id)
-{
-}
-
-void user_svc1_adc_val_1_ntf_cfm_handler(ke_msg_id_t const msgid,
-                                            struct custs1_val_write_ind const *param,
-                                            ke_task_id_t const dest_id,
-                                            ke_task_id_t const src_id)
-{
-}
-
-void user_svc1_button_cfg_ind_handler(ke_msg_id_t const msgid,
-                                         struct custs1_val_write_ind const *param,
-                                         ke_task_id_t const dest_id,
-                                         ke_task_id_t const src_id)
-{
-}
-
-void user_svc1_button_ntf_cfm_handler(ke_msg_id_t const msgid,
-                                         struct custs1_val_write_ind const *param,
-                                         ke_task_id_t const dest_id,
-                                         ke_task_id_t const src_id)
-{
-}
-
-void user_svc1_indicateable_cfg_ind_handler(ke_msg_id_t const msgid,
-                                               struct custs1_val_write_ind const *param,
-                                               ke_task_id_t const dest_id,
-                                               ke_task_id_t const src_id)
-{
-}
-
-void user_svc1_indicateable_ind_cfm_handler(ke_msg_id_t const msgid,
-                                               struct custs1_val_write_ind const *param,
-                                               ke_task_id_t const dest_id,
-                                               ke_task_id_t const src_id)
-{
+		i2c_init(&i2c_cfg_MCP9808);
+	
+		MCP9808_init();
+	
+		double temperature = MCP9808_get_temperature();
+		*temp_int = (int)temperature;
+		*temp_frac = (int)((temperature - *temp_int) * 10000);
+	
+		i2c_release();
 }
 
 void capture_adxl345_data_cb_handler()

@@ -58,6 +58,9 @@ ke_msg_id_t timer_adxl345_used      __SECTION_ZERO("retention_mem_area0"); //@RE
 ke_msg_id_t timer_mcp9808_used      __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t indication_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t non_db_val_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int previous_temp_int 							__SECTION_ZERO("retention_mem_area0");
+int previous_temp_frac							__SECTION_ZERO("retention_mem_area0");
+char temperature_string[DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN]; __SECTION_ZERO("retention_mem_area0");
 
 extern const i2c_cfg_t i2c_cfg_MCP9808;
 extern const i2c_cfg_t i2c_cfg_adxl345;
@@ -173,17 +176,21 @@ void capture_mcp9808_data_cb_handler()
                                                           prf_get_task_from_id(TASK_ID_CUSTS1),
                                                           TASK_APP,
                                                           custs1_val_ntf_ind_req,
-                                                          0 /*DEF_SVC1_ADC_VAL_1_CHAR_LEN*/);
+                                                          DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
     // MCP9808 Data Capturing
-    static uint16_t sample      __SECTION_ZERO("retention_mem_area0");
-    sample = (sample <= 0xffff) ? (sample + 1) : 0;
+    int temp_int, temp_frac;
+		mcp9808_capture(&temp_int, &temp_frac);
+		previous_temp_int = temp_int;
+		previous_temp_frac = temp_frac;
+		
+		uint8_t length = snprintf(temperature_string,DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%04d" ,temp_int, temp_frac);
 
-    //req->conhdl = app_env->conhdl;
-    //req->handle = SVC1_IDX_ADC_VAL_1_VAL;
-    //req->length = DEF_SVC1_ADC_VAL_1_CHAR_LEN;
+		req->conidx = 0;
+    req->handle = SVC2_IDX_TEMPERATURE_VAL;
+    req->length = DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN;
     req->notification = true;
-    //memcpy(req->value, &sample, DEF_SVC1_ADC_VAL_1_CHAR_LEN);
+    memcpy(req->value, temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
     KE_MSG_SEND(req);
 

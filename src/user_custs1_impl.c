@@ -48,6 +48,7 @@
 #include "user_periph_setup.h"
 #include "ADXL345.h"
 #include "MCP9808.h"
+#include "arch_console.h"
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -84,12 +85,14 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
+				arch_puts("Control Point 1 Activated\r\n");
         timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD, capture_adxl345_data_cb_handler);
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
         if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
         {
+						arch_puts("Control Point 1 Deactivated\r\n");
             app_easy_timer_cancel(timer_adxl345_used);
             timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
         }
@@ -106,12 +109,14 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
+				arch_puts("Control Point 2 Activated\r\n");
         timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD, capture_mcp9808_data_cb_handler);
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
         if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
         {
+						arch_puts("Control Point 2 Deactivated\r\n");
             app_easy_timer_cancel(timer_mcp9808_used);
             timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
         }
@@ -192,6 +197,8 @@ void capture_adxl345_data_cb_handler()
 		previous_accel_y = y;
 		previous_accel_z = z;
 		memcpy(previous_accel_xyz, xyz, sizeof(DEF_SVC1_GYR_DATA_CHAR_LEN));
+	
+		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
 
 		// Update and send value of Accel X
 		struct custs1_val_ntf_ind_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
@@ -272,6 +279,8 @@ void capture_adxl345_data_cb_handler()
     memcpy(req->value, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
 
     KE_MSG_SEND(req);
+		
+		arch_printf_process();
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
@@ -294,6 +303,8 @@ void capture_mcp9808_data_cb_handler()
 		previous_temp_int = temp_int;
 		previous_temp_frac = temp_frac;
 		
+		arch_printf("Temp: %d.%d\r\n", temp_int, temp_frac);
+		
 		uint8_t length = snprintf(temperature_string,DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%04d" ,temp_int, temp_frac);
 
 		req->conidx = 0;
@@ -303,6 +314,8 @@ void capture_mcp9808_data_cb_handler()
     memcpy(req->value, temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
     KE_MSG_SEND(req);
+		
+		arch_printf_process();
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {

@@ -63,7 +63,7 @@ static const att_svc_desc128_t custs1_svc1                      						= DEF_SVC1
 static const uint8_t SVC1_CTRL_POINT_1_UUID_128[ATT_UUID_128_LEN]      		  = DEF_SVC1_CTRL_POINT_1_UUID_128;
 static const uint8_t SVC1_ACCEL_X_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_X_DATA_UUID_128;
 static const uint8_t SVC1_ACCEL_Y_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_Y_DATA_UUID_128;
-static const uint8_t SVC1_ACCEL_Z_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_Y_DATA_UUID_128;
+static const uint8_t SVC1_ACCEL_Z_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_Z_DATA_UUID_128;
 static const uint8_t SVC1_GYR_DATA_UUID_128[ATT_UUID_128_LEN]               = DEF_SVC1_GYR_DATA_UUID_128;
 
 // Service 2 of the custom server 1

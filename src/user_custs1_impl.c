@@ -60,10 +60,14 @@ uint16_t indication_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENT
 uint16_t non_db_val_counter 				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 int previous_temp_int 							__SECTION_ZERO("retention_mem_area0");
 int previous_temp_frac							__SECTION_ZERO("retention_mem_area0");
-char temperature_string[DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN]; __SECTION_ZERO("retention_mem_area0");
+char temperature_string[DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN]  __SECTION_ZERO("retention_mem_area0");
+int16_t previous_accel_x 							__SECTION_ZERO("retention_mem_area0");
+int16_t previous_accel_y							__SECTION_ZERO("retention_mem_area0");
+int16_t previous_accel_z 							__SECTION_ZERO("retention_mem_area0");
+uint8_t previous_accel_xyz[DEF_SVC1_GYR_DATA_CHAR_LEN] 			__SECTION_ZERO("retention_mem_area0");
 
 extern const i2c_cfg_t i2c_cfg_MCP9808;
-extern const i2c_cfg_t i2c_cfg_adxl345;
+extern const i2c_cfg_t i2c_cfg_ADXL345;
 
 /*
  * FUNCTION DEFINITIONS
@@ -114,10 +118,43 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     }
 }
 
+/**
+ ****************************************************************************************
+ * @brief Helper function to convert a raw measurement to a string.
+ * @param[in]  input   Input raw measurement value
+ * @param[out] s       Pointer to the output string
+ * @return Length of string
+ ****************************************************************************************
+ */
+static uint8_t user_int_to_string(int16_t input, uint8_t *s){
+	uint8_t length = 1;
+	if(input < 0){
+		s[0] = '-';
+	} else {
+		s[0] = ' ';
+	}
+	input = abs(input);
+	if(input  >= 10000){
+		s[length++] = '0' + ((input / 10000) % 10);
+	}
+	if(input  >= 1000){
+		s[length++] = '0' + ((input / 1000) % 10);
+	}
+	if(input  >= 100){
+		s[length++] = '0' + ((input / 100) % 10);
+	}
+	if(input  >= 10){
+		s[length++] = '0' + ((input / 10) % 10);
+	}
+	
+	s[length++] = '0' + (input% 10);
+	return length;
+}
+
 // Function that initiates ADXL345 and captures data
-static void adxl345_capture(int *x, int *y, int *z, uint8_t *xyz)
+static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
-		i2c_init(&i2c_cfg_adxl345);
+		i2c_init(&i2c_cfg_ADXL345);
 	
 		ADXL345_init();
 	
@@ -145,21 +182,94 @@ static void mcp9808_capture(int *temp_int, int *temp_frac)
 
 void capture_adxl345_data_cb_handler()
 {
-    struct custs1_val_ntf_ind_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+    // ADXL345 Data capturing
+    int16_t x, y, z;
+		uint8_t axis_val[DEF_SVC1_ACCEL_X_DATA_CHAR_LEN];
+		uint8_t xyz[DEF_SVC1_GYR_DATA_CHAR_LEN];
+	
+		adxl345_capture(&x, &y, &z, xyz);
+		previous_accel_x = x;
+		previous_accel_y = y;
+		previous_accel_z = z;
+		memcpy(previous_accel_xyz, xyz, sizeof(DEF_SVC1_GYR_DATA_CHAR_LEN));
+
+		// Update and send value of Accel X
+		struct custs1_val_ntf_ind_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
                                                           prf_get_task_from_id(TASK_ID_CUSTS1),
                                                           TASK_APP,
                                                           custs1_val_ntf_ind_req,
-                                                          0 /*DEF_SVC1_ADC_VAL_1_CHAR_LEN*/);
+                                                          DEF_SVC1_ACCEL_X_DATA_CHAR_LEN);
 
-    // ADXL345 Data capturing
-    static uint16_t sample      __SECTION_ZERO("retention_mem_area0");
-    sample = (sample <= 0xffff) ? (sample + 1) : 0;
 
-    //req->conhdl = app_env->conhdl;
-    //req->handle = SVC1_IDX_ADC_VAL_1_VAL;
-    //req->length = DEF_SVC1_ADC_VAL_1_CHAR_LEN;
+    req->conidx = 0;
+    req->handle = SVC1_IDX_ACCELEROMETER_X_VAL;
+    req->length = DEF_SVC1_ACCEL_X_DATA_CHAR_LEN;
     req->notification = true;
-    //memcpy(req->value, &sample, DEF_SVC1_ADC_VAL_1_CHAR_LEN);
+		
+		uint8_t string_length = user_int_to_string(x * 3.9, axis_val);    //Read data and multiply by 3.9 to get acceleration in mg
+    memcpy(req->value, axis_val, DEF_SVC1_ACCEL_X_DATA_CHAR_LEN);
+
+    KE_MSG_SEND(req);
+		
+		memset(req, 0, sizeof(*req));
+		memset(axis_val, 0, sizeof(axis_val));
+		
+		// Update and send value of Accel Y
+		req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+														prf_get_task_from_id(TASK_ID_CUSTS1),
+														TASK_APP,
+														custs1_val_ntf_ind_req,
+														DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN);
+
+
+    req->conidx = 0;
+    req->handle = SVC1_IDX_ACCELEROMETER_Y_VAL;
+    req->length = DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN;
+    req->notification = true;
+		
+		string_length = user_int_to_string(y * 3.9, axis_val);    //Read data and multiply by 3.9 to get acceleration in mg
+    memcpy(req->value, axis_val, DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN);
+
+    KE_MSG_SEND(req);
+		
+		memset(req, 0, sizeof(*req));
+		memset(axis_val, 0, sizeof(axis_val));
+		
+		// Update and send value of Accel Z
+		req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+														prf_get_task_from_id(TASK_ID_CUSTS1),
+														TASK_APP,
+														custs1_val_ntf_ind_req,
+														DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN);
+
+
+    req->conidx = 0;
+    req->handle = SVC1_IDX_ACCELEROMETER_Z_VAL;
+    req->length = DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN;
+    req->notification = true;
+		
+		string_length = user_int_to_string(z * 3.9, axis_val);    //Read data and multiply by 3.9 to get acceleration in mg
+    memcpy(req->value, axis_val, DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN);
+
+    KE_MSG_SEND(req);
+		
+		memset(req, 0, sizeof(*req));
+		memset(axis_val, 0, sizeof(axis_val));
+		
+		// Update and send value of Accel G
+		req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+														prf_get_task_from_id(TASK_ID_CUSTS1),
+														TASK_APP,
+														custs1_val_ntf_ind_req,
+														DEF_SVC1_GYR_DATA_CHAR_LEN);
+
+
+    req->conidx = 0;
+    req->handle = SVC1_IDX_GYROSCOPE_VAL;
+    req->length = DEF_SVC1_GYR_DATA_CHAR_LEN;
+    req->notification = true;
+		
+    memcpy(req->value, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
 
     KE_MSG_SEND(req);
 

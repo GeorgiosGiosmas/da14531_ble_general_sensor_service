@@ -51,6 +51,7 @@
 #include "user_custs1_impl.h"
 #include "user_custs1_def.h"
 #include "co_bt.h"
+#include "arch_console.h"
 
 /*
  * TYPE DEFINITIONS
@@ -225,6 +226,8 @@ void user_app_init(void)
     stored_adv_data_len = USER_ADVERTISE_DATA_LEN;
     memcpy(stored_scan_rsp_data, USER_ADVERTISE_SCAN_RESPONSE_DATA, USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN);
     stored_scan_rsp_data_len = USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN;
+	
+		arch_puts("App Initialized\r\n");
 
     default_app_on_init();
 }
@@ -241,6 +244,8 @@ void user_app_adv_start(void)
     app_add_ad_struct(cmd, &mnf_data, sizeof(struct mnf_specific_data_ad_structure), 1);
 
     app_easy_gap_undirected_advertise_start();
+	
+		arch_puts("Advertising Started\r\n");
 }
 
 void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind const *param)
@@ -262,6 +267,8 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
             // Connection params are not these that we expect
             app_param_update_request_timer_used = app_easy_timer(APP_PARAM_UPDATE_REQUEST_TO, param_update_request_timer_cb);
         }
+				
+				arch_puts("App Connected\r\n");
     }
     else
     {
@@ -274,6 +281,8 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
 
 void user_app_adv_undirect_complete(uint8_t status)
 {
+		arch_puts("Advertising Ended\r\n");
+	
     // If advertising was canceled then update advertising data and start advertising again
     if (status == GAP_ERR_CANCELED)
     {
@@ -283,6 +292,8 @@ void user_app_adv_undirect_complete(uint8_t status)
 
 void user_app_disconnect(struct gapc_disconnect_ind const *param)
 {
+		arch_puts("App Disconnected\r\n");
+	
     // Cancel the parameter update request timer
     if (app_param_update_request_timer_used != EASY_TIMER_INVALID_TIMER)
     {

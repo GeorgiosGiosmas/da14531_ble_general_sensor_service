@@ -97,6 +97,8 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
             timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
         }
     }
+		else
+				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
 }
 
 void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
@@ -121,6 +123,8 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
             timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
         }
     }
+		else
+				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
 }
 
 /**
@@ -160,29 +164,40 @@ static uint8_t user_int_to_string(int16_t input, uint8_t *s){
 static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
 		i2c_init(&i2c_cfg_ADXL345);
+		arch_puts("I2C initialized\r\n");
 	
 		ADXL345_init();
+		arch_puts("ADXL345 initialized\r\n");
 	
 		*x = ADXL345_read_X();
+		arch_puts("X capture completed\r\n");
 		*y = ADXL345_read_Y();
+		arch_puts("Y capture completed\r\n");
 		*z = ADXL345_read_Z();
+		arch_puts("Z capture completed\r\n");
 		ADXL345_read_XYZ(xyz);
+		arch_puts("G capture completed\r\n");
 		
 		i2c_release();
+		arch_puts("I2C released\r\n");
 }	
 
 // Function that initiates MCP9808 and captures data
 static void mcp9808_capture(int *temp_int, int *temp_frac)
 {
 		i2c_init(&i2c_cfg_MCP9808);
+		arch_puts("I2C initialized\r\n");
 	
 		MCP9808_init();
+		arch_puts("MCP9808 initialized\r\n");
 	
 		double temperature = MCP9808_get_temperature();
+		arch_puts("MCP9808 capture completed\r\n");
 		*temp_int = (int)temperature;
 		*temp_frac = (int)((temperature - *temp_int) * 10000);
 	
 		i2c_release();
+		arch_puts("I2C released\r\n");
 }
 
 void capture_adxl345_data_cb_handler()
@@ -221,6 +236,8 @@ void capture_adxl345_data_cb_handler()
 		memset(req, 0, sizeof(*req));
 		memset(axis_val, 0, sizeof(axis_val));
 		
+		arch_puts("Updated X\r\n");
+		
 		// Update and send value of Accel Y
 		req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
 														prf_get_task_from_id(TASK_ID_CUSTS1),
@@ -241,6 +258,8 @@ void capture_adxl345_data_cb_handler()
 		
 		memset(req, 0, sizeof(*req));
 		memset(axis_val, 0, sizeof(axis_val));
+		
+		arch_puts("Updated X\r\n");
 		
 		// Update and send value of Accel Z
 		req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
@@ -263,6 +282,8 @@ void capture_adxl345_data_cb_handler()
 		memset(req, 0, sizeof(*req));
 		memset(axis_val, 0, sizeof(axis_val));
 		
+		arch_puts("Updated X\r\n");
+		
 		// Update and send value of Accel G
 		req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
 														prf_get_task_from_id(TASK_ID_CUSTS1),
@@ -279,6 +300,8 @@ void capture_adxl345_data_cb_handler()
     memcpy(req->value, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
 
     KE_MSG_SEND(req);
+		
+		arch_puts("Updated X\r\n");
 		
 		arch_printf_process();
 

@@ -338,13 +338,22 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 												arch_puts("Disabled Notifications for Accelerometer Y\r\n");
 										break;
 								case SVC1_IDX_ACCELEROMETER_Z_NTF_CFG:
-										arch_puts("Enabled Notifications for Accelerometer Z\r\n");
+										if(msg_param->value[0] == 0x01)
+												arch_puts("Enabled Notifications for Accelerometer Z\r\n");
+										else
+												arch_puts("Disabled Notifications for Accelerometer Z\r\n");
 										break;
 								case SVC1_IDX_GYROSCOPE_NTF_CFG:
-										arch_puts("Enabled Notifications for Gyroscope\r\n");
+										if(msg_param->value[0] == 0x01)
+												arch_puts("Enabled Notifications for Accelerometer G\r\n");
+										else
+												arch_puts("Disabled Notifications for Accelerometer G\r\n");
 										break;
 								case SVC2_IDX_TEMPERATURE_NTF_CFG:
-										arch_puts("Enabled Notifications for Temperature\r\n");
+										if(msg_param->value[0] == 0x01)
+												arch_puts("Enabled Notifications for Temperature\r\n");
+										else
+												arch_puts("Disabled Notifications for Temperature\r\n");
 										break;
 
                 default:

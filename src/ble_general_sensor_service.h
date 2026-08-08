@@ -79,7 +79,7 @@
 #define APP_AD_MSD_COMPANY_ID_LEN   (2)
 #define APP_AD_MSD_DATA_LEN         (sizeof(uint16_t))
 
-#define I2C_DATA_CAPTURE_PERIOD							(2000)
+#define I2C_DATA_CAPTURE_PERIOD							(200)
 
 /*
  * TYPE DEFINITIONS

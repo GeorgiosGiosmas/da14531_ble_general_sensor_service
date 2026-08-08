@@ -140,10 +140,10 @@
 /****************************************************************************************/
 // Define I2C Pads
 #define I2C_SCL_PORT                GPIO_PORT_0
-#define I2C_SCL_PIN                 GPIO_PIN_2
+#define I2C_SCL_PIN                 GPIO_PIN_8
 
 #define I2C_SDA_PORT                GPIO_PORT_0
-#define I2C_SDA_PIN                 GPIO_PIN_8
+#define I2C_SDA_PIN                 GPIO_PIN_9
 
 // Define I2C Configuration
 #define I2C_SLAVE_ADDRESS_ADXL345           (0x50)

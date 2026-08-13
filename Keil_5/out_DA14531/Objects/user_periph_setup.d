@@ -83,4 +83,5 @@
   ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
   ..\..\..\..\..\sdk\platform\driver\syscntl\syscntl.h \
   ..\..\..\..\..\sdk\platform\arch\fpga_helper.h \
-  ..\..\..\..\..\sdk\platform\arch\fpga.h
+  ..\..\..\..\..\sdk\platform\arch\fpga.h ..\src\MCP9808.h \
+  ..\src\ADXL345.h

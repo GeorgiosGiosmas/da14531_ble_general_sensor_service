@@ -44,6 +44,8 @@
 #include "uart.h"
 #include "syscntl.h"
 #include "fpga_helper.h"
+#include "MCP9808.h"
+#include "ADXL345.h"
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -104,8 +106,8 @@ void set_pad_functions(void)
 		GPIO_ConfigurePin(SPI_DI_PORT, SPI_DI_PIN, INPUT, PID_SPI_DI, false);
 	
 		// Configure I2C pins
-		GPIO_ConfigurePin(I2C_SCL_PORT, I2C_SCL_PIN, INPUT_PULLUP, PID_I2C_SCL, false);
-		GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT_PULLUP, PID_I2C_SDA, false);
+		GPIO_ConfigurePin(I2C_SCL_PORT, I2C_SCL_PIN, INPUT, PID_I2C_SCL, false);
+		GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT, PID_I2C_SDA, false);
 }
 
 #if defined (CFG_PRINTF_UART2)

@@ -177,6 +177,20 @@ const i2c_cfg_t i2c_cfg_ADXL345 = {
     .rx_fifo_level = 1,
 };
 
+i2c_cfg_t test_addr_cfg = {
+		.clock_cfg.ss_hcnt = I2C_SS_SCL_HCNT_REG_RESET,
+    .clock_cfg.ss_lcnt = I2C_SS_SCL_LCNT_REG_RESET,
+    .clock_cfg.fs_hcnt = I2C_FS_SCL_HCNT_REG_RESET,
+    .clock_cfg.fs_lcnt = I2C_FS_SCL_LCNT_REG_RESET,
+    .restart_en = I2C_RESTART_ENABLE,
+    .speed = I2C_SPEED_MODE,
+    .mode = I2C_MODE_MASTER,
+    .addr_mode = I2C_ADDRESS_MODE,
+    .address = 0x08,
+    .tx_fifo_level = 1,
+    .rx_fifo_level = 1,
+};
+
 void periph_init(void)
 {
 		// Disable the Debugger to release P0_2 for I2C usage

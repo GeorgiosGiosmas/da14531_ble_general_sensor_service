@@ -148,7 +148,7 @@
 // Define I2C Configuration
 #define I2C_SLAVE_ADDRESS_ADXL345           (0x1D)
 #define I2C_SLAVE_ADDRESS_MCP9808           (0x18)
-#define I2C_SPEED_MODE              				I2C_SPEED_FAST
+#define I2C_SPEED_MODE              				I2C_SPEED_STANDARD
 #define I2C_ADDRESS_MODE            				I2C_ADDRESSING_7B
 #define I2C_ADDRESS_SIZE            				I2C_2BYTES_ADDR
 

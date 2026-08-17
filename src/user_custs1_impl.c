@@ -52,7 +52,7 @@
 #include "i2c.h"
 
 /* Test Parameters for I2C addresses verification */
-#define test_time_timer	100
+#define test_time_timer	50
 extern i2c_cfg_t test_addr_cfg;
 uint8_t stop_testing = 0x08;
 
@@ -177,13 +177,13 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 			ADXL345_init();
 			arch_puts("ADXL345 initialized\r\n");
 		
-			*x = ADXL345_read_X();
+			//*x = ADXL345_read_X();
 			arch_puts("X capture completed\r\n");
-			*y = ADXL345_read_Y();
+			//*y = ADXL345_read_Y();
 			arch_puts("Y capture completed\r\n");
-			*z = ADXL345_read_Z();
+			//*z = ADXL345_read_Z();
 			arch_puts("Z capture completed\r\n");
-			ADXL345_read_XYZ(xyz);
+			//ADXL345_read_XYZ(xyz);
 			arch_puts("G capture completed\r\n");
 			
 			i2c_release();

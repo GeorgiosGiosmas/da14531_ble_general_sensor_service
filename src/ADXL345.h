@@ -30,6 +30,7 @@
 
 #ifndef _ADXL345_
 #define _ADXL345_
+#endif
 
 #include "gpio.h"
 
@@ -40,13 +41,7 @@
  
 #undef BLE_TINY_CLICK					//Define this if you are using the BLE Tiny Click
 
-#define ADXL345_I2C_ADDRESS   0x1D      //This is the sensor address without R/W bit (0x1D or 0x53 for ADXL)
-
-#if defined (__DA14531__)
-
-#ifdef BLE_TINY_CLICK
-												     
-#endif
+#if defined(__DA14531__)
 
 // ADXL345 Registers
 

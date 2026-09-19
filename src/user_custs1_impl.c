@@ -169,55 +169,47 @@ static uint8_t user_int_to_string(int16_t input, uint8_t *s){
 // Function that initiates ADXL345 and captures data
 static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
-		if(stop_testing < 0x78)
-		{
-			i2c_init(&test_addr_cfg);
-			arch_puts("I2C initialized\r\n");
-		
-			ADXL345_init();
-			arch_puts("ADXL345 initialized\r\n");
-		
-			*x = ADXL345_read_X();
-			arch_puts("X capture completed\r\n");
-			*y = ADXL345_read_Y();
-			arch_puts("Y capture completed\r\n");
-			*z = ADXL345_read_Z();
-			arch_puts("Z capture completed\r\n");
-			ADXL345_read_XYZ(xyz);
-			arch_puts("G capture completed\r\n");
-			
-			i2c_release();
-		
-			// Set new test address
-			test_addr_cfg.address = ++stop_testing;
-		
-			arch_puts("I2C released\r\n");
-		}
+		i2c_init(&i2c_cfg_ADXL345);
+		arch_puts("I2C initialized\r\n");
+	
+		ADXL345_init();
+		arch_puts("ADXL345 initialized\r\n");
+	
+		arch_asm_delay_us(10000);
+	
+		*x = ADXL345_read_X();
+		arch_puts("X capture completed\r\n");
+		*y = ADXL345_read_Y();
+		arch_puts("Y capture completed\r\n");
+		*z = ADXL345_read_Z();
+		arch_puts("Z capture completed\r\n");
+		ADXL345_read_XYZ(xyz);
+		arch_puts("G capture completed\r\n");
+		arch_printf_process();
+	
+		i2c_release();
+	
+		arch_puts("I2C released\r\n");
 }	
 
 // Function that initiates MCP9808 and captures data
 static void mcp9808_capture(int *temp_int, int *temp_frac)
 {
-		if(stop_testing < 0x78)
-		{
-			i2c_init(&test_addr_cfg);
-			arch_puts("I2C initialized\r\n");
+		i2c_init(&i2c_cfg_MCP9808);
+		arch_puts("I2C initialized\r\n");
+	
+		MCP9808_init();
+		arch_puts("MCP9808 initialized\r\n");
+	
+		double temperature = MCP9808_get_temperature();
+		arch_puts("MCP9808 capture completed\r\n");
+		*temp_int = (int)temperature;
+		*temp_frac = (int)((temperature - *temp_int) * 10000);
+	
+		arch_printf_process();
+		i2c_release();
 		
-			MCP9808_init();
-			arch_puts("MCP9808 initialized\r\n");
-		
-			double temperature = MCP9808_get_temperature();
-			arch_puts("MCP9808 capture completed\r\n");
-			*temp_int = (int)temperature;
-			*temp_frac = (int)((temperature - *temp_int) * 10000);
-		
-			i2c_release();
-			
-			// Set new test address
-			test_addr_cfg.address = ++stop_testing;
-			
-			arch_puts("I2C released\r\n");
-		}
+		arch_puts("I2C released\r\n");
 }
 
 void capture_adxl345_data_cb_handler()

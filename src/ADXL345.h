@@ -45,30 +45,6 @@
 #if defined (__DA14531__)
 
 #ifdef BLE_TINY_CLICK
-
-#define ADXL345_SCL_PORT    GPIO_PORT_0
-#define ADXL345_SCL_PIN     GPIO_PIN_11
-
-#define ADXL345_SDA_PORT    GPIO_PORT_0
-#define ADXL345_SDA_PIN     GPIO_PIN_9
-
-#else
-	
-#define ADXL345_SCL_PORT    GPIO_PORT_0
-#define ADXL345_SCL_PIN     GPIO_PIN_3
-
-#define ADXL345_SDA_PORT    GPIO_PORT_0
-#define ADXL345_SDA_PIN     GPIO_PIN_1
-
-#endif
-
-#else
-
-#define ADXL345_SDA_PORT    GPIO_PORT_1
-#define ADXL345_SDA_PIN     GPIO_PIN_1
-												     
-#define ADXL345_SCL_PORT    GPIO_PORT_1
-#define ADXL345_SCL_PIN     GPIO_PIN_3
 												     
 #endif
 

@@ -61,7 +61,7 @@ void MCP9808_set_resolution_register(const temperature_resolution resolution){
 	buffer[0] = RESOLUTION_CONFIG_REGISTER;
 	buffer[1] = resolution;
 	
-	i2c_master_transmit_buffer_sync((uint8_t*)buffer,sizeof(buffer),&abort_code,I2C_F_WAIT_FOR_STOP);
+	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_WAIT_FOR_STOP);
 	
 	if(abort_code != I2C_ABORT_NONE) {
 		//insert error handler
@@ -79,13 +79,13 @@ temperature_resolution MCP9808_get_resolution_register(void){
 	i2c_abort_t abort_code = I2C_ABORT_NONE;
 	buffer[0] = RESOLUTION_CONFIG_REGISTER;
 	
-	i2c_master_transmit_buffer_sync((uint8_t*)buffer,sizeof(buffer),&abort_code,I2C_F_WAIT_FOR_STOP);
+	i2c_master_transmit_buffer_sync((uint8_t*)buffer,sizeof(buffer), &abort_code, I2C_F_WAIT_FOR_STOP);
 	
 	if(abort_code != I2C_ABORT_NONE) {
 		//insert error handler
 	}
 	
-	i2c_master_receive_buffer_sync((uint8_t*)buffer,sizeof(buffer),&abort_code,I2C_F_WAIT_FOR_STOP);
+	i2c_master_receive_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_WAIT_FOR_STOP);
 	
 	if(abort_code != I2C_ABORT_NONE) {
 		//insert error handler
@@ -111,12 +111,12 @@ uint16_t MCP9808_read_temperature_register(void){
 		
 	buffer[0] = TEMPERATURE_DATA_REGISTER; 
 	
-	i2c_master_transmit_buffer_sync((uint8_t*)buffer,1,&abort_code,I2C_F_WAIT_FOR_STOP);
+	i2c_master_transmit_buffer_sync((uint8_t*)buffer, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
 	if(abort_code != I2C_ABORT_NONE) {
 		//insert error handler
 	}
 	
-	i2c_master_receive_buffer_sync((uint8_t*)buffer,sizeof(buffer),&abort_code,I2C_F_WAIT_FOR_STOP);
+	i2c_master_receive_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_WAIT_FOR_STOP);
 	if(abort_code != I2C_ABORT_NONE) {
 		//insert error handler
 	}

@@ -57,10 +57,21 @@ void ADXL345_init(void){
 
     i2c_abort_t abort_code; //May be used for error checking
 
-	//Initialize sensor configuration registers
-    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_NONE);
-    i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_NONE);
-    i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_NONE);
+		//Initialize sensor configuration registers
+    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+    
+		i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+    i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
 
 #endif //NO_SENSOR
 }
@@ -81,20 +92,37 @@ int16_t ADXL345_read_X(void)
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
-    axis_read = byte_received & 0xff;          //Store X LSB
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+    
+		i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+    if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+		axis_read = byte_received & 0xff;          //Store X LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAX1;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
-    axis_read |= (byte_received & 0xff) << 8;  //Store X MSB
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+    
+		axis_read |= (byte_received & 0xff) << 8;  //Store X MSB
 #else
-	//If no sensor is present just increase current data
+		//If no sensor is present just increase current data
     dummy_x++;
-	axis_read = dummy_x;
+		axis_read = dummy_x;
 #endif //NO_SENSOR
-	return axis_read;
+		
+		return axis_read;
 }
 
 /**
@@ -113,20 +141,37 @@ int16_t ADXL345_read_Y(void)
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
-	axis_read = byte_received & 0xff;          //Store Y LSB
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+		axis_read = byte_received & 0xff;          //Store Y LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAY1;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
    	axis_read |= (byte_received & 0xff) << 8;  //Store Y MSB
 #else
-	//If no sensor is present just increase current data
+		//If no sensor is present just increase current data
     dummy_y++;
-	axis_read = (int16_t)dummy_y;
+		axis_read = (int16_t)dummy_y;
 #endif //NO_SENSOR
-	return axis_read;
+		
+		return axis_read;
 }
 
 /**
@@ -145,20 +190,37 @@ int16_t ADXL345_read_Z(void)
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
-	axis_read = byte_received & 0xff;          //Store Z LSB
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+		axis_read = byte_received & 0xff;          //Store Z LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAZ1;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
-   	axis_read |= (byte_received & 0xff) << 8;  //Store Z MSB
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+		axis_read |= (byte_received & 0xff) << 8;  //Store Z MSB
 #else
-	//If no sensor is present just increase current data
+		//If no sensor is present just increase current data
     dummy_z++;
-	axis_read = (int16_t)dummy_z;
+		axis_read = (int16_t)dummy_z;
 #endif //NO_SENSOR
-	return axis_read;
+	
+		return axis_read;
 }
 
 /**
@@ -175,18 +237,26 @@ void ADXL345_read_XYZ(uint8_t* xyz){
     //Setup multiple-byte read from DATAX0 to DATAZ1 registers
     const uint8_t reg_addr = ADXL345_REG_DATAX0;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
     i2c_master_receive_buffer_sync(xyz, 6, &abort_code, I2C_F_NONE);
-    
+    if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
     //Process the received register values
-	for(int i = 0; i < 3; i++){
-		int16_t current =   (xyz[i*2+1] & 0xff) << 8 | (xyz[i*2] & 0xff); //Convert the received data to a 16 bit int
-		int16_t prev = (previous[i*2+1] & 0xff) << 8 | (previous[i*2] & 0xff);
-		current = 0.75 * current + 0.25 * prev; //A very simple smoothing algorithm
-		xyz[i*2] = current & 0xff;
-		xyz[i*2+1] = (current >> 8) & 0xff;
-	}
+		for(int i = 0; i < 3; i++){
+				int16_t current =   (xyz[i*2+1] & 0xff) << 8 | (xyz[i*2] & 0xff); //Convert the received data to a 16 bit int
+				int16_t prev = (previous[i*2+1] & 0xff) << 8 | (previous[i*2] & 0xff);
+				current = 0.75 * current + 0.25 * prev; //A very simple smoothing algorithm
+				xyz[i*2] = current & 0xff;
+				xyz[i*2+1] = (current >> 8) & 0xff;
+		}
+		
     //Save the data
-	memcpy(previous, xyz, 6);
+		memcpy(previous, xyz, 6);
 #else
     // Send dummy data if no sensor is attached
     dummy_x++;

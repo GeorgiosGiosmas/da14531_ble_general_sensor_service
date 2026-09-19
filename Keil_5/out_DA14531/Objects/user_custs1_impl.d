@@ -105,4 +105,4 @@
   ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
   ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
   ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h ..\src\ADXL345.h \
-  ..\src\MCP9808.h
+  ..\src\MCP9808.h ..\..\..\..\..\sdk\platform\driver\timer\timer0.h

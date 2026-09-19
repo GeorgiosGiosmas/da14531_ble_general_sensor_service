@@ -57,10 +57,10 @@ void ADXL345_init(void){
 
     i2c_abort_t abort_code; //May be used for error checking
 
-	//Initialize sensor configuration registers
-    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_NONE);
-    i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_NONE);
-    i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_NONE);
+	  //Initialize sensor configuration registers
+    i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+		i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
 
 #endif //NO_SENSOR
 }
@@ -81,13 +81,13 @@ int16_t ADXL345_read_X(void)
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
     axis_read = byte_received & 0xff;          //Store X LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAX1;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
     axis_read |= (byte_received & 0xff) << 8;  //Store X MSB
 #else
 	//If no sensor is present just increase current data
@@ -113,13 +113,13 @@ int16_t ADXL345_read_Y(void)
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
 	axis_read = byte_received & 0xff;          //Store Y LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAY1;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
    	axis_read |= (byte_received & 0xff) << 8;  //Store Y MSB
 #else
 	//If no sensor is present just increase current data
@@ -145,13 +145,13 @@ int16_t ADXL345_read_Z(void)
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
 	axis_read = byte_received & 0xff;          //Store Z LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAZ1;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
    	axis_read |= (byte_received & 0xff) << 8;  //Store Z MSB
 #else
 	//If no sensor is present just increase current data
@@ -175,7 +175,7 @@ void ADXL345_read_XYZ(uint8_t* xyz){
     //Setup multiple-byte read from DATAX0 to DATAZ1 registers
     const uint8_t reg_addr = ADXL345_REG_DATAX0;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
-    i2c_master_receive_buffer_sync(xyz, 6, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(xyz, 6, &abort_code, I2C_F_WAIT_FOR_STOP);
     
     //Process the received register values
 	for(int i = 0; i < 3; i++){

@@ -186,7 +186,7 @@ i2c_cfg_t test_addr_cfg = {
     .speed = I2C_SPEED_MODE,
     .mode = I2C_MODE_MASTER,
     .addr_mode = I2C_ADDRESS_MODE,
-    .address = 0x08,
+    .address = 0x53,
     .tx_fifo_level = 1,
     .rx_fifo_level = 1,
 };
@@ -226,7 +226,11 @@ void periph_init(void)
 		
     // Set pad functionality
     set_pad_functions();
+		
+		i2c_init(&test_addr_cfg);
 
     // Enable the pads
     GPIO_set_pad_latch_en(true);
+		
+		ADXL345_init();
 }

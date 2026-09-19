@@ -73,7 +73,7 @@
 #endif
 
 // ADXL345 Registers
-
+#define ADXL345_REG_DEVID						0x00
 #define ADXL345_REG_POWER_CTL       0x2D //Power-saving features control 
 #define ADXL345_REG_DATA_FORMAT     0x31 //Data format control 
 #define ADXL345_REG_BW_RATE         0x2C //Data rate and power mode control

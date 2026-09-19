@@ -50,6 +50,7 @@
 #include "MCP9808.h"
 #include "arch_console.h"
 #include "i2c.h"
+#include "timer0.h"
 
 /* Test Parameters for I2C addresses verification */
 #define test_time_timer	50
@@ -169,30 +170,36 @@ static uint8_t user_int_to_string(int16_t input, uint8_t *s){
 // Function that initiates ADXL345 and captures data
 static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
-		if(stop_testing < 0x78)
-		{
-			i2c_init(&test_addr_cfg);
-			arch_puts("I2C initialized\r\n");
+		i2c_abort_t abort_code;
+		uint8_t byte_received = 0; 
+		uint8_t reg_addr = ADXL345_REG_DEVID;
+	
+		arch_puts("I2C initialized\r\n");
+	
+		ADXL345_init();
+		arch_puts("ADXL345 initialized\r\n");
+	
+		arch_asm_delay_us(20000);
+	
+		i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+	
+		*x = ADXL345_read_X();
+		arch_puts("X capture completed\r\n");
+		*y = ADXL345_read_Y();
+		arch_puts("Y capture completed\r\n");
+		*z = ADXL345_read_Z();
+		arch_puts("Z capture completed\r\n");
+		ADXL345_read_XYZ(xyz);
+		arch_puts("G capture completed\r\n");
 		
-			ADXL345_init();
-			arch_puts("ADXL345 initialized\r\n");
+		//i2c_release();
+	
+		// Set new test address
+		//test_addr_cfg.address = ++stop_testing;
+	
+		arch_puts("I2C released\r\n");
 		
-			//*x = ADXL345_read_X();
-			arch_puts("X capture completed\r\n");
-			//*y = ADXL345_read_Y();
-			arch_puts("Y capture completed\r\n");
-			//*z = ADXL345_read_Z();
-			arch_puts("Z capture completed\r\n");
-			//ADXL345_read_XYZ(xyz);
-			arch_puts("G capture completed\r\n");
-			
-			i2c_release();
-		
-			// Set new test address
-			test_addr_cfg.address = ++stop_testing;
-		
-			arch_puts("I2C released\r\n");
-		}
 }	
 
 // Function that initiates MCP9808 and captures data

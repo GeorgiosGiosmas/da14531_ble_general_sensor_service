@@ -82,4 +82,11 @@
   ..\src\user_custs1_impl.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
   ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \
-  ..\src\custom_profile\user_custs1_def.h
+  ..\src\custom_profile\user_custs1_def.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\dma\dma.h ..\src\MCP9808.h \
+  ..\src\ADXL345.h ..\src\config\user_periph_setup.h \
+  ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h

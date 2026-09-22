@@ -52,6 +52,10 @@
 #include "user_custs1_def.h"
 #include "co_bt.h"
 #include "arch_console.h"
+#include "i2c.h"
+#include "MCP9808.h"
+#include "ADXL345.h"
+#include "user_periph_setup.h"
 
 /*
  * TYPE DEFINITIONS
@@ -227,9 +231,8 @@ void user_app_init(void)
     memcpy(stored_scan_rsp_data, USER_ADVERTISE_SCAN_RESPONSE_DATA, USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN);
     stored_scan_rsp_data_len = USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN;
 	
-		arch_puts("App Initialized\r\n");
-
     default_app_on_init();
+		arch_puts("App Initialized\r\n");
 }
 
 void user_app_adv_start(void)

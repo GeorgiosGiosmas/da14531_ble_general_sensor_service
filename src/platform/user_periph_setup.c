@@ -46,6 +46,7 @@
 #include "fpga_helper.h"
 #include "MCP9808.h"
 #include "ADXL345.h"
+#include "arch_console.h"
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -215,4 +216,14 @@ void periph_init(void)
 
     // Enable the pads
     GPIO_set_pad_latch_en(true);
+		
+		i2c_init(&i2c_cfg_MCP9808);
+		MCP9808_init();
+		arch_puts("MCP9808 initialized\r\n");
+	
+		arch_asm_delay_us(15000);
+	
+		i2c_set_target_address(I2C_SLAVE_ADDRESS_ADXL345);
+		ADXL345_init();
+		arch_puts("ADXL345 initialized\r\n");
 }

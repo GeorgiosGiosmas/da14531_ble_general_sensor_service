@@ -58,17 +58,17 @@ void ADXL345_init(void){
     i2c_abort_t abort_code; //May be used for error checking
 
 		//Initialize sensor configuration registers
-    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
     
-		i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+		i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
 		
-    i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -96,7 +96,7 @@ int16_t ADXL345_read_X(void)
 			//insert error handler
 		}
     
-		i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+		i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
     if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -110,7 +110,7 @@ int16_t ADXL345_read_X(void)
 			//insert error handler
 		}
 		
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -145,7 +145,7 @@ int16_t ADXL345_read_Y(void)
 			//insert error handler
 		}
 		
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -159,7 +159,7 @@ int16_t ADXL345_read_Y(void)
 			//insert error handler
 		}
 		
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -194,7 +194,7 @@ int16_t ADXL345_read_Z(void)
 			//insert error handler
 		}
 		
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -208,7 +208,7 @@ int16_t ADXL345_read_Z(void)
 			//insert error handler
 		}
 		
-    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_WAIT_FOR_STOP);
+    i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -241,7 +241,7 @@ void ADXL345_read_XYZ(uint8_t* xyz){
 			//insert error handler
 		}
 		
-    i2c_master_receive_buffer_sync(xyz, 6, &abort_code, I2C_F_NONE);
+    i2c_master_receive_buffer_sync(xyz, 6, &abort_code, I2C_F_ADD_STOP);
     if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}

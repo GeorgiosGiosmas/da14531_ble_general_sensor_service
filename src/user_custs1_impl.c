@@ -92,7 +92,7 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
 				arch_puts("Control Point 1 Activated\r\n");
-        timer_adxl345_used = app_easy_timer(test_time_timer, capture_adxl345_data_cb_handler);
+        timer_adxl345_used = app_easy_timer(300, capture_adxl345_data_cb_handler);
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
@@ -118,7 +118,7 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
 				arch_puts("Control Point 2 Activated\r\n");
-        timer_mcp9808_used = app_easy_timer(test_time_timer, capture_mcp9808_data_cb_handler);
+        timer_mcp9808_used = app_easy_timer(200, capture_mcp9808_data_cb_handler);
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
@@ -169,47 +169,22 @@ static uint8_t user_int_to_string(int16_t input, uint8_t *s){
 // Function that initiates ADXL345 and captures data
 static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
-		i2c_init(&i2c_cfg_ADXL345);
-		arch_puts("I2C initialized\r\n");
-	
-		ADXL345_init();
-		arch_puts("ADXL345 initialized\r\n");
-	
-		arch_asm_delay_us(10000);
-	
+		i2c_set_target_address(I2C_SLAVE_ADDRESS_ADXL345);
+
 		*x = ADXL345_read_X();
-		arch_puts("X capture completed\r\n");
 		*y = ADXL345_read_Y();
-		arch_puts("Y capture completed\r\n");
 		*z = ADXL345_read_Z();
-		arch_puts("Z capture completed\r\n");
 		ADXL345_read_XYZ(xyz);
-		arch_puts("G capture completed\r\n");
-		arch_printf_process();
-	
-		i2c_release();
-	
-		arch_puts("I2C released\r\n");
 }	
 
 // Function that initiates MCP9808 and captures data
 static void mcp9808_capture(int *temp_int, int *temp_frac)
 {
-		i2c_init(&i2c_cfg_MCP9808);
-		arch_puts("I2C initialized\r\n");
-	
-		MCP9808_init();
-		arch_puts("MCP9808 initialized\r\n");
+		i2c_set_target_address(I2C_SLAVE_ADDRESS_MCP9808);
 	
 		double temperature = MCP9808_get_temperature();
-		arch_puts("MCP9808 capture completed\r\n");
 		*temp_int = (int)temperature;
 		*temp_frac = (int)((temperature - *temp_int) * 10000);
-	
-		arch_printf_process();
-		i2c_release();
-		
-		arch_puts("I2C released\r\n");
 }
 
 void capture_adxl345_data_cb_handler()
@@ -320,7 +295,7 @@ void capture_adxl345_data_cb_handler()
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
         // Set it once again until Stop command is received in Control Characteristic
-        timer_adxl345_used = app_easy_timer(test_time_timer, capture_adxl345_data_cb_handler);
+        timer_adxl345_used = app_easy_timer(300, capture_adxl345_data_cb_handler);
     }
 }
 
@@ -355,7 +330,7 @@ void capture_mcp9808_data_cb_handler()
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
         // Set it once again until Stop command is received in Control Characteristic
-        timer_mcp9808_used = app_easy_timer(test_time_timer, capture_mcp9808_data_cb_handler);
+        timer_mcp9808_used = app_easy_timer(200, capture_mcp9808_data_cb_handler);
     }
 }
 

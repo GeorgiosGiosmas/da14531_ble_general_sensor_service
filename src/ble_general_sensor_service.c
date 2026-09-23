@@ -233,6 +233,15 @@ void user_app_init(void)
 	
     default_app_on_init();
 		arch_puts("App Initialized\r\n");
+	
+		MCP9808_init();
+		arch_puts("MCP9808 initialized\r\n");
+	
+		arch_asm_delay_us(15000);
+	
+		i2c_set_target_address(I2C_SLAVE_ADDRESS_ADXL345);
+		ADXL345_init();
+		arch_puts("ADXL345 initialized\r\n");
 }
 
 void user_app_adv_start(void)

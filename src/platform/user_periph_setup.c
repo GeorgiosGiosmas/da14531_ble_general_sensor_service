@@ -83,6 +83,8 @@ void GPIO_reservations(void)
 		// I2C Reserve
 		RESERVE_GPIO(I2C_SCL, I2C_SCL_PORT, I2C_SCL_PIN, PID_I2C_SCL);
 		RESERVE_GPIO(I2C_SDA, I2C_SDA_PORT, I2C_SDA_PIN, PID_I2C_SDA);
+	
+		RESERVE_GPIO(TEST_GPIO, GPIO_PORT_0, GPIO_PIN_6, PID_GPIO);
 }
 
 #endif
@@ -109,6 +111,8 @@ void set_pad_functions(void)
 		// Configure I2C pins
 		GPIO_ConfigurePin(I2C_SCL_PORT, I2C_SCL_PIN, INPUT, PID_I2C_SCL, false);
 		GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT, PID_I2C_SDA, false);
+	
+		GPIO_ConfigurePin(GPIO_PORT_0, GPIO_PIN_6, OUTPUT, PID_GPIO, false);
 }
 
 #if defined (CFG_PRINTF_UART2)
@@ -216,6 +220,4 @@ void periph_init(void)
 
     // Enable the pads
     GPIO_set_pad_latch_en(true);
-		
-		i2c_init(&i2c_cfg_MCP9808);
 }

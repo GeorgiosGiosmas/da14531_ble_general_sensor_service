@@ -310,7 +310,7 @@ static const struct connection_param_configuration user_connection_param_conf = 
 
     /// Supervision timeout measured in timer units (10 ms)
     /// use the macro MS_TO_TIMERUNITS to convert from milliseconds (ms) to timer units
-    .time_out = MS_TO_TIMERUNITS(2000),
+    .time_out = MS_TO_TIMERUNITS(4000),
 
     /// Minimum Connection Event Duration measured in ble double slots (1.25ms)
     /// use the macro MS_TO_DOUBLESLOTS to convert from milliseconds (ms) to double slots

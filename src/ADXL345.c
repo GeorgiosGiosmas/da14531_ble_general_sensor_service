@@ -250,7 +250,7 @@ void ADXL345_read_XYZ(uint8_t* xyz){
 		for(int i = 0; i < 3; i++){
 				int16_t current =   (xyz[i*2+1] & 0xff) << 8 | (xyz[i*2] & 0xff); //Convert the received data to a 16 bit int
 				int16_t prev = (previous[i*2+1] & 0xff) << 8 | (previous[i*2] & 0xff);
-				current = 0.75 * current + 0.25 * prev; //A very simple smoothing algorithm
+				current = (3 * current + prev) >> 2; //A very simple smoothing algorithm
 				xyz[i*2] = current & 0xff;
 				xyz[i*2+1] = (current >> 8) & 0xff;
 		}

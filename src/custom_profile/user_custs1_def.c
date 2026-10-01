@@ -117,8 +117,8 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								0, 0, NULL},
 
     // Accelerometer X Characteristic Value
-    [SVC1_IDX_ACCELEROMETER_X_VAL]           = {SVC1_ACCEL_X_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE),
-																								PERM(RI, ENABLE), DEF_SVC1_ACCEL_X_DATA_CHAR_LEN, 0, NULL},
+    [SVC1_IDX_ACCELEROMETER_X_VAL]           = {SVC1_ACCEL_X_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
+																								PERM(RD, ENABLE), DEF_SVC1_ACCEL_X_DATA_CHAR_LEN, 0, NULL},
 		
 		// Accelerometer X Characteristic Configuration Descriptor
     [SVC1_IDX_ACCELEROMETER_X_NTF_CFG]       = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
@@ -134,8 +134,8 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								0, 0, NULL},
 
     // Accelerometer Y Characteristic Value
-    [SVC1_IDX_ACCELEROMETER_Y_VAL]           = {SVC1_ACCEL_Y_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE),
-																								PERM(RI, ENABLE), DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN, 0, NULL},
+    [SVC1_IDX_ACCELEROMETER_Y_VAL]           = {SVC1_ACCEL_Y_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
+																								PERM(RD, ENABLE), DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN, 0, NULL},
 		
 		// Accelerometer Y Characteristic Configuration Descriptor
     [SVC1_IDX_ACCELEROMETER_Y_NTF_CFG]       = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
@@ -151,8 +151,8 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								0, 0, NULL},
 
     // Accelerometer Z Characteristic Value
-    [SVC1_IDX_ACCELEROMETER_Z_VAL]           = {SVC1_ACCEL_Z_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE),
-																								PERM(RI, ENABLE), DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN, 0, NULL},
+    [SVC1_IDX_ACCELEROMETER_Z_VAL]           = {SVC1_ACCEL_Z_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
+																								PERM(RD, ENABLE), DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN, 0, NULL},
 		
 		// Accelerometer Z Characteristic Configuration Descriptor
     [SVC1_IDX_ACCELEROMETER_Z_NTF_CFG]       = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
@@ -168,8 +168,8 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								0, 0, NULL},
 
     // Gyroscope Characteristic Value
-    [SVC1_IDX_GYROSCOPE_VAL]           			 = {SVC1_GYR_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE),
-																								PERM(RI, ENABLE), DEF_SVC1_GYR_DATA_CHAR_LEN, 0, NULL},
+    [SVC1_IDX_GYROSCOPE_VAL]           			 = {SVC1_GYR_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
+																								PERM(RD, ENABLE), DEF_SVC1_GYR_DATA_CHAR_LEN, 0, NULL},
 		
 		// Gyroscope Characteristic Configuration Descriptor
     [SVC1_IDX_GYROSCOPE_NTF_CFG]       			 = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
@@ -208,8 +208,8 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								0, 0, NULL},
 
     // Temperature Characteristic Value
-    [SVC2_IDX_TEMPERATURE_VAL]           		 = {SVC2_TEMP_VAL_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE),
-																								PERM(RI, ENABLE), DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, 0, NULL},
+    [SVC2_IDX_TEMPERATURE_VAL]           		 = {SVC2_TEMP_VAL_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
+																								PERM(RD, ENABLE), DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, 0, NULL},
 		
 		// Temperature Characteristic Configuration Descriptor
     [SVC2_IDX_TEMPERATURE_NTF_CFG]       		 = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),

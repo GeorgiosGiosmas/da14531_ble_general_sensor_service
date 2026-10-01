@@ -139,10 +139,10 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
 		i2c_init(&i2c_cfg_ADXL345);
 
-		*x = ADXL345_read_X();
-		*y = ADXL345_read_Y();
-		*z = ADXL345_read_Z();
 		ADXL345_read_XYZ(xyz);
+		*x = ((uint16_t)(*xyz) >> 8) | ((uint16_t)(*(xyz+1)) << 8);
+		*y = ((uint16_t)(*(xyz+2))>> 8) | ((uint16_t)(*(xyz+3)) << 8);
+		*z = ((uint16_t)(*(xyz+4)) >> 8) | ((uint16_t)(*(xyz+5)) << 8);
 	
 		i2c_release();
 }	
@@ -174,8 +174,6 @@ void capture_adxl345_data_cb_handler()
 		memcpy(previous_accel_xyz, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
 	
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
-
-		GPIO_SetActive(GPIO_PORT_0, GPIO_PIN_6);
 	
 		// Update and send value of Accel X
 		struct custs1_val_ntf_ind_req *req_x = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,

@@ -37,6 +37,10 @@
 #include "i2c.h"
 #include "math.h"
 
+const uint16_t constant_temp = (uint16_t)((1U << TEMPERATURE_REGISTER_SIZE) - 1);
+const uint16_t constant_reso = (uint16_t)((1U << RESOLUTION_CONFIG_REGISTER_SIZE) - 1);
+const uint8_t valid_temp_reg = ((TEMPERATURE_REGISTER_SIZE % 1) != 0) || (TEMPERATURE_REGISTER_SIZE < 1);
+
 /**
  ****************************************************************************************
  * @brief Initialize the temperature sensor, the function sets the resolution to maximum
@@ -44,7 +48,33 @@
  ****************************************************************************************
  */
 void MCP9808_init(void){
+	uint8_t buffer[3];
+	i2c_abort_t abort_code = I2C_ABORT_NONE;
+	
+	buffer[0] = CONFIGURATION_REGISTER;
+	buffer[1] = 0x00;
+	buffer[2] = 0x01;
+	
+	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
+	
 	MCP9808_set_resolution_register(USED_TEMPERATURE_RESOLUTION);
+}
+
+/**
+ ****************************************************************************************
+ * @brief Deinitialize the temperature sensor, the function sets the resolution to maximum
+ * @return void
+ ****************************************************************************************
+ */
+void MCP9808_deinit(void){
+	uint8_t buffer[3];
+	i2c_abort_t abort_code = I2C_ABORT_NONE;
+	
+	buffer[0] = CONFIGURATION_REGISTER;
+	buffer[1] = 0x00;
+	buffer[2] = 0x00;
+	
+	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
 }
 
 /**
@@ -91,7 +121,7 @@ temperature_resolution MCP9808_get_resolution_register(void){
 		//insert error handler
 	}
 	
-	return (temperature_resolution)( buffer[0] & ((unsigned)pow(2,RESOLUTION_CONFIG_REGISTER_SIZE)-1) ); 
+	return (temperature_resolution)( buffer[0] & constant_reso ); 
 }
 
 /**
@@ -101,7 +131,7 @@ temperature_resolution MCP9808_get_resolution_register(void){
  ****************************************************************************************
  */
 uint16_t MCP9808_read_temperature_register(void){
-	if(TEMPERATURE_REGISTER_SIZE%1 != 0 || TEMPERATURE_REGISTER_SIZE<1){//pre defined conditions size must be an unsigned integer greater than 0
+	if(valid_temp_reg){//pre defined conditions size must be an unsigned integer greater than 0
 		//insert error handler
 		return 0xFFFF;
 	}
@@ -121,7 +151,7 @@ uint16_t MCP9808_read_temperature_register(void){
 		//insert error handler
 	}
 	
-	return ( ((buffer[0]<<8) + buffer[1]) &((unsigned)pow(2,TEMPERATURE_REGISTER_SIZE)-1) ); 
+	return (((buffer[0]<<8) + buffer[1]) & constant_temp); 
 }
 
 /**

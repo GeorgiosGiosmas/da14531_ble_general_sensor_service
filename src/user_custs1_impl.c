@@ -51,10 +51,7 @@
 #include "arch_console.h"
 #include "i2c.h"
 
-/* Test Parameters for I2C addresses verification */
-#define test_time_timer	100
-extern i2c_cfg_t test_addr_cfg;
-uint8_t stop_testing = 0x08;
+extern uint8_t app_connection_idx    __SECTION_ZERO("retention_mem_area0");
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -93,7 +90,7 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
 				arch_puts("Control Point 1 Activated\r\n");
-        timer_adxl345_used = app_easy_timer(300, capture_adxl345_data_cb_handler);
+        timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
@@ -119,7 +116,7 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
 				arch_puts("Control Point 2 Activated\r\n");
-        timer_mcp9808_used = app_easy_timer(200, capture_mcp9808_data_cb_handler);
+        timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
@@ -138,12 +135,14 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
 		i2c_init(&i2c_cfg_ADXL345);
+		ADXL345_init();
 
 		ADXL345_read_XYZ(xyz);
-		*x = ((uint16_t)(*xyz) >> 8) | ((uint16_t)(*(xyz+1)) << 8);
-		*y = ((uint16_t)(*(xyz+2))>> 8) | ((uint16_t)(*(xyz+3)) << 8);
-		*z = ((uint16_t)(*(xyz+4)) >> 8) | ((uint16_t)(*(xyz+5)) << 8);
+		*x = (*xyz & 0xFF) | ((uint16_t)(*(xyz+1)) << 8);
+		*y = (*(xyz+2) & 0xFF) | ((uint16_t)(*(xyz+3)) << 8);
+		*z = (*(xyz+4) & 0xFF) | ((uint16_t)(*(xyz+5)) << 8);
 	
+		ADXL345_deinit();
 		i2c_release();
 }	
 
@@ -151,11 +150,13 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 static void mcp9808_capture(int *temp_int, int *temp_frac)
 {
 		i2c_init(&i2c_cfg_MCP9808);
+		MCP9808_init();
 	
 		double temperature = MCP9808_get_temperature();
 		*temp_int = (int)temperature;
-		*temp_frac = (int)((temperature - *temp_int) * 10000);
+	  *temp_frac = (temperature >= 0) ? (int)((temperature - *temp_int) * 10000) : (int)((*temp_int - temperature) * 10000);
 	
+		MCP9808_deinit();
 		i2c_release();
 }
 
@@ -183,7 +184,7 @@ void capture_adxl345_data_cb_handler()
 																														DEF_SVC1_ACCEL_X_DATA_CHAR_LEN);
 
 
-    req_x->conidx = 0;
+    req_x->conidx = app_connection_idx;
     req_x->handle = SVC1_IDX_ACCELEROMETER_X_VAL;
     req_x->length = DEF_SVC1_ACCEL_X_DATA_CHAR_LEN;
     req_x->notification = true;
@@ -203,7 +204,7 @@ void capture_adxl345_data_cb_handler()
 																														DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN);
 
 
-    req_y->conidx = 0;
+    req_y->conidx = app_connection_idx;
     req_y->handle = SVC1_IDX_ACCELEROMETER_Y_VAL;
     req_y->length = DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN;
     req_y->notification = true;
@@ -223,7 +224,7 @@ void capture_adxl345_data_cb_handler()
 																														DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN);
 
 
-    req_z->conidx = 0;
+    req_z->conidx = app_connection_idx;
     req_z->handle = SVC1_IDX_ACCELEROMETER_Z_VAL;
     req_z->length = DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN;
     req_z->notification = true;
@@ -243,7 +244,7 @@ void capture_adxl345_data_cb_handler()
 																														DEF_SVC1_GYR_DATA_CHAR_LEN);
 
 
-    req_g->conidx = 0;
+    req_g->conidx = app_connection_idx;
     req_g->handle = SVC1_IDX_GYROSCOPE_VAL;
     req_g->length = DEF_SVC1_GYR_DATA_CHAR_LEN;
     req_g->notification = true;
@@ -257,8 +258,14 @@ void capture_adxl345_data_cb_handler()
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
         // Set it once again until Stop command is received in Control Characteristic
-        timer_adxl345_used = app_easy_timer(300, capture_adxl345_data_cb_handler);
+        timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
     }
+		else
+		{
+				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
+				app_easy_timer_cancel(timer_adxl345_used);
+				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
+		}
 		
 		GPIO_SetInactive(GPIO_PORT_0, GPIO_PIN_6);
 }
@@ -274,6 +281,7 @@ void capture_mcp9808_data_cb_handler()
 		GPIO_SetActive(GPIO_PORT_0, GPIO_PIN_6);
 
     // MCP9808 Data Capturing
+		memset(temperature_string, 0, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
     int temp_int, temp_frac;
 		mcp9808_capture(&temp_int, &temp_frac);
 		previous_temp_int = temp_int;
@@ -281,7 +289,7 @@ void capture_mcp9808_data_cb_handler()
 		
 		arch_printf("Temp: %d.%d\r\n", temp_int, temp_frac);
 		
-		uint8_t length = snprintf(temperature_string,DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%04d" ,temp_int, temp_frac);
+		uint8_t length = snprintf(temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%04d" ,temp_int, temp_frac);
 
 		req->conidx = 0;
     req->handle = SVC2_IDX_TEMPERATURE_VAL;
@@ -296,8 +304,14 @@ void capture_mcp9808_data_cb_handler()
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
         // Set it once again until Stop command is received in Control Characteristic
-        timer_mcp9808_used = app_easy_timer(200, capture_mcp9808_data_cb_handler);
+        timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
     }
+		else
+		{
+				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
+				app_easy_timer_cancel(timer_mcp9808_used);
+				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+		}
 		
 		GPIO_SetInactive(GPIO_PORT_0, GPIO_PIN_6);
 }

@@ -55,24 +55,26 @@ typedef enum{ 	HALF_RESOLUTION = 0,
  */
 #define TEMPERATURE_DATA_REGISTER		    		0x05 									//Register 5 contains 12 bits of temperature data
 #define TEMPERATURE_REGISTER_SIZE		    		12	 									//In bits. Must be a unsigned integer greater than 0
-#define RESOLUTION_CONFIG_REGISTER	        0X08 								 	//2 bits register containing the resolution
+#define RESOLUTION_CONFIG_REGISTER	        0x08 								 	//2 bits register containing the resolution
 #define RESOLUTION_CONFIG_REGISTER_SIZE			2
 #define USED_TEMPERATURE_RESOLUTION	        SIXTEENTH_RESOLUTION 	//0.0625 degrees Celsius resolution
+#define CONFIGURATION_REGISTER							0x01	
 
 /*
  * FUNCTION DECLARATIONS
  ****************************************************************************************
  */
- 
+								
 /**
 ****************************************************************************************
 * @brief Declared function to deinitialize MCP9808, to be defined by the user if necessary
 * @return void
 ****************************************************************************************
 */
-void MCP9808_deinit(void);
 
 void MCP9808_init(void);
+
+void MCP9808_deinit(void);
 
 void MCP9808_set_resolution_register(const temperature_resolution resolution);
 

@@ -76,6 +76,22 @@ void ADXL345_init(void){
 #endif //NO_SENSOR
 }
 
+void ADXL345_deinit(void){
+#ifdef NO_SENSOR
+		return;//If the demo is ran without a sensor return immediately
+#else
+		const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x00};      //Set measure mode
+
+    i2c_abort_t abort_code; //May be used for error checking
+
+		//Initialize sensor configuration registers
+    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+#endif //NO_SENSOR
+}
+
 /**
  ****************************************************************************************
  * @brief Read X-axis acceleration registers

@@ -31,8 +31,8 @@
  ****************************************************************************************
  */
 
-#ifndef _USER_PERIPHERAL_H_
-#define _USER_PERIPHERAL_H_
+#ifndef _BLE_GENERAL_SENSOR_SERVICE_H_
+#define _BLE_GENERAL_SENSOR_SERVICE_H_
 
 /**
  ****************************************************************************************
@@ -78,8 +78,10 @@
 #define APP_AD_MSD_COMPANY_ID       (0xABCD)
 #define APP_AD_MSD_COMPANY_ID_LEN   (2)
 #define APP_AD_MSD_DATA_LEN         (sizeof(uint16_t))
-
-#define I2C_DATA_CAPTURE_PERIOD							(200)
+	
+/** Frequency of I2C Data Capturing for the sensors **/
+#define I2C_DATA_CAPTURE_PERIOD_MCP9808							(200)
+#define I2C_DATA_CAPTURE_PERIOD_ADXL345							(300)
 
 /*
  * TYPE DEFINITIONS
@@ -147,4 +149,4 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
 /// @} APP
 
-#endif // _USER_PERIPHERAL_H_
+#endif // _BLE_GENERAL_SENSOR_SERVICE_H_

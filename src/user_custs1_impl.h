@@ -56,15 +56,6 @@ enum
 		ENABLE_SENSOR_DATA_CAPTURING
 };
 
-enum
-{
-		ADVERTISE_ACCELEROMETER_X_DATA = 0,
-		ADVERTISE_ACCELEROMETER_Y_DATA,
-		ADVERTISE_ACCELEROMETER_Z_DATA,
-		ADVERTISE_ACCELEROMETER_G_DATA,
-		ADVERTISE_TEMPERATURE_DATA
-};
-
 /*
  * INCLUDE FILES
  ****************************************************************************************

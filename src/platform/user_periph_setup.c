@@ -47,6 +47,8 @@
 #include "MCP9808.h"
 #include "ADXL345.h"
 #include "arch_console.h"
+#include "app_easy_timer.h"
+#include "app_easy_crypto.h"
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -72,8 +74,10 @@ void GPIO_reservations(void)
     RESERVE_GPIO(UART2_TX, UART2_TX_PORT, UART2_TX_PIN, PID_UART2_TX);
 #endif
 
-    //RESERVE_GPIO(LED, GPIO_LED_PORT, GPIO_LED_PIN, PID_GPIO);
-	
+/**** Remove Jumper from LED to avoid damaging the SDA pin on P0_9 ****/
+#if !defined(SDA_ON_P0_9)
+    RESERVE_GPIO(LED, GPIO_LED_PORT, GPIO_LED_PIN, PID_GPIO);
+#endif	
 		// SPI Reserve
 		RESERVE_GPIO(SPI_EN, SPI_EN_PORT, SPI_EN_PIN, PID_SPI_EN);
 		RESERVE_GPIO(SPI_CLK, SPI_CLK_PORT, SPI_CLK_PIN, PID_SPI_CLK);
@@ -99,8 +103,11 @@ void set_pad_functions(void)
     // Configure UART2 TX Pad
     GPIO_ConfigurePin(UART2_TX_PORT, UART2_TX_PIN, OUTPUT, PID_UART2_TX, false);
 #endif
-
-    //GPIO_ConfigurePin(GPIO_LED_PORT, GPIO_LED_PIN, OUTPUT, PID_GPIO, false);
+	
+/**** Remove Jumper from LED to avoid damaging the SDA pin on P0_9 ****/
+#if !defined(SDA_ON_P0_9)
+		GPIO_ConfigurePin(GPIO_LED_PORT, GPIO_LED_PIN, OUTPUT, PID_GPIO, false);
+#endif
 	
 		// Configure SPI pins
 		GPIO_ConfigurePin(SPI_EN_PORT, SPI_EN_PIN, OUTPUT, PID_SPI_EN, true);
@@ -189,33 +196,37 @@ static void i2c_bus_recovery(void)
     GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT,  PID_GPIO, true);
 
     for (int i = 0; i < 9; i++) {
-        if (GPIO_GetPinStatus(I2C_SDA_PORT, I2C_SDA_PIN)) break;  // SDA released
-						GPIO_SetInactive(I2C_SCL_PORT, I2C_SCL_PIN);
-			
-        for (volatile int d = 0; d < 40; d++);   // ~5 us at 100 kHz
-						GPIO_SetActive(I2C_SCL_PORT, I2C_SCL_PIN);
-			
-        for (volatile int d = 0; d < 40; d++);
+        if (GPIO_GetPinStatus(I2C_SDA_PORT, I2C_SDA_PIN)) 
+						break;  // SDA released
+				
+				GPIO_SetInactive(I2C_SCL_PORT, I2C_SCL_PIN);
+				arch_asm_delay_us(5);
+				
+				GPIO_SetActive(I2C_SCL_PORT, I2C_SCL_PIN);
+				arch_asm_delay_us(5);
     }
-
+		
+		GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, OUTPUT,  PID_GPIO, false);
+		arch_asm_delay_us(3);
+		GPIO_SetActive(I2C_SCL_PORT, I2C_SCL_PIN);
+		arch_asm_delay_us(3);
+		GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT, PID_I2C_SDA, true);
+		arch_asm_delay_us(3);
     GPIO_ConfigurePin(I2C_SCL_PORT, I2C_SCL_PIN, INPUT, PID_I2C_SCL, true);
-    GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT, PID_I2C_SDA, true);
 }
 
 void periph_init(void)
 {
-		// Disable the Debugger to release P0_2 for I2C usage
+		// Disable the Debugger for Safety
 #if defined (__DA14531__)
 		SetBits16(SYS_CTRL_REG, DEBUGGER_ENABLE, 0);
 #endif
 #if defined (__DA14531__)
-    // Select FPGA GPIO_MAP 1
-    // set debugger SWD to SW_CLK = P0[2], SW_DIO=P0[5]
-    FPGA_HELPER(FPGA_GPIO_MAP_1, SWD_DATA_AT_P0_5);
-
+#if (BOOST_MODE)
     // In Boost mode enable the DCDC converter to supply VBAT_HIGH for the used GPIOs
     // Assumption: The connected external peripheral is powered by 3V
     syscntl_dcdc_turn_on_in_boost(SYSCNTL_DCDC_LEVEL_3V0);
+#endif
 #else
     // Power up peripherals' power domain
     SetBits16(PMU_CTRL_REG, PERIPH_SLEEP, 0);

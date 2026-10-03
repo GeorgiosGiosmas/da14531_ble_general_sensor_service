@@ -30,7 +30,6 @@
 
 #ifndef _ADXL345_
 #define _ADXL345_
-#endif
 
 #include "gpio.h"
 
@@ -71,7 +70,14 @@ void ADXL345_init(void);
 
 /**
  ****************************************************************************************
- * @brief Read the data registers of the ADXL345, reads X to a global variable.
+ * @brief ADXL345 deinitialization function.
+ * @return void
+ *****/
+void ADXL345_deinit(void);
+
+/**
+ ****************************************************************************************
+ * @brief Read data register X, of the ADXL345, to a global variable.
  * @return void
  ****************************************************************************************
 */
@@ -79,7 +85,7 @@ int16_t ADXL345_read_X(void);
 
 /**
  ****************************************************************************************
- * @brief Read the data registers of the ADXL345, reads Y to a global variable.
+ * @brief Read data register Y, of the ADXL345, to a global variable.
  * @return void
  ****************************************************************************************
 */
@@ -87,12 +93,18 @@ int16_t ADXL345_read_Y(void);
 
 /**
  ****************************************************************************************
- * @brief Read the data registers of the ADXL345, reads Z to a global variable.
+ * @brief Read data register Z, of the ADXL345, to a global variable.
  * @return void
  ****************************************************************************************
 */
 int16_t ADXL345_read_Z(void);
 
-
+/**
+ ****************************************************************************************
+ * @brief Read the data registers of the ADXL345.
+ * @return void
+ ****************************************************************************************
+*/
 void ADXL345_read_XYZ(uint8_t* xyz);
 #endif
+#endif //_ADXL345_

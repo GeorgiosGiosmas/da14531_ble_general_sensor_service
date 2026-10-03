@@ -221,21 +221,6 @@ static void param_update_request_timer_cb()
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 }
 
-static void initialize_registers_sensors()
-{
-		/** Initialize ADXL345 **/
-		i2c_init(&i2c_cfg_ADXL345);
-		ADXL345_init();
-		arch_puts("ADXL345 initialized\r\n");
-		i2c_release();
-	
-		/** Initialize MCP9808 **/
-		i2c_init(&i2c_cfg_MCP9808);
-		MCP9808_init();
-		arch_puts("MCP9808 initialized\r\n");
-		i2c_release();
-
-}
 
 void user_app_init(void)
 {
@@ -252,10 +237,6 @@ void user_app_init(void)
 	
     default_app_on_init();
 		arch_puts("App Initialized\r\n");
-	
-		initialize_registers_sensors();
-
-		//arch_asm_delay_us(15000);
 }
 
 void user_app_adv_start(void)

@@ -85,4 +85,5 @@
   ..\..\..\..\..\sdk\platform\arch\fpga_helper.h \
   ..\..\..\..\..\sdk\platform\arch\fpga.h ..\src\MCP9808.h \
   ..\src\ADXL345.h \
-  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_easy_crypto.h

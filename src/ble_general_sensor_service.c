@@ -59,6 +59,8 @@
 
 extern const i2c_cfg_t i2c_cfg_ADXL345;
 extern const i2c_cfg_t i2c_cfg_MCP9808;
+extern const spi_cfg_t spi_cfg;
+extern const spi_flash_cfg_t spi_flash_cfg;
 
 /*
  * TYPE DEFINITIONS
@@ -221,10 +223,35 @@ static void param_update_request_timer_cb()
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 }
 
+#if defined (CFG_SPI_FLASH_ENABLE)
+static void boot_flash_init_power_down(void)
+{
+    uint8_t dev_id;
+
+		// Initialize interface to SPI flash so we can use it from within the application
+		spi_flash_configure_env(&spi_flash_cfg);
+		spi_initialize(&spi_cfg);
+	
+    // Release the SPI flash memory from power down
+    spi_flash_release_from_power_down();
+
+    // Try to auto-detect the SPI flash memory
+    spi_flash_auto_detect(&dev_id);
+
+    // Power down flash
+    spi_flash_power_down();
+}
+#endif // CFG_SPI_FLASH_ENABLE
+
 
 void user_app_init(void)
 {
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
+
+#if defined (CFG_SPI_FLASH_ENABLE)
+    // Make sure the flash is put to sleep when booting
+    boot_flash_init_power_down();
+#endif
 
     // Initialize Manufacturer Specific Data
     mnf_data_init();

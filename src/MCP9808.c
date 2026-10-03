@@ -53,7 +53,7 @@ void MCP9808_init(void){
 	
 	buffer[0] = CONFIGURATION_REGISTER;
 	buffer[1] = 0x00;
-	buffer[2] = 0x01;
+	buffer[2] = 0x00;
 	
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
 	
@@ -71,7 +71,7 @@ void MCP9808_deinit(void){
 	i2c_abort_t abort_code = I2C_ABORT_NONE;
 	
 	buffer[0] = CONFIGURATION_REGISTER;
-	buffer[1] = 0x00;
+	buffer[1] = 0x01;
 	buffer[2] = 0x00;
 	
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);

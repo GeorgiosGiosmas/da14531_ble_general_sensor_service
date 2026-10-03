@@ -78,11 +78,15 @@ void GPIO_reservations(void)
 #if !defined(SDA_ON_P0_9)
     RESERVE_GPIO(LED, GPIO_LED_PORT, GPIO_LED_PIN, PID_GPIO);
 #endif	
+	
+#if defined (CFG_SPI_FLASH_ENABLE)
+    // SPI Flash
 		// SPI Reserve
 		RESERVE_GPIO(SPI_EN, SPI_EN_PORT, SPI_EN_PIN, PID_SPI_EN);
 		RESERVE_GPIO(SPI_CLK, SPI_CLK_PORT, SPI_CLK_PIN, PID_SPI_CLK);
 		RESERVE_GPIO(SPI_DO, SPI_DO_PORT, SPI_DO_PIN, PID_SPI_DO);
 		RESERVE_GPIO(SPI_DI, SPI_DI_PORT, SPI_DI_PIN, PID_SPI_DI);
+#endif
 
 		// I2C Reserve
 		RESERVE_GPIO(I2C_SCL, I2C_SCL_PORT, I2C_SCL_PIN, PID_I2C_SCL);
@@ -108,13 +112,16 @@ void set_pad_functions(void)
 #if !defined(SDA_ON_P0_9)
 		GPIO_ConfigurePin(GPIO_LED_PORT, GPIO_LED_PIN, OUTPUT, PID_GPIO, false);
 #endif
-	
+
+#if defined (CFG_SPI_FLASH_ENABLE)
+    // SPI Flash
 		// Configure SPI pins
 		GPIO_ConfigurePin(SPI_EN_PORT, SPI_EN_PIN, OUTPUT, PID_SPI_EN, true);
 		GPIO_ConfigurePin(SPI_CLK_PORT, SPI_CLK_PIN, OUTPUT, PID_SPI_CLK, false);
 		GPIO_ConfigurePin(SPI_DO_PORT, SPI_DO_PIN, OUTPUT, PID_SPI_DO, false);	
 		GPIO_ConfigurePin(SPI_DI_PORT, SPI_DI_PIN, INPUT, PID_SPI_DI, false);
-	
+#endif 
+
 		// Configure I2C pins
 		GPIO_ConfigurePin(I2C_SCL_PORT, I2C_SCL_PIN, INPUT, PID_I2C_SCL, false);
 		GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT, PID_I2C_SDA, false);
@@ -137,7 +144,8 @@ static const uart_cfg_t uart_cfg = {
 };
 #endif
 
-static const spi_cfg_t spi_cfg = {
+#if defined (CFG_SPI_FLASH_ENABLE)
+const spi_cfg_t spi_cfg = {
     .spi_ms = SPI_MS_MODE,
     .spi_cp = SPI_CP_MODE,
     .spi_speed = SPI_SPEED_MODE,
@@ -154,12 +162,12 @@ static const spi_cfg_t spi_cfg = {
 
 /* SPI flash configuration - assumes use of a Macronix MXR2035F as this is
    present on the DA145xx PRO development kit */
-static const spi_flash_cfg_t spi_flash_cfg = {
+const spi_flash_cfg_t spi_flash_cfg = {
     .dev_index = MX25R2035F_DEV_INDEX,
     .jedec_id  = MX25V2035F_JEDEC_ID,
     .chip_size = MX25V2035F_CHIP_SIZE,
 };
-
+#endif
 
 const i2c_cfg_t i2c_cfg_MCP9808 = {
     .clock_cfg.ss_hcnt = I2C_SS_SCL_HCNT_REG_RESET,
@@ -242,9 +250,6 @@ void periph_init(void)
     // Initialize UART2
     uart_initialize(UART2, &uart_cfg);
 #endif
-		// Initialize interface to SPI flash so we can use it from within the application
-		spi_flash_configure_env(&spi_flash_cfg);
-		//spi_initialize(&spi_cfg);
 		
     // Set pad functionality
     set_pad_functions();

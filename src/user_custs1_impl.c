@@ -252,8 +252,6 @@ void capture_adxl345_data_cb_handler()
     memcpy(req_g->value, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
 
     KE_MSG_SEND(req_g);
-		
-		arch_printf_process();
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
@@ -298,8 +296,6 @@ void capture_mcp9808_data_cb_handler()
     memcpy(req->value, temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
     KE_MSG_SEND(req);
-		
-		arch_printf_process();
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {

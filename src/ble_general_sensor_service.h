@@ -58,6 +58,7 @@
 #include "co_error.h"                  // error code definitions
 #include "arch_wdg.h"
 #include "arch_console.h"
+#include "arch_api.h"
 
 #include "app_callback.h"
 #include "app_default_handlers.h"
@@ -106,6 +107,13 @@ void user_app_init(void);
  ****************************************************************************************
 */
 void user_app_adv_start(void);
+
+/**
+ ****************************************************************************************
+ * @brief Check if UART or I2C transaction is going to happen before sleep.
+ ****************************************************************************************
+*/
+arch_main_loop_callback_ret_t user_app_on_system_powered(void);
 
 /**
  ****************************************************************************************

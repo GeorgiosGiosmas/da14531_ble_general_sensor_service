@@ -93,6 +93,8 @@ uint8_t stored_adv_data_len                     __SECTION_ZERO("retention_mem_ar
 uint8_t stored_scan_rsp_data_len                __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_adv_data[ADV_DATA_LEN]           __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_scan_rsp_data[SCAN_RSP_DATA_LEN] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+extern ke_msg_id_t timer_adxl345_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+extern ke_msg_id_t timer_mcp9808_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
 /*
  * FUNCTION DEFINITIONS
@@ -357,8 +359,29 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
     }
     // Update manufacturer data for the next advertsing event
     mnf_data_update();
+		
+		if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
+		{
+				arch_puts("Control Point 1 Deactivated\r\n");
+				app_easy_timer_cancel(timer_adxl345_used);
+				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
+		}
+		
+		if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
+		{
+				arch_puts("Control Point 2 Deactivated\r\n");
+				app_easy_timer_cancel(timer_mcp9808_used);
+				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+		}
+				
     // Restart Advertising
     user_app_adv_start();
+}
+
+arch_main_loop_callback_ret_t user_app_on_system_powered()
+{
+		
+		return KEEP_POWERED;
 }
 
 void user_catch_rest_hndl(ke_msg_id_t const msgid,

@@ -86,6 +86,7 @@ void ADXL345_deinit(void){
 
 		//Initialize sensor configuration registers
     i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}

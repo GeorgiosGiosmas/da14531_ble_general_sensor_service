@@ -143,6 +143,10 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 		*z = (*(xyz+4) & 0xFF) | ((uint16_t)(*(xyz+5)) << 8);
 	
 		ADXL345_deinit();
+	
+	  // Wait until no master activity
+		while (i2c_is_master_busy());
+	
 		i2c_release();
 }	
 
@@ -157,13 +161,15 @@ static void mcp9808_capture(int *temp_int, int *temp_frac)
 	  *temp_frac = (temperature >= 0) ? (int)((temperature - *temp_int) * 10000) : (int)((*temp_int - temperature) * 10000);
 	
 		MCP9808_deinit();
+	
+		// Wait until no master activity
+		while (i2c_is_master_busy());
+	
 		i2c_release();
 }
 
 void capture_adxl345_data_cb_handler()
 {
-		GPIO_SetActive(GPIO_PORT_0, GPIO_PIN_6);
-
 		// ADXL345 Data capturing
     int16_t x, y, z;
 		uint8_t xyz[DEF_SVC1_GYR_DATA_CHAR_LEN];
@@ -264,8 +270,6 @@ void capture_adxl345_data_cb_handler()
 				app_easy_timer_cancel(timer_adxl345_used);
 				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
 		}
-		
-		GPIO_SetInactive(GPIO_PORT_0, GPIO_PIN_6);
 }
 
 void capture_mcp9808_data_cb_handler()
@@ -276,9 +280,7 @@ void capture_mcp9808_data_cb_handler()
                                                           custs1_val_ntf_ind_req,
                                                           DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
-		GPIO_SetActive(GPIO_PORT_0, GPIO_PIN_6);
-
-    // MCP9808 Data Capturing
+		// MCP9808 Data Capturing
 		memset(temperature_string, 0, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
     int temp_int, temp_frac;
 		mcp9808_capture(&temp_int, &temp_frac);
@@ -308,8 +310,6 @@ void capture_mcp9808_data_cb_handler()
 				app_easy_timer_cancel(timer_mcp9808_used);
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
 		}
-		
-		GPIO_SetInactive(GPIO_PORT_0, GPIO_PIN_6);
 }
 
 void user_svc3_read_non_db_val_handler(ke_msg_id_t const msgid,

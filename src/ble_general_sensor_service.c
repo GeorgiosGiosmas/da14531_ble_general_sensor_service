@@ -243,6 +243,24 @@ static void boot_flash_init_power_down(void)
 }
 #endif // CFG_SPI_FLASH_ENABLE
 
+static void power_down_sensors(void)
+{
+		i2c_init(&i2c_cfg_MCP9808);
+		MCP9808_deinit();
+	
+		// Wait until no master activity
+		while (i2c_is_master_busy());
+	
+		i2c_release();
+	
+		i2c_init(&i2c_cfg_ADXL345);
+		ADXL345_deinit();
+	
+		// Wait until no master activity
+		while (i2c_is_master_busy());
+	
+		i2c_release();
+}
 
 void user_app_init(void)
 {
@@ -261,6 +279,8 @@ void user_app_init(void)
     stored_adv_data_len = USER_ADVERTISE_DATA_LEN;
     memcpy(stored_scan_rsp_data, USER_ADVERTISE_SCAN_RESPONSE_DATA, USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN);
     stored_scan_rsp_data_len = USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN;
+	
+		power_down_sensors();
 	
     default_app_on_init();
 		arch_puts("App Initialized\r\n");

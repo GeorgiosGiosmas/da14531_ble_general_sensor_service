@@ -378,12 +378,6 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
     user_app_adv_start();
 }
 
-arch_main_loop_callback_ret_t user_app_on_system_powered()
-{
-		
-		return KEEP_POWERED;
-}
-
 void user_catch_rest_hndl(ke_msg_id_t const msgid,
                           void const *param,
                           ke_task_id_t const dest_id,

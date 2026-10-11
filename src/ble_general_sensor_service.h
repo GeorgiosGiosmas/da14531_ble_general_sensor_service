@@ -110,13 +110,6 @@ void user_app_adv_start(void);
 
 /**
  ****************************************************************************************
- * @brief Check if UART or I2C transaction is going to happen before sleep.
- ****************************************************************************************
-*/
-arch_main_loop_callback_ret_t user_app_on_system_powered(void);
-
-/**
- ****************************************************************************************
  * @brief Connection function.
  * @param[in] connection_idx Connection Id index
  * @param[in] param Pointer to GAPC_CONNECTION_REQ_IND message

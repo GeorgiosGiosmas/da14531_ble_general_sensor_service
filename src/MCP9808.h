@@ -57,7 +57,7 @@ typedef enum{ 	HALF_RESOLUTION = 0,
 #define TEMPERATURE_REGISTER_SIZE		    		12	 									//In bits. Must be a unsigned integer greater than 0
 #define RESOLUTION_CONFIG_REGISTER	        0x08 								 	//2 bits register containing the resolution
 #define RESOLUTION_CONFIG_REGISTER_SIZE			2
-#define USED_TEMPERATURE_RESOLUTION	        SIXTEENTH_RESOLUTION 	//0.0625 degrees Celsius resolution
+#define USED_TEMPERATURE_RESOLUTION	        HALF_RESOLUTION 	
 #define CONFIGURATION_REGISTER							0x01	
 
 /*

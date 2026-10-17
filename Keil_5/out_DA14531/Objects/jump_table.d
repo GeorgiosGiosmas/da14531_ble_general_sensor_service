@@ -73,6 +73,22 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_suotar.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\suota\suotar\api\suotar.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\prf_utils.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm_task.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattc\gattc.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attc\attc.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_suotar_task.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\suota\suotar\api\suotar_task.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
   ..\..\..\..\..\sdk\ble_stack\controller\em\em_map_ble.h \
@@ -88,8 +104,6 @@
   ..\..\..\..\..\sdk\platform\driver\ble\_reg_common_em_et.h \
   ..\..\..\..\..\sdk\common_project_files\da1458x_scatter_config.h \
   ..\..\..\..\..\sdk\ble_stack\rwble_hl\rwble_hl.h \
-  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattc\gattc.h \
-  ..\..\..\..\..\sdk\ble_stack\host\att\attc\attc.h \
   ..\..\..\..\..\sdk\ble_stack\controller\lld\lld_sleep.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc_task.h \
@@ -110,7 +124,6 @@
   ..\..\..\..\..\sdk\platform\core_modules\dbg\api\dbg.h \
   ..\..\..\..\..\sdk\platform\core_modules\dbg\api\dbg_swdiag.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
-  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
   ..\..\..\..\..\third_party\rand\chacha20.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1.h \
   ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \

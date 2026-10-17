@@ -53,6 +53,13 @@
  * LOCAL VARIABLE DEFINITIONS
  ****************************************************************************************
  */
+ 
+#if defined(CFG_PRF_SUOTAR)
+static const struct app_suotar_cb user_app_suotar_cb = {
+    .on_suotar_status_change = on_suotar_status_change,
+    .on_suotar_version_check = default_suotar_on_version_check,
+};
+#endif // BLE_SUOTA_RECEIVER
 
 static const struct app_callbacks user_app_callbacks = {
     .app_on_connection                  = user_app_connection,
@@ -63,7 +70,7 @@ static const struct app_callbacks user_app_callbacks = {
     .app_on_adv_nonconn_complete        = NULL,
     .app_on_adv_undirect_complete       = user_app_adv_undirect_complete,
     .app_on_adv_direct_complete         = NULL,
-    .app_on_db_init_complete            = default_app_on_db_init_complete,
+    .app_on_db_init_complete            = user_app_on_db_init_complete,
     .app_on_scanning_completed          = NULL,
     .app_on_adv_report_ind              = NULL,
     .app_on_get_dev_name                = default_app_on_get_dev_name,

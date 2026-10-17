@@ -93,8 +93,8 @@ uint8_t stored_adv_data_len                     __SECTION_ZERO("retention_mem_ar
 uint8_t stored_scan_rsp_data_len                __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_adv_data[ADV_DATA_LEN]           __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_scan_rsp_data[SCAN_RSP_DATA_LEN] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-extern ke_msg_id_t timer_adxl345_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-extern ke_msg_id_t timer_mcp9808_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+extern ke_msg_id_t timer_adxl345_used      			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+extern ke_msg_id_t timer_mcp9808_used      			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
 /*
  * FUNCTION DEFINITIONS
@@ -225,11 +225,14 @@ static void param_update_request_timer_cb()
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 }
 
-#if defined (CFG_SPI_FLASH_ENABLE)
+#if defined(CFG_SPI_FLASH_ENABLE)
 static void boot_flash_init_power_down(void)
 {
     uint8_t dev_id;
-
+	
+		// Disable HW Reset functionality of P0_0
+		GPIO_Disable_HW_Reset();
+	
 		// Initialize interface to SPI flash so we can use it from within the application
 		spi_flash_configure_env(&spi_flash_cfg);
 		spi_initialize(&spi_cfg);
@@ -244,6 +247,36 @@ static void boot_flash_init_power_down(void)
     spi_flash_power_down();
 }
 #endif // CFG_SPI_FLASH_ENABLE
+
+#if defined(CFG_PRF_SUOTAR)
+void on_suotar_status_change(const uint8_t suotar_event)
+{
+#if (!SUOTAR_SPI_DISABLE)
+    uint8_t dev_id;
+	
+		// Disable HW Reset functionality of P0_0
+		GPIO_Disable_HW_Reset();
+	
+#if defined(CFG_SPI_FLASH_ENABLE)
+		// Initialize interface to SPI flash so we can use it from within the application
+		spi_flash_configure_env(&spi_flash_cfg);
+		spi_initialize(&spi_cfg);
+#endif
+
+    // Release Flash from power down
+    spi_flash_release_from_power_down();
+
+    // Try to auto-detect the device
+    spi_flash_auto_detect(&dev_id);
+
+    if (suotar_event == SUOTAR_END)
+    {
+        // Power down SPI Flash
+        spi_flash_power_down();
+    }
+#endif
+}
+#endif
 
 static void power_down_sensors(void)
 {
@@ -268,8 +301,8 @@ void user_app_init(void)
 {
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 
-#if defined (CFG_SPI_FLASH_ENABLE)
-    // Make sure the flash is put to sleep when booting
+#if defined(CFG_SPI_FLASH_ENABLE)
+		// Make sure the flash is put to sleep when booting
     boot_flash_init_power_down();
 #endif
 
@@ -325,7 +358,7 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
 						arch_puts("Connection Parameters update initiated\r\n");
         }
 				
-				arch_puts("App Connected\r\n");
+				arch_printf("App Connected: Index = %u\r\n", connection_idx);
     }
     else
     {
@@ -338,7 +371,7 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
 
 void user_app_adv_undirect_complete(uint8_t status)
 {
-		arch_puts("Advertising Ended\r\n");
+		arch_printf("Advertising Ended: %u\r\n", status);
 	
     // If advertising was canceled then update advertising data and start advertising again
     if (status == GAP_ERR_CANCELED)
@@ -349,7 +382,7 @@ void user_app_adv_undirect_complete(uint8_t status)
 
 void user_app_disconnect(struct gapc_disconnect_ind const *param)
 {
-		arch_puts("App Disconnected\r\n");
+	arch_printf("App Disconnected: Index -> %lu, Reason: -> %u\r\n", param->conhdl, param->reason);
 	
     // Cancel the parameter update request timer
     if (app_param_update_request_timer_used != EASY_TIMER_INVALID_TIMER)
@@ -360,23 +393,53 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
     // Update manufacturer data for the next advertsing event
     mnf_data_update();
 		
+		// Cancel capture timers if they are still active after a sudden disconnection
 		if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
 		{
-				arch_puts("Control Point 1 Deactivated\r\n");
+				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
 				app_easy_timer_cancel(timer_adxl345_used);
 				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
 		}
 		
 		if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
 		{
-				arch_puts("Control Point 2 Deactivated\r\n");
+				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
 				app_easy_timer_cancel(timer_mcp9808_used);
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+		}
+		
+		// Issue a platform reset when it is requested by the suotar procedure
+		if (suota_state.reboot_requested)
+		{
+				// Reboot request will be served
+				suota_state.reboot_requested = 0;
+
+				// Platform reset
+				platform_reset(RESET_AFTER_SUOTA_UPDATE);
 		}
 				
     // Restart Advertising
     user_app_adv_start();
 }
+
+#include "user_version.h"
+void user_app_on_db_init_complete(void)
+{
+    /* Set application version number in DISS */
+    char sw_version[] = SDK_VERSION;
+    struct diss_set_value_req *req = KE_MSG_ALLOC_DYN(DISS_SET_VALUE_REQ,
+                                                      prf_get_task_from_id(TASK_ID_DISS),
+                                                      TASK_APP,
+                                                      diss_set_value_req,
+                                                      sizeof(sw_version));
+    req->value = DIS_SW_REV_STR_CHAR;
+    req->length = sizeof(sw_version);
+    memcpy(req->data, sw_version, sizeof(sw_version));
+    ke_msg_send(req);
+
+    default_app_on_db_init_complete();
+}
+
 
 void user_catch_rest_hndl(ke_msg_id_t const msgid,
                           void const *param,

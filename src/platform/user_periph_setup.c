@@ -163,7 +163,7 @@ const spi_flash_cfg_t spi_flash_cfg = {
     .jedec_id  = MX25V2035F_JEDEC_ID,
     .chip_size = MX25V2035F_CHIP_SIZE,
 };
-#endif
+#endif // CFG_SPI_FLASH_ENABLE
 
 const i2c_cfg_t i2c_cfg_MCP9808 = {
     .clock_cfg.ss_hcnt = I2C_SS_SCL_HCNT_REG_RESET,
@@ -223,14 +223,9 @@ void periph_init(void)
 {
 		// Disable the Debugger for Safety
 #if defined (__DA14531__)
-		SetBits16(SYS_CTRL_REG, DEBUGGER_ENABLE, 0);
-#endif
-#if defined (__DA14531__)
-#if (BOOST_MODE)
-    // In Boost mode enable the DCDC converter to supply VBAT_HIGH for the used GPIOs
-    // Assumption: The connected external peripheral is powered by 3V
-    syscntl_dcdc_turn_on_in_boost(SYSCNTL_DCDC_LEVEL_3V0);
-#endif
+		//SetBits16(SYS_CTRL_REG, DEBUGGER_ENABLE, 0);
+	
+		syscntl_dcdc_turn_on_in_boost(SYSCNTL_DCDC_LEVEL_3V0);
 #else
     // Power up peripherals' power domain
     SetBits16(PMU_CTRL_REG, PERIPH_SLEEP, 0);
@@ -246,7 +241,7 @@ void periph_init(void)
     // Initialize UART2
     uart_initialize(UART2, &uart_cfg);
 #endif
-		
+
     // Set pad functionality
     set_pad_functions();
 

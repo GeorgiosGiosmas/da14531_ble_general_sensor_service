@@ -72,6 +72,22 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_suotar.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\suota\suotar\api\suotar.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\prf_utils.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm_task.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattc\gattc.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attc\attc.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_suotar_task.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\suota\suotar\api\suotar_task.h \
   ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
   ..\..\..\..\..\sdk\platform\core_modules\ke\api\ke_event.h \
   ..\..\..\..\..\sdk\platform\core_modules\common\api\co_buf.h \
@@ -103,14 +119,9 @@
   ..\..\..\..\..\sdk\platform\driver\syscntl\syscntl.h \
   ..\..\..\..\..\sdk\platform\core_modules\gtl\src\gtl_eif.h \
   ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
-  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
   ..\..\..\..\..\sdk\platform\driver\adc\adc.h \
   ..\..\..\..\..\sdk\platform\driver\adc\adc_531.h \
   ..\src\config\user_periph_setup.h \
-  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
-  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
-  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
-  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
   ..\..\..\..\..\sdk\platform\arch\main\arch_system.h \
   ..\..\..\..\..\sdk\ble_stack\controller\llc\llc_util.h \
   ..\..\..\..\..\sdk\platform\driver\ble\reg_ble_em_rx_desc.h \

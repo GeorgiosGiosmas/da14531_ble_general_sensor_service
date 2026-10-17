@@ -57,7 +57,7 @@
 
 #define CFG_PRF_DISS
 #define CFG_PRF_CUST1
-//#define CFG_PRF_SUOTAR
+#define CFG_PRF_SUOTAR
 //#define CFG_PRF_BASS
 
 /***************************************************************************************/

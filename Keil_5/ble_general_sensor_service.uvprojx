@@ -1917,6 +1917,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
+            <File>
+              <FileName>user_version.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\src\user_version.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -3832,6 +3837,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
+            <File>
+              <FileName>user_version.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\src\user_version.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -5644,6 +5654,11 @@
               <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_version.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\src\user_version.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -7458,6 +7473,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\user_custs1_impl.c</FilePath>
             </File>
+            <File>
+              <FileName>user_version.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\src\user_version.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -9270,6 +9290,11 @@
               <FileName>user_custs1_impl.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\user_custs1_impl.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_version.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\src\user_version.h</FilePath>
             </File>
           </Files>
         </Group>

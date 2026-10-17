@@ -73,4 +73,40 @@
   ..\..\..\..\..\sdk\ble_stack\host\gatt\gatt.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf_types.h \
   ..\..\..\..\..\sdk\ble_stack\profiles\prf.h \
-  ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h
+  ..\..\..\..\..\sdk\app_modules\api\app_suotar.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi.h \
+  ..\..\..\..\..\sdk\platform\driver\spi\spi_531.h \
+  ..\..\..\..\..\sdk\platform\driver\dma\dma.h \
+  ..\..\..\..\..\sdk\platform\driver\spi_flash\spi_flash.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c\i2c.h \
+  ..\..\..\..\..\sdk\platform\driver\i2c_eeprom\i2c_eeprom.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\suota\suotar\api\suotar.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\prf_utils.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm_task.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattm\gattm.h \
+  ..\..\..\..\..\sdk\ble_stack\host\gatt\gattc\gattc.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attc\attc.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_suotar_task.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\suota\suotar\api\suotar_task.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_adv_data.h \
+  ..\..\..\..\..\sdk\platform\core_modules\rwip\api\rwip.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_api.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_task.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_entry_point.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
+  ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_prf_perm_types.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_easy_security.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_mid.h \
+  ..\..\..\..\..\sdk\ble_stack\controller\llm\llm.h \
+  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_math.h \
+  ..\..\..\..\..\sdk\platform\core_modules\common\api\co_buf.h \
+  ..\..\..\..\..\sdk\ble_stack\controller\llm\llm_task.h \
+  ..\..\..\..\..\sdk\ble_stack\ea\api\ea.h \
+  ..\src\config\user_periph_setup.h \
+  ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
+  ..\src\config\user_callback_config.h \
+  ..\..\..\..\..\sdk\app_modules\api\app_prf_types.h \
+  ..\src\ble_general_sensor_service.h \
+  ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h

@@ -131,16 +131,18 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
 }
 
-// Function that initiates ADXL345 and captures data
+/** Function that initializes and captures ADXL345 data **/
 static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 {
 		i2c_init(&i2c_cfg_ADXL345);
 		ADXL345_init();
-
+	
+		arch_asm_delay_us(11000);
+	
 		ADXL345_read_XYZ(xyz);
-		*x = (*xyz & 0xFF) | ((uint16_t)(*(xyz+1)) << 8);
-		*y = (*(xyz+2) & 0xFF) | ((uint16_t)(*(xyz+3)) << 8);
-		*z = (*(xyz+4) & 0xFF) | ((uint16_t)(*(xyz+5)) << 8);
+		*x = (*xyz & 0xFF) | (((uint16_t)*(xyz+1)) << 8);
+		*y = (*(xyz+2) & 0xFF) | (((uint16_t)*(xyz+3)) << 8);
+		*z = (*(xyz+4) & 0xFF) | (((uint16_t)*(xyz+5)) << 8);
 	
 		ADXL345_deinit();
 	
@@ -150,15 +152,17 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 		i2c_release();
 }	
 
-// Function that initiates MCP9808 and captures data
+/** Function that initializes and captures MCP9800 data **/
 static void mcp9808_capture(int *temp_int, int *temp_frac)
 {
 		i2c_init(&i2c_cfg_MCP9808);
 		MCP9808_init();
 	
+		arch_asm_delay_us(35000);
+	
 		double temperature = MCP9808_get_temperature();
 		*temp_int = (int)temperature;
-	  *temp_frac = (temperature >= 0) ? (int)((temperature - *temp_int) * 10000) : (int)((*temp_int - temperature) * 10000);
+	  *temp_frac = (temperature >= 0) ? (int)((temperature - *temp_int) * 10) : (int)((*temp_int - temperature) * 10);
 	
 		MCP9808_deinit();
 	
@@ -289,7 +293,7 @@ void capture_mcp9808_data_cb_handler()
 		
 		arch_printf("Temp: %d.%d\r\n", temp_int, temp_frac);
 		
-		uint8_t length = snprintf(temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%04d" ,temp_int, temp_frac);
+		uint8_t length = snprintf(temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%d " ,temp_int, temp_frac);
 
 		req->conidx = 0;
     req->handle = SVC2_IDX_TEMPERATURE_VAL;

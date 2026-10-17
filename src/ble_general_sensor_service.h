@@ -110,6 +110,20 @@ void user_app_adv_start(void);
 
 /**
  ****************************************************************************************
+ * @brief SUOTA needed callback.
+ ****************************************************************************************
+*/
+void on_suotar_status_change(const uint8_t suotar_event);
+
+/**
+ ****************************************************************************************
+ * @brief User user_app_on_db_init_complete() callback.
+ ****************************************************************************************
+*/
+void user_app_on_db_init_complete(void);
+
+/**
+ ****************************************************************************************
  * @brief Connection function.
  * @param[in] connection_idx Connection Id index
  * @param[in] param Pointer to GAPC_CONNECTION_REQ_IND message

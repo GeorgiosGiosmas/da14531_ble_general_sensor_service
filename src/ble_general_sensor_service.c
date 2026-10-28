@@ -58,6 +58,7 @@
 #include "user_periph_setup.h"
 #if defined(CFG_PRF_SUOTAR)
 #include "app_suotar.h"
+#include "custom_common.h"
 #endif
 
 extern const i2c_cfg_t i2c_cfg_ADXL345;
@@ -463,6 +464,15 @@ void user_app_on_db_init_complete(void)
     req->length = sizeof(sw_version);
     memcpy(req->data, sw_version, sizeof(sw_version));
     ke_msg_send(req);
+		
+#if defined(CFG_PRINTF)
+    arch_puts("--- CUSTS1 handle map ---\r\n");
+    for (uint8_t i = 0; i < CUSTS1_IDX_NB; i++)
+    {
+        arch_printf("att_idx %u -> handle %u\r\n", i, custs1_get_att_handle(i));
+    }
+    arch_puts("-------------------------\r\n");
+#endif
 
     default_app_on_db_init_complete();
 }

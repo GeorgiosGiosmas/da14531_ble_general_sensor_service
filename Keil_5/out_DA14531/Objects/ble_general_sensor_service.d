@@ -100,4 +100,6 @@
   ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h \
   ..\src\custom_profile\user_custs1_def.h ..\src\MCP9808.h \
   ..\src\ADXL345.h ..\src\config\user_periph_setup.h \
-  ..\..\..\..\..\sdk\platform\driver\uart\uart.h ..\src\user_version.h
+  ..\..\..\..\..\sdk\platform\driver\uart\uart.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\custom\custom_common.h \
+  ..\src\user_version.h

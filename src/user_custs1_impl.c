@@ -62,14 +62,13 @@ ke_msg_id_t timer_adxl345_used      												__SECTION_ZERO("retention_mem_ar
 ke_msg_id_t timer_mcp9808_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t indication_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t non_db_val_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int previous_temp_int 																			__SECTION_ZERO("retention_mem_area0");
-int previous_temp_frac																			__SECTION_ZERO("retention_mem_area0");
-char temperature_string[DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN]  __SECTION_ZERO("retention_mem_area0");
-char axis_val[DEF_SVC1_ACCEL_X_DATA_CHAR_LEN]  							__SECTION_ZERO("retention_mem_area0");
-int16_t previous_accel_x 																		__SECTION_ZERO("retention_mem_area0");
-int16_t previous_accel_y																		__SECTION_ZERO("retention_mem_area0");
-int16_t previous_accel_z 																		__SECTION_ZERO("retention_mem_area0");
-uint8_t previous_accel_xyz[DEF_SVC1_GYR_DATA_CHAR_LEN] 			__SECTION_ZERO("retention_mem_area0");
+int previous_temp_int 																			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int previous_temp_frac																			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+char temperature_string[DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN]  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t previous_accel_x 																		__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t previous_accel_y																		__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t previous_accel_z 																		__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+uint8_t previous_accel_xyz[DEF_SVC1_ACC_DATA_CHAR_LEN] 			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
 extern const i2c_cfg_t i2c_cfg_MCP9808;
 extern const i2c_cfg_t i2c_cfg_ADXL345;
@@ -176,92 +175,32 @@ void capture_adxl345_data_cb_handler()
 {
 		// ADXL345 Data capturing
     int16_t x, y, z;
-		uint8_t xyz[DEF_SVC1_GYR_DATA_CHAR_LEN];
+		uint8_t xyz[DEF_SVC1_ACC_DATA_CHAR_LEN];
 	
 		adxl345_capture(&x, &y, &z, xyz);
 		previous_accel_x = x;
 		previous_accel_y = y;
 		previous_accel_z = z;
-		memcpy(previous_accel_xyz, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
+		memcpy(previous_accel_xyz, xyz, DEF_SVC1_ACC_DATA_CHAR_LEN);
 	
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
-	
-		// Update and send value of Accel X
-		struct custs1_val_ntf_ind_req *req_x = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+		
+		// Update and send value of Accelerometer
+		struct custs1_val_ntf_ind_req *req_acc = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
 																														prf_get_task_from_id(TASK_ID_CUSTS1),
 																														TASK_APP,
 																														custs1_val_ntf_ind_req,
-																														DEF_SVC1_ACCEL_X_DATA_CHAR_LEN);
+																														DEF_SVC1_ACC_DATA_CHAR_LEN);
 
 
-    req_x->conidx = app_connection_idx;
-    req_x->handle = SVC1_IDX_ACCELEROMETER_X_VAL;
-    req_x->length = DEF_SVC1_ACCEL_X_DATA_CHAR_LEN;
-    req_x->notification = true;
+    req_acc->conidx = app_connection_idx;
+    req_acc->handle = SVC1_IDX_ACCELEROMETER_VAL;
+    req_acc->length = DEF_SVC1_ACC_DATA_CHAR_LEN;
+    req_acc->notification = true;
 		
-		uint8_t string_length = sprintf(axis_val, "%d", (int16_t)(x * 3.9));
-    memcpy(req_x->value, axis_val, DEF_SVC1_ACCEL_X_DATA_CHAR_LEN);
+    memcpy(req_acc->value, xyz, DEF_SVC1_ACC_DATA_CHAR_LEN);
 
-    KE_MSG_SEND(req_x);
-		
-		memset(axis_val, 0, sizeof(axis_val));
-		
-		// Update and send value of Accel Y
-		struct custs1_val_ntf_ind_req *req_y = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
-																														prf_get_task_from_id(TASK_ID_CUSTS1),
-																														TASK_APP,
-																														custs1_val_ntf_ind_req,
-																														DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN);
-
-
-    req_y->conidx = app_connection_idx;
-    req_y->handle = SVC1_IDX_ACCELEROMETER_Y_VAL;
-    req_y->length = DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN;
-    req_y->notification = true;
-		
-		string_length = sprintf(axis_val, "%d", (int16_t)(y * 3.9));
-    memcpy(req_y->value, axis_val, DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN);
-
-    KE_MSG_SEND(req_y);
-		
-		memset(axis_val, 0, sizeof(axis_val));
-		
-		// Update and send value of Accel Z
-		struct custs1_val_ntf_ind_req *req_z = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
-																														prf_get_task_from_id(TASK_ID_CUSTS1),
-																														TASK_APP,
-																														custs1_val_ntf_ind_req,
-																														DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN);
-
-
-    req_z->conidx = app_connection_idx;
-    req_z->handle = SVC1_IDX_ACCELEROMETER_Z_VAL;
-    req_z->length = DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN;
-    req_z->notification = true;
-		
-		string_length = sprintf(axis_val, "%d", (int16_t)(z * 3.9));
-    memcpy(req_z->value, axis_val, DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN);
-
-    KE_MSG_SEND(req_z);
-		
-		memset(axis_val, 0, sizeof(axis_val));
-		
-		// Update and send value of Accel G
-		struct custs1_val_ntf_ind_req *req_g = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
-																														prf_get_task_from_id(TASK_ID_CUSTS1),
-																														TASK_APP,
-																														custs1_val_ntf_ind_req,
-																														DEF_SVC1_GYR_DATA_CHAR_LEN);
-
-
-    req_g->conidx = app_connection_idx;
-    req_g->handle = SVC1_IDX_GYROSCOPE_VAL;
-    req_g->length = DEF_SVC1_GYR_DATA_CHAR_LEN;
-    req_g->notification = true;
-		
-    memcpy(req_g->value, xyz, DEF_SVC1_GYR_DATA_CHAR_LEN);
-
-    KE_MSG_SEND(req_g);
+    KE_MSG_SEND(req_acc);
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
@@ -278,7 +217,7 @@ void capture_adxl345_data_cb_handler()
 
 void capture_mcp9808_data_cb_handler()
 {
-    struct custs1_val_ntf_ind_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+    struct custs1_val_ntf_ind_req *req_tmp = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
                                                           prf_get_task_from_id(TASK_ID_CUSTS1),
                                                           TASK_APP,
                                                           custs1_val_ntf_ind_req,
@@ -295,13 +234,13 @@ void capture_mcp9808_data_cb_handler()
 		
 		uint8_t length = snprintf(temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%d " ,temp_int, temp_frac);
 
-		req->conidx = 0;
-    req->handle = SVC2_IDX_TEMPERATURE_VAL;
-    req->length = DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN;
-    req->notification = true;
-    memcpy(req->value, temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
+		req_tmp->conidx = app_connection_idx;
+    req_tmp->handle = SVC2_IDX_TEMPERATURE_VAL;
+    req_tmp->length = DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN;
+    req_tmp->notification = true;
+    memcpy(req_tmp->value, temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
-    KE_MSG_SEND(req);
+    KE_MSG_SEND(req_tmp);
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {

@@ -56,6 +56,9 @@
 #include "MCP9808.h"
 #include "ADXL345.h"
 #include "user_periph_setup.h"
+#if defined(CFG_PRF_SUOTAR)
+#include "app_suotar.h"
+#endif
 
 extern const i2c_cfg_t i2c_cfg_ADXL345;
 extern const i2c_cfg_t i2c_cfg_MCP9808;
@@ -249,6 +252,22 @@ static void boot_flash_init_power_down(void)
 #endif // CFG_SPI_FLASH_ENABLE
 
 #if defined(CFG_PRF_SUOTAR)
+/*
+static void update_parameters_for_SUOTA()
+{
+		struct gapc_param_update_cmd* cmd;
+    cmd = app_easy_gap_param_update_msg_create(conidx);
+
+    // Send the message
+    app_param_update_msg_send(cmd);
+    param_update_cmd[conidx] = NULL;
+}
+*/
+static void restore_parameters_after_SUOTA()
+{
+		app_easy_gap_param_update_start(app_connection_idx);
+}
+
 void on_suotar_status_change(const uint8_t suotar_event)
 {
 #if (!SUOTAR_SPI_DISABLE)
@@ -269,10 +288,16 @@ void on_suotar_status_change(const uint8_t suotar_event)
     // Try to auto-detect the device
     spi_flash_auto_detect(&dev_id);
 
-    if (suotar_event == SUOTAR_END)
+		if (suotar_event == SUOTAR_START)
+		{
+				//update_parameters_for_SUOTA();
+		}
+    else if (suotar_event == SUOTAR_END)
     {
         // Power down SPI Flash
         spi_flash_power_down();
+			
+				restore_parameters_after_SUOTA();
     }
 #endif
 }
@@ -408,6 +433,7 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
 		}
 		
+#if defined(CFG_PRF_SUOTAR)
 		// Issue a platform reset when it is requested by the suotar procedure
 		if (suota_state.reboot_requested)
 		{
@@ -417,7 +443,8 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 				// Platform reset
 				platform_reset(RESET_AFTER_SUOTA_UPDATE);
 		}
-				
+#endif
+		
     // Restart Advertising
     user_app_adv_start();
 }
@@ -460,29 +487,11 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 								case SVC2_IDX_CONTROL_POINT_2_VAL:
                     user_svc2_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
-								case SVC1_IDX_ACCELEROMETER_X_NTF_CFG:
+								case SVC1_IDX_ACCELEROMETER_NTF_CFG:
 										if(msg_param->value[0] == 0x01)
-												arch_puts("Enabled Notifications for Accelerometer X\r\n");
+												arch_puts("Enabled Notifications for Accelerometer\r\n");
 										else
-												arch_puts("Disabled Notifications for Accelerometer X\r\n");
-										break;
-								case SVC1_IDX_ACCELEROMETER_Y_NTF_CFG:
-										if(msg_param->value[0] == 0x01)
-												arch_puts("Enabled Notifications for Accelerometer Y\r\n");
-										else
-												arch_puts("Disabled Notifications for Accelerometer Y\r\n");
-										break;
-								case SVC1_IDX_ACCELEROMETER_Z_NTF_CFG:
-										if(msg_param->value[0] == 0x01)
-												arch_puts("Enabled Notifications for Accelerometer Z\r\n");
-										else
-												arch_puts("Disabled Notifications for Accelerometer Z\r\n");
-										break;
-								case SVC1_IDX_GYROSCOPE_NTF_CFG:
-										if(msg_param->value[0] == 0x01)
-												arch_puts("Enabled Notifications for Accelerometer G\r\n");
-										else
-												arch_puts("Disabled Notifications for Accelerometer G\r\n");
+												arch_puts("Disabled Notifications for Accelerometer\r\n");
 										break;
 								case SVC2_IDX_TEMPERATURE_NTF_CFG:
 										if(msg_param->value[0] == 0x01)

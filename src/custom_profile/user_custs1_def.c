@@ -61,10 +61,7 @@
 static const att_svc_desc128_t custs1_svc1                      						= DEF_SVC1_UUID_128;
 
 static const uint8_t SVC1_CTRL_POINT_1_UUID_128[ATT_UUID_128_LEN]      		  = DEF_SVC1_CTRL_POINT_1_UUID_128;
-static const uint8_t SVC1_ACCEL_X_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_X_DATA_UUID_128;
-static const uint8_t SVC1_ACCEL_Y_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_Y_DATA_UUID_128;
-static const uint8_t SVC1_ACCEL_Z_DATA_UUID_128[ATT_UUID_128_LEN]           = DEF_SVC1_ACCEL_Z_DATA_UUID_128;
-static const uint8_t SVC1_GYR_DATA_UUID_128[ATT_UUID_128_LEN]               = DEF_SVC1_GYR_DATA_UUID_128;
+static const uint8_t SVC1_ACC_DATA_UUID_128[ATT_UUID_128_LEN]               = DEF_SVC1_ACC_DATA_UUID_128;
 
 // Service 2 of the custom server 1
 static const att_svc_desc128_t custs1_svc2                      						= DEF_SVC2_UUID_128;
@@ -112,73 +109,22 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								sizeof(DEF_SVC1_CONTROL_POINT_1_USER_DESC) - 1, sizeof(DEF_SVC1_CONTROL_POINT_1_USER_DESC) - 1,
 																								(uint8_t *) DEF_SVC1_CONTROL_POINT_1_USER_DESC},
 
-    // Accelerometer X Characteristic Declaration
-    [SVC1_IDX_ACCELEROMETER_X_CHAR]          = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE),
+    // Accelerometer Characteristic Declaration
+    [SVC1_IDX_ACCELEROMETER_CHAR]          	 = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE),
 																								0, 0, NULL},
 
-    // Accelerometer X Characteristic Value
-    [SVC1_IDX_ACCELEROMETER_X_VAL]           = {SVC1_ACCEL_X_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
-																								PERM(RD, ENABLE), DEF_SVC1_ACCEL_X_DATA_CHAR_LEN, 0, NULL},
+    // Accelerometer Characteristic Value
+    [SVC1_IDX_ACCELEROMETER_VAL]           	 = {SVC1_ACC_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
+																								PERM(RD, ENABLE), DEF_SVC1_ACC_DATA_CHAR_LEN, 0, NULL},
 		
-		// Accelerometer X Characteristic Configuration Descriptor
-    [SVC1_IDX_ACCELEROMETER_X_NTF_CFG]       = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
-                                                sizeof(uint16_t), 0, NULL},
+		// Accelerometer Characteristic Configuration Descriptor
+    [SVC1_IDX_ACCELEROMETER_NTF_CFG]       	 = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
+                                               sizeof(uint16_t), 0, NULL},
 
-    // Accelerometer X Characteristic User Description
-    [SVC1_IDX_ACCELEROMETER_X_USER_DESC]     = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								sizeof(DEF_SVC1_ACCEL_X_DATA_USER_DESC) - 1, sizeof(DEF_SVC1_ACCEL_X_DATA_USER_DESC) - 1,
-																								(uint8_t *) DEF_SVC1_ACCEL_X_DATA_USER_DESC},
-		
-		// Accelerometer Y Characteristic Declaration
-    [SVC1_IDX_ACCELEROMETER_Y_CHAR]          = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								0, 0, NULL},
-
-    // Accelerometer Y Characteristic Value
-    [SVC1_IDX_ACCELEROMETER_Y_VAL]           = {SVC1_ACCEL_Y_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
-																								PERM(RD, ENABLE), DEF_SVC1_ACCEL_Y_DATA_CHAR_LEN, 0, NULL},
-		
-		// Accelerometer Y Characteristic Configuration Descriptor
-    [SVC1_IDX_ACCELEROMETER_Y_NTF_CFG]       = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
-                                                sizeof(uint16_t), 0, NULL},
-
-    // Accelerometer Y Characteristic User Description
-    [SVC1_IDX_ACCELEROMETER_Y_USER_DESC]     = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								sizeof(DEF_SVC1_ACCEL_Y_DATA_USER_DESC) - 1, sizeof(DEF_SVC1_ACCEL_Y_DATA_USER_DESC) - 1,
-																								(uint8_t *) DEF_SVC1_ACCEL_Y_DATA_USER_DESC},
-		
-		// Accelerometer Z Characteristic Declaration
-    [SVC1_IDX_ACCELEROMETER_Z_CHAR]          = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								0, 0, NULL},
-
-    // Accelerometer Z Characteristic Value
-    [SVC1_IDX_ACCELEROMETER_Z_VAL]           = {SVC1_ACCEL_Z_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
-																								PERM(RD, ENABLE), DEF_SVC1_ACCEL_Z_DATA_CHAR_LEN, 0, NULL},
-		
-		// Accelerometer Z Characteristic Configuration Descriptor
-    [SVC1_IDX_ACCELEROMETER_Z_NTF_CFG]       = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
-                                                sizeof(uint16_t), 0, NULL},
-
-    // Accelerometer Z Characteristic User Description
-    [SVC1_IDX_ACCELEROMETER_Z_USER_DESC]     = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								sizeof(DEF_SVC1_ACCEL_Z_DATA_USER_DESC) - 1, sizeof(DEF_SVC1_ACCEL_Z_DATA_USER_DESC) - 1,
-																								(uint8_t *) DEF_SVC1_ACCEL_Z_DATA_USER_DESC},
-		
-		// Gyroscope Characteristic Declaration
-    [SVC1_IDX_GYROSCOPE_CHAR]          			 = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								0, 0, NULL},
-
-    // Gyroscope Characteristic Value
-    [SVC1_IDX_GYROSCOPE_VAL]           			 = {SVC1_GYR_DATA_UUID_128, ATT_UUID_128_LEN, PERM(NTF, ENABLE)|
-																								PERM(RD, ENABLE), DEF_SVC1_GYR_DATA_CHAR_LEN, 0, NULL},
-		
-		// Gyroscope Characteristic Configuration Descriptor
-    [SVC1_IDX_GYROSCOPE_NTF_CFG]       			 = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
-                                                sizeof(uint16_t), 0, NULL},
-
-    // Gyroscope Characteristic User Description
-    [SVC1_IDX_GYROSCOPE_USER_DESC]     			 = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
-																								sizeof(DEF_SVC1_GYR_DATA_USER_DESC) - 1, sizeof(DEF_SVC1_GYR_DATA_USER_DESC) - 1,
-																								(uint8_t *) DEF_SVC1_GYR_DATA_USER_DESC},
+    // Accelerometer Characteristic User Description
+    [SVC1_IDX_ACCELEROMETER_USER_DESC]     	 = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
+																							 sizeof(DEF_SVC1_ACC_DATA_USER_DESC) - 1, sizeof(DEF_SVC1_ACC_DATA_USER_DESC) - 1,
+																							 (uint8_t *) DEF_SVC1_ACC_DATA_USER_DESC},
 
     
     /*************************

@@ -33,7 +33,6 @@
  ****************************************************************************************
  */
 #include "MCP9808.h"
-#if !defined(CFG_USE_INTERNAL_TEMP_SENSOR)
 #include "i2c.h"
 #include "math.h"
 
@@ -176,4 +175,3 @@ double MCP9808_get_temperature(void){
 	return MCP9808_calculate_temperature(MCP9808_read_temperature_register());
 }
 
-#endif

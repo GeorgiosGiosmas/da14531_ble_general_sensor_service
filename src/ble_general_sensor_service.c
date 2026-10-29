@@ -271,7 +271,6 @@ static void restore_parameters_after_SUOTA()
 
 void on_suotar_status_change(const uint8_t suotar_event)
 {
-#if (!SUOTAR_SPI_DISABLE)
     uint8_t dev_id;
 	
 		// Disable HW Reset functionality of P0_0
@@ -300,7 +299,6 @@ void on_suotar_status_change(const uint8_t suotar_event)
 			
 				restore_parameters_after_SUOTA();
     }
-#endif
 }
 #endif
 
@@ -454,7 +452,7 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 void user_app_on_db_init_complete(void)
 {
     /* Set application version number in DISS */
-    char sw_version[] = SDK_VERSION;
+    char sw_version[] = APP_VERSION;
     struct diss_set_value_req *req = KE_MSG_ALLOC_DYN(DISS_SET_VALUE_REQ,
                                                       prf_get_task_from_id(TASK_ID_DISS),
                                                       TASK_APP,

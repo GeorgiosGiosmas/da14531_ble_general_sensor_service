@@ -35,12 +35,6 @@
 #include "i2c.h"
 #include "compiler.h"
 
-#ifdef NO_SENSOR
-uint16_t dummy_x     __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint16_t dummy_y     __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint16_t dummy_z     __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-#endif
-
 /**
  ****************************************************************************************
  * @brief ADXL345 sensor initialization function
@@ -48,12 +42,10 @@ uint16_t dummy_z     __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
  ****************************************************************************************
  */
 void ADXL345_init(void){
-#ifdef NO_SENSOR
-	return;//If the demo is ran without a sensor return immediately
-#else
-    const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x08};      //Set measure mode
+
     const uint8_t data_format_cmd[] = {ADXL345_REG_DATA_FORMAT, 0x0B};  //16g range, LSB mode with sign ext, full resolution
     const uint8_t bw_rate_cmd[] = {ADXL345_REG_BW_RATE, 0x0A};          //100Hz output
+		const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x08};      //Set measure mode
 
     i2c_abort_t abort_code; //May be used for error checking
 
@@ -72,14 +64,10 @@ void ADXL345_init(void){
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
-
-#endif //NO_SENSOR
 }
 
 void ADXL345_deinit(void){
-#ifdef NO_SENSOR
-		return;//If the demo is ran without a sensor return immediately
-#else
+	
 		const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x00};      //Set measure mode
 
     i2c_abort_t abort_code; //May be used for error checking
@@ -90,7 +78,6 @@ void ADXL345_deinit(void){
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
-#endif //NO_SENSOR
 }
 
 /**
@@ -102,7 +89,7 @@ void ADXL345_deinit(void){
 int16_t ADXL345_read_X(void)
 {
     int16_t axis_read;                      //Readout of the sensor or dummy
-#ifndef NO_SENSOR
+
     i2c_abort_t abort_code;                 //May be used for error checking
     uint8_t reg_addr = ADXL345_REG_DATAX0;  //Variable to hold the register address
     uint8_t byte_received = 0;              //Intermediate storage of the received byte
@@ -133,11 +120,6 @@ int16_t ADXL345_read_X(void)
 		}
     
 		axis_read |= (byte_received & 0xff) << 8;  //Store X MSB
-#else
-		//If no sensor is present just increase current data
-    dummy_x++;
-		axis_read = dummy_x;
-#endif //NO_SENSOR
 		
 		return axis_read;
 }
@@ -151,7 +133,7 @@ int16_t ADXL345_read_X(void)
 int16_t ADXL345_read_Y(void)
 {
     int16_t axis_read;                      //Readout of the sensor or dummy
-#ifndef NO_SENSOR
+
     i2c_abort_t abort_code;                 //May be used for error checking
     uint8_t reg_addr = ADXL345_REG_DATAY0;  //Variable to hold the register address
     uint8_t byte_received = 0;              //Intermediate storage of the received byte
@@ -182,11 +164,6 @@ int16_t ADXL345_read_Y(void)
 		}
 		
    	axis_read |= (byte_received & 0xff) << 8;  //Store Y MSB
-#else
-		//If no sensor is present just increase current data
-    dummy_y++;
-		axis_read = (int16_t)dummy_y;
-#endif //NO_SENSOR
 		
 		return axis_read;
 }
@@ -200,7 +177,7 @@ int16_t ADXL345_read_Y(void)
 int16_t ADXL345_read_Z(void)
 {
     int16_t axis_read;                      //Readout of the sensor or dummy
-#ifndef NO_SENSOR
+
     i2c_abort_t abort_code;                 //May be used for error checking
     uint8_t reg_addr = ADXL345_REG_DATAZ0;  //Variable to hold the register address
     uint8_t byte_received = 0;              //Intermediate storage of the received byte
@@ -231,11 +208,6 @@ int16_t ADXL345_read_Z(void)
 		}
 		
 		axis_read |= (byte_received & 0xff) << 8;  //Store Z MSB
-#else
-		//If no sensor is present just increase current data
-    dummy_z++;
-		axis_read = (int16_t)dummy_z;
-#endif //NO_SENSOR
 	
 		return axis_read;
 }
@@ -249,7 +221,7 @@ int16_t ADXL345_read_Z(void)
  */
 void ADXL345_read_XYZ(uint8_t* xyz){
     static uint8_t previous[6] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY//Holds the previous measurement
-#ifndef NO_SENSOR
+
     i2c_abort_t abort_code;     //May be used for error checking
     //Setup multiple-byte read from DATAX0 to DATAZ1 registers
     const uint8_t reg_addr = ADXL345_REG_DATAX0;
@@ -274,14 +246,4 @@ void ADXL345_read_XYZ(uint8_t* xyz){
 		
     //Save the data
 		memcpy(previous, xyz, 6);
-#else
-    // Send dummy data if no sensor is attached
-    dummy_x++;
-    dummy_y++;
-    dummy_z++;
-    
-    co_write16p(xyz, dummy_x);
-    co_write16p(&xyz[2], dummy_y);
-    co_write16p(&xyz[4], dummy_z);
-#endif	
 }

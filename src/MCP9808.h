@@ -35,18 +35,19 @@
  * INCLUDE FILES
  ****************************************************************************************
  */
- #include "da1458x_config_basic.h"
- #if !defined(CFG_USE_INTERNAL_TEMP_SENSOR)
+#include "da1458x_config_basic.h"
 #include "stdint.h"
 
 /*
  * USER TYPE DEFINITIONS
  ****************************************************************************************
  */
-typedef enum{ 	HALF_RESOLUTION = 0,
-                QUATER_RESOLUTION,
-								EIGHT_RESOLUTION,
-								SIXTEENTH_RESOLUTION} temperature_resolution; //The higher the resolution the longer the convursion time, for SIXTEENTH_RESOLUTION it is 250ms.
+typedef enum{ 	
+		HALF_RESOLUTION = 0,
+		QUARTER_RESOLUTION,
+		EIGHT_RESOLUTION,
+		SIXTEENTH_RESOLUTION
+} temperature_resolution; //The higher the resolution the longer the convursion time, for SIXTEENTH_RESOLUTION it is 250ms.
 																															//Look in the datasheet of the MCP9808 Temperature sensor for the convursion time.
 							
 /*
@@ -85,7 +86,5 @@ uint16_t MCP9808_read_temperature_register(void);
 double MCP9808_calculate_temperature(const uint16_t);
 
 double MCP9808_get_temperature(void);
-
-#endif //CFG_USE_INTERNAL_TEMP_SENSOR
 
 #endif // _MCP9808_H_

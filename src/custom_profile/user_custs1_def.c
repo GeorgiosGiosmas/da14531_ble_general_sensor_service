@@ -70,10 +70,19 @@ static const uint8_t SVC2_CTRL_POINT_2_UUID_128[ATT_UUID_128_LEN]      		  = DEF
 static const uint8_t SVC2_TEMP_VAL_UUID_128[ATT_UUID_128_LEN]      			    = DEF_SVC2_TEMPERATURE_VAL_UUID_128;
 
 // Attribute specifications
-static const uint16_t att_decl_svc       = ATT_DECL_PRIMARY_SERVICE;
-static const uint16_t att_decl_char      = ATT_DECL_CHARACTERISTIC;
-static const uint16_t att_desc_cfg       = ATT_DESC_CLIENT_CHAR_CFG;
-static const uint16_t att_desc_user_desc = ATT_DESC_CHAR_USER_DESCRIPTION;
+static const uint16_t att_decl_svc       			= ATT_DECL_PRIMARY_SERVICE;
+static const uint16_t att_decl_char      			= ATT_DECL_CHARACTERISTIC;
+static const uint16_t att_desc_cfg       			= ATT_DESC_CLIENT_CHAR_CFG;
+static const uint16_t att_desc_user_desc 			= ATT_DESC_CHAR_USER_DESCRIPTION;
+static const uint16_t att_desc_pres_format		= ATT_DESC_CHAR_PRES_FORMAT;
+	
+static const uint8_t SVC2_TEMP_PRES_FORMAT[] = {
+    0x0E,          // Format:      sint16
+    0xFF,          // Exponent:    -1  (value x 10^-1)
+    0x2F, 0x27,    // Unit:        0x272F, degree Celsius
+    0x01,          // Namespace:   Bluetooth SIG
+    0x00, 0x00     // Description: 0x0000
+};
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
@@ -160,6 +169,11 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 		// Temperature Characteristic Configuration Descriptor
     [SVC2_IDX_TEMPERATURE_NTF_CFG]       		 = {(uint8_t*)&att_desc_cfg, ATT_UUID_16_LEN, PERM(RD, ENABLE) | PERM(WR, ENABLE) | PERM(WRITE_REQ, ENABLE),
                                                 sizeof(uint16_t), 0, NULL},
+		
+		// Temperature Characteristic Presentation Format Descriptor
+		[SVC2_IDX_TEMPERATURE_PRES_FORMAT_DESC]	 = {(uint8_t*)&att_desc_pres_format, ATT_UUID_16_LEN, PERM(RD, ENABLE), 
+																								sizeof(SVC2_TEMP_PRES_FORMAT), sizeof(SVC2_TEMP_PRES_FORMAT), 
+		                                            (uint8_t *)SVC2_TEMP_PRES_FORMAT},
 
     // Temperature Characteristic User Description
     [SVC2_IDX_TEMPERATURE_USER_DESC]     		 = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),

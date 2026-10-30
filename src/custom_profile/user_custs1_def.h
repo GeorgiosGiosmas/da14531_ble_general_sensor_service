@@ -66,7 +66,7 @@
 #define DEF_SVC1_ACC_DATA_CHAR_LEN            	6
 
 #define DEF_SVC1_CONTROL_POINT_1_USER_DESC     	"Control Point Accelerometer"
-#define DEF_SVC1_ACC_DATA_USER_DESC      				"Accelerometer Data"
+#define DEF_SVC1_ACC_DATA_USER_DESC      				"Accelerometer Data: X,Y,Z int16 LE, 3.9mg/LSB"
 
 // Service 2 (Temperature) of the custom server 1
 #define DEF_SVC2_UUID_128                		  	{0x59, 0x5a, 0x08, 0xe4, 0x86, 0x2a, 0x9e, 0x8f, 0xe9, 0x11, 0xbc, 0x7c, 0x7c, 0x46, 0x42, 0x18}
@@ -105,6 +105,7 @@ enum
     SVC2_IDX_TEMPERATURE_CHAR,
     SVC2_IDX_TEMPERATURE_VAL,
     SVC2_IDX_TEMPERATURE_NTF_CFG,
+		SVC2_IDX_TEMPERATURE_PRES_FORMAT_DESC,
 		SVC2_IDX_TEMPERATURE_USER_DESC,
 
 		CUSTS1_IDX_NB

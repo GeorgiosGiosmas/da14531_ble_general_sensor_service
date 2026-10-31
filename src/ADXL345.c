@@ -48,12 +48,6 @@ void ADXL345_init(void){
 		const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x08};      //Set measure mode
 
     i2c_abort_t abort_code; //May be used for error checking
-
-		//Initialize sensor configuration registers
-    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
-		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
-		}
     
 		i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
@@ -61,6 +55,12 @@ void ADXL345_init(void){
 		}
 		
     i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_ADD_STOP);
+		if(abort_code != I2C_ABORT_NONE) {
+			//insert error handler
+		}
+		
+		//Initialize sensor configuration registers
+    i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
 		if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
@@ -220,9 +220,9 @@ int16_t ADXL345_read_Z(void)
  ****************************************************************************************
  */
 void ADXL345_read_XYZ(uint8_t* xyz){
-    static uint8_t previous[6] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY//Holds the previous measurement
 
-    i2c_abort_t abort_code;     //May be used for error checking
+		i2c_abort_t abort_code;     //May be used for error checking
+	
     //Setup multiple-byte read from DATAX0 to DATAZ1 registers
     const uint8_t reg_addr = ADXL345_REG_DATAX0;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
@@ -234,16 +234,4 @@ void ADXL345_read_XYZ(uint8_t* xyz){
     if(abort_code != I2C_ABORT_NONE) {
 			//insert error handler
 		}
-		
-    //Process the received register values
-		for(int i = 0; i < 3; i++){
-				int16_t current =   (xyz[i*2+1] & 0xff) << 8 | (xyz[i*2] & 0xff); //Convert the received data to a 16 bit int
-				int16_t prev = (previous[i*2+1] & 0xff) << 8 | (previous[i*2] & 0xff);
-				current = (3 * current + prev) >> 2; //A very simple smoothing algorithm
-				xyz[i*2] = current & 0xff;
-				xyz[i*2+1] = (current >> 8) & 0xff;
-		}
-		
-    //Save the data
-		memcpy(previous, xyz, 6);
 }

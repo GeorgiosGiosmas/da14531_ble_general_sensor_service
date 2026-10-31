@@ -188,6 +188,13 @@ void GPIO_reservations(void);
 
 /**
  ****************************************************************************************
+ * @brief    Function responsible for recovering the bus in case SDA has stayed low
+ ****************************************************************************************
+ */
+void i2c_bus_recovery(void);
+	
+/**
+ ****************************************************************************************
  * @brief   Sets the functionality of application pads
  * @details i.e. to set P0_1 as Generic purpose Output:
  *          GPIO_ConfigurePin(GPIO_PORT_0, GPIO_PIN_1, OUTPUT, PID_GPIO, false);

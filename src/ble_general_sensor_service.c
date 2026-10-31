@@ -97,8 +97,10 @@ uint8_t stored_adv_data_len                     __SECTION_ZERO("retention_mem_ar
 uint8_t stored_scan_rsp_data_len                __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_adv_data[ADV_DATA_LEN]           __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_scan_rsp_data[SCAN_RSP_DATA_LEN] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-extern ke_msg_id_t timer_adxl345_used      			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-extern ke_msg_id_t timer_mcp9808_used      			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+extern timer_hnd timer_adxl345_used;      			  
+extern timer_hnd timer_mcp9808_used;     			  
+uint16_t acc_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+uint16_t tmp_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
 /*
  * FUNCTION DEFINITIONS
@@ -229,6 +231,20 @@ static void param_update_request_timer_cb()
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 }
 
+bool i2c_wait_idle(void)
+{
+    for (uint8_t i = 0; i < I2C_IDLE_POLL_COUNT; i++)
+    {
+        if (!i2c_is_master_busy())
+        {
+            return true;
+        }
+        arch_asm_delay_us(I2C_IDLE_POLL_US);
+    }
+		
+    return false;
+}
+
 #if defined(CFG_SPI_FLASH_ENABLE)
 static void boot_flash_init_power_down(void)
 {
@@ -307,18 +323,32 @@ static void power_down_sensors(void)
 		i2c_init(&i2c_cfg_MCP9808);
 		MCP9808_deinit();
 	
-		// Wait until no master activity
-		while (i2c_is_master_busy());
-	
-		i2c_release();
-	
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("MCP9808 power-down: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else
+		{
+			i2c_release();
+		}
+		
 		i2c_init(&i2c_cfg_ADXL345);
 		ADXL345_deinit();
 	
-		// Wait until no master activity
-		while (i2c_is_master_busy());
-	
-		i2c_release();
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("ADXL345 power-down: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else
+		{
+			i2c_release();
+		}
 }
 
 void user_app_init(void)
@@ -406,7 +436,11 @@ void user_app_adv_undirect_complete(uint8_t status)
 
 void user_app_disconnect(struct gapc_disconnect_ind const *param)
 {
-	arch_printf("App Disconnected: Index -> %lu, Reason: -> %u\r\n", param->conhdl, param->reason);
+		arch_printf("App Disconnected: Index -> %lu, Reason: -> %u\r\n", param->conhdl, param->reason);
+	
+		// Clear CCCD descriptor values upon disconnection
+		acc_cccd = 0;
+		tmp_cccd = 0;
 	
     // Cancel the parameter update request timer
     if (app_param_update_request_timer_used != EASY_TIMER_INVALID_TIMER)
@@ -462,8 +496,8 @@ void user_app_on_db_init_complete(void)
                                                       diss_set_value_req,
                                                       sizeof(sw_version));
     req->value = DIS_SW_REV_STR_CHAR;
-    req->length = sizeof(sw_version);
-    memcpy(req->data, sw_version, sizeof(sw_version));
+    req->length = sizeof(sw_version) - 1;
+    memcpy(req->data, sw_version, sizeof(sw_version) - 1);
 		
     ke_msg_send(req);
 		
@@ -496,48 +530,87 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
                 case SVC1_IDX_CONTROL_POINT_1_VAL:
                     user_svc1_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
+								
 								case SVC2_IDX_CONTROL_POINT_2_VAL:
                     user_svc2_ctrl_wr_ind_handler(msgid, msg_param, dest_id, src_id);
                     break;
+								
 								case SVC1_IDX_ACCELEROMETER_NTF_CFG:
-										if(msg_param->value[0] == 0x01)
-												arch_puts("Enabled Notifications for Accelerometer\r\n");
+								{
+										// Check the length of the written value in CCCD of the Accelerometer
+										if (msg_param->length != sizeof(uint16_t))
+										{
+												arch_printf("Accelerometer CCC: bad length %u\r\n", msg_param->length);
+												break;
+										}
+										
+										// Read the CCCD value for the Accelerometer
+										acc_cccd = co_read16p(&msg_param->value[0]);
+										
+										if (acc_cccd == PRF_CLI_START_NTF)              /* 0x0001 */
+										{
+												arch_puts("Accelerometer notifications enabled\r\n");
+										}
+										else if (acc_cccd == PRF_CLI_STOP_NTFIND)       /* 0x0000 */
+										{
+												arch_puts("Accelerometer notifications disabled\r\n");
+										}
 										else
-												arch_puts("Disabled Notifications for Accelerometer\r\n");
-										break;
+										{
+												arch_printf("Accelerometer CCC: unsupported value 0x%04X on a notify-only characteristic\r\n", acc_cccd);
+										}
+								}break;
+								
 								case SVC2_IDX_TEMPERATURE_NTF_CFG:
-										if(msg_param->value[0] == 0x01)
-												arch_puts("Enabled Notifications for Temperature\r\n");
+								{
+										// Check the length of the written value in CCCD of the Temperature
+										if (msg_param->length != sizeof(uint16_t))
+										{
+												arch_printf("Temperature CCC: bad length %u\r\n", msg_param->length);
+												break;
+										}
+										
+										// Read the CCCD value for the Temperature
+										tmp_cccd = co_read16p(&msg_param->value[0]);
+										
+										if (tmp_cccd == PRF_CLI_START_NTF)              /* 0x0001 */
+										{
+												arch_puts("Temperature notifications enabled\r\n");
+										}
+										else if (tmp_cccd == PRF_CLI_STOP_NTFIND)       /* 0x0000 */
+										{
+												arch_puts("Temperature notifications disabled\r\n");
+										}
 										else
-												arch_puts("Disabled Notifications for Temperature\r\n");
-										break;
+										{
+												arch_printf("Temperature CCC: unsupported value 0x%04X on a notify-only characteristic\r\n", tmp_cccd);
+										}
+								}break;
 
                 default:
                     break;
             }
         } break;
 
+				// Do nothing when Notifications leave the Queue where they await for sending
         case CUSTS1_VAL_NTF_CFM:
         {
             struct custs1_val_ntf_cfm const *msg_param = (struct custs1_val_ntf_cfm const *)(param);
 
             switch (msg_param->handle)
             {
-								/*
-                case SVC1_IDX_ADC_VAL_1_VAL:
-                    break;
-
-                case SVC1_IDX_BUTTON_STATE_VAL:
-                    break;
-
-                case SVC1_IDX_LONG_VALUE_VAL:
-                    break;
-	              */
+								case SVC1_IDX_ACCELEROMETER_VAL:
+										break;
+								
+								case SVC2_IDX_TEMPERATURE_VAL:
+										break;
+								
                 default:
                     break;
             }
         } break;
 
+				// Indication messages don't exist in this example so they remain unhandled
         case CUSTS1_VAL_IND_CFM:
         {
             struct custs1_val_ind_cfm const *msg_param = (struct custs1_val_ind_cfm const *)(param);

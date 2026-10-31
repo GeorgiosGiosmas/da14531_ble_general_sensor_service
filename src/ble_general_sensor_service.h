@@ -69,6 +69,10 @@
  ****************************************************************************************
  */
 
+/* Macros i2c bus stuck check */
+#define I2C_IDLE_POLL_US      (100)
+#define I2C_IDLE_POLL_COUNT   (20)      /* 20 x 100 us = 2 ms ceiling */
+
 /* Duration of timer for connection parameter update request */
 #define APP_PARAM_UPDATE_REQUEST_TO         (500)   // 1000*10ms = 10sec, The maximum allowed value is 41943sec (4194300 * 10ms)
 
@@ -131,6 +135,13 @@ void user_app_on_db_init_complete(void);
 */
 void user_app_connection(uint8_t connection_idx, 
                          struct gapc_connection_req_ind const *param);
+
+/**
+ ****************************************************************************************
+ * @brief Check if i2c bus is stcuk helper function.
+ ****************************************************************************************
+*/
+bool i2c_wait_idle(void);
 
 /**
  ****************************************************************************************

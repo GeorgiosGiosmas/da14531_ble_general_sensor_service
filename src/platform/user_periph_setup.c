@@ -193,8 +193,7 @@ const i2c_cfg_t i2c_cfg_ADXL345 = {
     .rx_fifo_level = 1,
 };
 
-/** Function responsible for recovering the bus in case SDA has stayed low **/
-static void i2c_bus_recovery(void)
+void i2c_bus_recovery(void)
 {
     GPIO_ConfigurePin(I2C_SCL_PORT, I2C_SCL_PIN, OUTPUT, PID_GPIO, true);
     GPIO_ConfigurePin(I2C_SDA_PORT, I2C_SDA_PIN, INPUT,  PID_GPIO, true);
@@ -249,5 +248,5 @@ void periph_init(void)
     GPIO_set_pad_latch_en(true);
 		
 		// Make sure the bus is in the desired state
-		//i2c_bus_recovery();
+		i2c_bus_recovery();
 }

@@ -58,10 +58,12 @@ extern uint8_t app_connection_idx    __SECTION_ZERO("retention_mem_area0");
  ****************************************************************************************
  */
 
-ke_msg_id_t timer_adxl345_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-ke_msg_id_t timer_mcp9808_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd timer_adxl345_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd timer_mcp9808_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t indication_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t non_db_val_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+extern uint16_t acc_cccd;																		
+extern uint16_t tmp_cccd;																		
 
 extern const i2c_cfg_t i2c_cfg_MCP9808;
 extern const i2c_cfg_t i2c_cfg_ADXL345;
@@ -143,7 +145,7 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 		i2c_init(&i2c_cfg_ADXL345);
 		ADXL345_init();
 	
-		arch_asm_delay_us(11000);
+		arch_asm_delay_us(11200);
 	
 		ADXL345_read_XYZ(xyz);
 		*x = (*xyz & 0xFF) | (((uint16_t)*(xyz+1)) << 8);
@@ -152,10 +154,16 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 	
 		ADXL345_deinit();
 	
-	  // Wait until no master activity
-		while (i2c_is_master_busy());
-	
-		i2c_release();
+	  // Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("ADXL345 capture: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else{
+			i2c_release();
+		}
 }	
 
 /** Function that initializes and captures MCP9800 data **/
@@ -170,10 +178,16 @@ static void mcp9808_capture(int16_t *temp_tenths)
 
 		MCP9808_deinit();
 	
-		// Wait until no master activity
-		while (i2c_is_master_busy());
-	
-		i2c_release();
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("MCP9808 capture: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else{
+			i2c_release();
+		}
 }
 
 void capture_adxl345_data_cb_handler()
@@ -186,7 +200,17 @@ void capture_adxl345_data_cb_handler()
 	
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
 
-    if (ke_state_get(TASK_APP) == APP_CONNECTED)
+		// Check if the Central is still Connected
+		if(ke_state_get(TASK_APP) != APP_CONNECTED)
+		{
+				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
+				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
+			
+				return;
+		}
+	
+		// If the Central is still connected and has the Notifications enabled, then Notify it for the new Accelerometer Value
+    if (acc_cccd == PRF_CLI_START_NTF)
     {
 				// Update and send value of Accelerometer
 				struct custs1_val_ntf_ind_req *req_acc = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
@@ -204,15 +228,10 @@ void capture_adxl345_data_cb_handler()
 				memcpy(req_acc->value, xyz, DEF_SVC1_ACC_DATA_CHAR_LEN);
 
 				KE_MSG_SEND(req_acc);
-		
-        // Set it once again until Stop command is received in Control Characteristic
-        timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
     }
-		else
-		{
-				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
-				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
-		}
+		
+		// Set the timer once again until Stop command is received in Control Characteristic
+		timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
 }
 
 void capture_mcp9808_data_cb_handler()
@@ -226,7 +245,17 @@ void capture_mcp9808_data_cb_handler()
 
 		arch_printf("Temp: %s%u.%u\r\n", sign, mag / 10, mag % 10);
 
-    if (ke_state_get(TASK_APP) == APP_CONNECTED)
+		// Check if the Central is still Connected
+		if(ke_state_get(TASK_APP) != APP_CONNECTED)
+		{
+				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
+				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+			
+				return;
+		}
+		
+		// If the Central is still connected and has the Notifications enabled, then Notify it for the new Temperature Value
+    if (tmp_cccd == PRF_CLI_START_NTF)
     {
 				struct custs1_val_ntf_ind_req *req_tmp = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
                                                           prf_get_task_from_id(TASK_ID_CUSTS1),
@@ -241,15 +270,10 @@ void capture_mcp9808_data_cb_handler()
 				memcpy(req_tmp->value, &temp_tenths, sizeof(temp_tenths));
 
 				KE_MSG_SEND(req_tmp);
-				
-        // Set it once again until Stop command is received in Control Characteristic
-        timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
     }
-		else
-		{
-				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
-				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
-		}
+		
+		// Set the timer once again until Stop command is received in Control Characteristic
+		timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
 }
 
 void user_svc3_read_non_db_val_handler(ke_msg_id_t const msgid,

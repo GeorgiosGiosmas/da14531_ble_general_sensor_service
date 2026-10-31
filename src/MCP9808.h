@@ -1,7 +1,7 @@
 /**
  ****************************************************************************************
  *
- * @file user_custs1_impl.h
+ * @file MCP9808.h
  *
  * @brief Peripheral project Custom1 Server implementation header file.
  *
@@ -54,9 +54,9 @@ typedef enum{
  * DEFINES
  ****************************************************************************************
  */
-#define TEMPERATURE_DATA_REGISTER		    		0x05 									//Register 5 contains 12 bits of temperature data
-#define TEMPERATURE_REGISTER_SIZE		    		12	 									//In bits. Must be a unsigned integer greater than 0
-#define RESOLUTION_CONFIG_REGISTER	        0x08 								 	//2 bits register containing the resolution
+#define TEMPERATURE_DATA_REGISTER		    		0x05 									// Register 5 contains 13 bits of temperature data
+#define TEMPERATURE_REGISTER_SIZE		    		13	 									// In bits. Must be a unsigned integer greater than 0
+#define RESOLUTION_CONFIG_REGISTER	        0x08 								 	// 2 bits register containing the resolution
 #define RESOLUTION_CONFIG_REGISTER_SIZE			2
 #define USED_TEMPERATURE_RESOLUTION	        HALF_RESOLUTION 	
 #define CONFIGURATION_REGISTER							0x01	
@@ -83,8 +83,6 @@ temperature_resolution MCP9808_get_resolution_register(void);
 
 uint16_t MCP9808_read_temperature_register(void);
 
-double MCP9808_calculate_temperature(const uint16_t);
-
-double MCP9808_get_temperature(void);
+int16_t MCP9808_get_temperature_tenths(void);
 
 #endif // _MCP9808_H_

@@ -62,13 +62,6 @@ ke_msg_id_t timer_adxl345_used      												__SECTION_ZERO("retention_mem_ar
 ke_msg_id_t timer_mcp9808_used      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t indication_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t non_db_val_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int previous_temp_int 																			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int previous_temp_frac																			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-char temperature_string[DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN]  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t previous_accel_x 																		__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t previous_accel_y																		__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t previous_accel_z 																		__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint8_t previous_accel_xyz[DEF_SVC1_ACC_DATA_CHAR_LEN] 			__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
 extern const i2c_cfg_t i2c_cfg_MCP9808;
 extern const i2c_cfg_t i2c_cfg_ADXL345;
@@ -152,17 +145,15 @@ static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
 }	
 
 /** Function that initializes and captures MCP9800 data **/
-static void mcp9808_capture(int *temp_int, int *temp_frac)
+static void mcp9808_capture(int16_t *temp_tenths)
 {
 		i2c_init(&i2c_cfg_MCP9808);
 		MCP9808_init();
 	
 		arch_asm_delay_us(35000);
 	
-		double temperature = MCP9808_get_temperature();
-		*temp_int = (int)temperature;
-	  *temp_frac = (temperature >= 0) ? (int)((temperature - *temp_int) * 10) : (int)((*temp_int - temperature) * 10);
-	
+		*temp_tenths = MCP9808_get_temperature_tenths();
+
 		MCP9808_deinit();
 	
 		// Wait until no master activity
@@ -178,10 +169,6 @@ void capture_adxl345_data_cb_handler()
 		uint8_t xyz[DEF_SVC1_ACC_DATA_CHAR_LEN];
 	
 		adxl345_capture(&x, &y, &z, xyz);
-		previous_accel_x = x;
-		previous_accel_y = y;
-		previous_accel_z = z;
-		memcpy(previous_accel_xyz, xyz, DEF_SVC1_ACC_DATA_CHAR_LEN);
 	
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
 		
@@ -224,21 +211,19 @@ void capture_mcp9808_data_cb_handler()
                                                           DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
 
 		// MCP9808 Data Capturing
-		memset(temperature_string, 0, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
-    int temp_int, temp_frac;
-		mcp9808_capture(&temp_int, &temp_frac);
-		previous_temp_int = temp_int;
-		previous_temp_frac = temp_frac;
+    int16_t temp_tenths;
+		mcp9808_capture(&temp_tenths);
 		
-		arch_printf("Temp: %d.%d\r\n", temp_int, temp_frac);
-		
-		uint8_t length = snprintf(temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN, "%d.%d " ,temp_int, temp_frac);
+		const char *sign = (temp_tenths < 0) ? "-" : "";
+		uint16_t    mag  = (temp_tenths < 0) ? -temp_tenths : temp_tenths;
+
+		arch_printf("Temp: %s%u.%u\r\n", sign, mag / 10, mag % 10);
 
 		req_tmp->conidx = app_connection_idx;
     req_tmp->handle = SVC2_IDX_TEMPERATURE_VAL;
     req_tmp->length = DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN;
     req_tmp->notification = true;
-    memcpy(req_tmp->value, temperature_string, DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
+		memcpy(req_tmp->value, &temp_tenths, sizeof(temp_tenths));
 
     KE_MSG_SEND(req_tmp);
 

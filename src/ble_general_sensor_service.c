@@ -451,7 +451,9 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 #include "user_version.h"
 void user_app_on_db_init_complete(void)
 {
-    /* Set application version number in DISS */
+    /* Set the correct application version number in DISS 
+			 The default value is the SDK_VERSION, same as the FIRMWARE_VERSION
+		**/
     char sw_version[] = APP_VERSION;
     struct diss_set_value_req *req = KE_MSG_ALLOC_DYN(DISS_SET_VALUE_REQ,
                                                       prf_get_task_from_id(TASK_ID_DISS),

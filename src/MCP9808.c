@@ -1,7 +1,7 @@
 /**
  ****************************************************************************************
  *
- * @file user_peripheral.c
+ * @file MCP9808.c
  *
  * @brief Peripheral project source code.
  *
@@ -34,11 +34,9 @@
  */
 #include "MCP9808.h"
 #include "i2c.h"
-#include "math.h"
 
 const uint16_t constant_temp = (uint16_t)((1U << TEMPERATURE_REGISTER_SIZE) - 1);
 const uint16_t constant_reso = (uint16_t)((1U << RESOLUTION_CONFIG_REGISTER_SIZE) - 1);
-const uint8_t valid_temp_reg = ((TEMPERATURE_REGISTER_SIZE % 1) != 0) || (TEMPERATURE_REGISTER_SIZE < 1);
 
 /**
  ****************************************************************************************
@@ -125,15 +123,11 @@ temperature_resolution MCP9808_get_resolution_register(void){
 
 /**
  ****************************************************************************************
- * @brief read the 12bits temperature data from register 5. 
+ * @brief read the 16bits data from temperature register 5. 
  * @return uint16_t 
  ****************************************************************************************
  */
 uint16_t MCP9808_read_temperature_register(void){
-	if(valid_temp_reg){//pre defined conditions size must be an unsigned integer greater than 0
-		//insert error handler
-		return 0xFFFF;
-	}
 
 	uint8_t buffer[2];
 	i2c_abort_t abort_code = I2C_ABORT_NONE;
@@ -150,28 +144,23 @@ uint16_t MCP9808_read_temperature_register(void){
 		//insert error handler
 	}
 	
-	return (((buffer[0]<<8) + buffer[1]) & constant_temp); 
+	return ((buffer[0] << 8) + buffer[1]); 
 }
-
-/**
- ****************************************************************************************
- * @brief 		calculate the temperature in celsius. For the formula see "EQUATION 5-1:" of the MCP9808 datasheet
- * @param[in]	const uint16_t data 
- * @return 		double 
- ****************************************************************************************
- */
-double MCP9808_calculate_temperature(const uint16_t data){
-		return (data & 0x800) ? ( ((double)data/16)-256 ) : ( (double)data/16 ); 
-}
-
 
 /**
  ****************************************************************************************
  * @brief Combines reading the temperature register and calculating the temperature in celsius  
- * @return double 
+ * @return int16_t 
  ****************************************************************************************
  */
-double MCP9808_get_temperature(void){
-	return MCP9808_calculate_temperature(MCP9808_read_temperature_register());
+int16_t MCP9808_get_temperature_tenths(void){
+	
+	uint16_t reg  = MCP9808_read_temperature_register();
+	uint16_t temp_data = reg & constant_temp;                 // SIGN + 12 data bits
+	
+	// Sign-extend bit 12 into bits 15..13
+	int16_t t = (temp_data & 0x1000) ? (int16_t)(temp_data | 0xE000) : (int16_t)temp_data;
+
+	return (int16_t)((t * 5) / 8);                // 1/16 °C -> tenths of °C
 }
 

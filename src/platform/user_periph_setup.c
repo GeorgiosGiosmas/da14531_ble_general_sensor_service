@@ -75,7 +75,7 @@ void GPIO_reservations(void)
 #endif
 
 /**** Remove Jumper from LED to avoid damaging the SDA pin on P0_9 ****/
-#if !defined(SDA_ON_P0_9)
+#if !(SDA_ON_P0_9)
     RESERVE_GPIO(LED, GPIO_LED_PORT, GPIO_LED_PIN, PID_GPIO);
 #endif	
 	
@@ -107,7 +107,7 @@ void set_pad_functions(void)
 #endif
 	
 /**** Remove Jumper from LED to avoid damaging the SDA pin on P0_9 ****/
-#if !defined(SDA_ON_P0_9)
+#if !(SDA_ON_P0_9)
 		GPIO_ConfigurePin(GPIO_LED_PORT, GPIO_LED_PIN, OUTPUT, PID_GPIO, false);
 #endif
 

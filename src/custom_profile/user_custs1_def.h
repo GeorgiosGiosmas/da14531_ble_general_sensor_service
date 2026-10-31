@@ -75,7 +75,7 @@
 #define DEF_SVC2_TEMPERATURE_VAL_UUID_128     	{0x4F, 0x43, 0x31, 0x3C, 0x93, 0x92, 0x42, 0xE6, 0xA8, 0x76, 0xFA, 0x3B, 0xEF, 0xB4, 0x87, 0x59}
 
 #define DEF_SVC2_CTRL_POINT_2_CHAR_LEN    	  	1
-#define DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN     	7
+#define DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN     	2
 
 #define DEF_SVC2_CONTROL_POINT_2_USER_DESC   		"Control Point Temperature"
 #define DEF_SVC2_TEMPERATURE_VAL_USER_DESC   		"Temperature Data"

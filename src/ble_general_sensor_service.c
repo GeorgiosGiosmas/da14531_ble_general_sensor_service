@@ -455,6 +455,7 @@ void user_app_on_db_init_complete(void)
 			 The default value is the SDK_VERSION, same as the FIRMWARE_VERSION
 		**/
     char sw_version[] = APP_VERSION;
+	
     struct diss_set_value_req *req = KE_MSG_ALLOC_DYN(DISS_SET_VALUE_REQ,
                                                       prf_get_task_from_id(TASK_ID_DISS),
                                                       TASK_APP,
@@ -463,6 +464,7 @@ void user_app_on_db_init_complete(void)
     req->value = DIS_SW_REV_STR_CHAR;
     req->length = sizeof(sw_version);
     memcpy(req->data, sw_version, sizeof(sw_version));
+		
     ke_msg_send(req);
 		
 #if defined(CFG_PRINTF)

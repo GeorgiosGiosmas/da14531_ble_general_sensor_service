@@ -81,8 +81,15 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-				arch_puts("Control Point 1 Activated\r\n");
-        timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
+				if (timer_adxl345_used == EASY_TIMER_INVALID_TIMER)
+				{
+						arch_puts("Control Point 1 Activated\r\n");
+						timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
+				}
+				else
+				{
+						arch_puts("ADXL345 capture already running\r\n");
+				}
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
@@ -107,8 +114,15 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-				arch_puts("Control Point 2 Activated\r\n");
-        timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
+				if (timer_mcp9808_used == EASY_TIMER_INVALID_TIMER)
+				{
+						arch_puts("Control Point 2 Activated\r\n");
+						timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
+				}
+				else
+				{
+						arch_puts("MCP9808 capture already running\r\n");
+				}
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
@@ -171,46 +185,39 @@ void capture_adxl345_data_cb_handler()
 		adxl345_capture(&x, &y, &z, xyz);
 	
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
-		
-		// Update and send value of Accelerometer
-		struct custs1_val_ntf_ind_req *req_acc = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
-																														prf_get_task_from_id(TASK_ID_CUSTS1),
-																														TASK_APP,
-																														custs1_val_ntf_ind_req,
-																														DEF_SVC1_ACC_DATA_CHAR_LEN);
-
-
-    req_acc->conidx = app_connection_idx;
-    req_acc->handle = SVC1_IDX_ACCELEROMETER_VAL;
-    req_acc->length = DEF_SVC1_ACC_DATA_CHAR_LEN;
-    req_acc->notification = true;
-		
-    memcpy(req_acc->value, xyz, DEF_SVC1_ACC_DATA_CHAR_LEN);
-
-    KE_MSG_SEND(req_acc);
 
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
+				// Update and send value of Accelerometer
+				struct custs1_val_ntf_ind_req *req_acc = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+																																prf_get_task_from_id(TASK_ID_CUSTS1),
+																																TASK_APP,
+																																custs1_val_ntf_ind_req,
+																																DEF_SVC1_ACC_DATA_CHAR_LEN);
+
+
+				req_acc->conidx = app_connection_idx;
+				req_acc->handle = SVC1_IDX_ACCELEROMETER_VAL;
+				req_acc->length = DEF_SVC1_ACC_DATA_CHAR_LEN;
+				req_acc->notification = true;
+				
+				memcpy(req_acc->value, xyz, DEF_SVC1_ACC_DATA_CHAR_LEN);
+
+				KE_MSG_SEND(req_acc);
+		
         // Set it once again until Stop command is received in Control Characteristic
         timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
     }
 		else
 		{
 				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
-				app_easy_timer_cancel(timer_adxl345_used);
 				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
 		}
 }
 
 void capture_mcp9808_data_cb_handler()
 {
-    struct custs1_val_ntf_ind_req *req_tmp = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
-                                                          prf_get_task_from_id(TASK_ID_CUSTS1),
-                                                          TASK_APP,
-                                                          custs1_val_ntf_ind_req,
-                                                          DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
-
-		// MCP9808 Data Capturing
+    // MCP9808 Data Capturing
     int16_t temp_tenths;
 		mcp9808_capture(&temp_tenths);
 		
@@ -219,23 +226,28 @@ void capture_mcp9808_data_cb_handler()
 
 		arch_printf("Temp: %s%u.%u\r\n", sign, mag / 10, mag % 10);
 
-		req_tmp->conidx = app_connection_idx;
-    req_tmp->handle = SVC2_IDX_TEMPERATURE_VAL;
-    req_tmp->length = DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN;
-    req_tmp->notification = true;
-		memcpy(req_tmp->value, &temp_tenths, sizeof(temp_tenths));
-
-    KE_MSG_SEND(req_tmp);
-
     if (ke_state_get(TASK_APP) == APP_CONNECTED)
     {
+				struct custs1_val_ntf_ind_req *req_tmp = KE_MSG_ALLOC_DYN(CUSTS1_VAL_NTF_REQ,
+                                                          prf_get_task_from_id(TASK_ID_CUSTS1),
+                                                          TASK_APP,
+                                                          custs1_val_ntf_ind_req,
+																													DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN);
+
+				req_tmp->conidx = app_connection_idx;
+				req_tmp->handle = SVC2_IDX_TEMPERATURE_VAL;
+				req_tmp->length = DEF_SVC2_TEMPERATURE_VAL_CHAR_LEN;
+				req_tmp->notification = true;
+				memcpy(req_tmp->value, &temp_tenths, sizeof(temp_tenths));
+
+				KE_MSG_SEND(req_tmp);
+				
         // Set it once again until Stop command is received in Control Characteristic
         timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
     }
 		else
 		{
 				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
-				app_easy_timer_cancel(timer_mcp9808_used);
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
 		}
 }

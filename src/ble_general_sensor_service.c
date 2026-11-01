@@ -231,6 +231,16 @@ static void param_update_request_timer_cb()
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 }
 
+void user_app_update_params_rejected(const uint8_t status)
+{
+    arch_printf("Conn param update REJECTED by master, status 0x%02X\r\n", status);
+}
+
+void user_app_update_params_complete(void)
+{
+    arch_puts("Conn param update request accepted\r\n");
+}
+
 bool i2c_wait_idle(void)
 {
     for (uint8_t i = 0; i < I2C_IDLE_POLL_COUNT; i++)
@@ -626,6 +636,13 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
         {
             // Cast the "param" pointer to the appropriate message structure
             struct gapc_param_updated_ind const *msg_param = (struct gapc_param_updated_ind const *)(param);
+					
+						// Connection Interval in 1.25ms Units, Supervision Timeout in 10 ms Units
+						arch_printf("Connection Parameters: Interval ->  %u.%02ums, Latency -> %u, Timeout -> %u | ", 
+																		(msg_param->con_interval) * 125 / 100, 
+																		((msg_param->con_interval) * 125) % 100, 
+																		msg_param->con_latency, 
+																		msg_param->sup_to * 10);
 
             // Check if updated Conn Params filled to preferred ones
             if ((msg_param->con_interval >= user_connection_param_conf.intv_min) &&
@@ -633,7 +650,11 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
                 (msg_param->con_latency == user_connection_param_conf.latency) &&
                 (msg_param->sup_to == user_connection_param_conf.time_out))
             {
+								arch_puts("  -> WITHIN preferred range\r\n");
             }
+						else{
+								arch_puts("  -> OUTSIDE preferred range\r\n");
+						}
         } break;
 
         case CUSTS1_VALUE_REQ_IND:

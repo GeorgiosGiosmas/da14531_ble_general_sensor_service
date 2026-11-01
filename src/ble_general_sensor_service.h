@@ -161,6 +161,20 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param);
 
 /**
  ****************************************************************************************
+ * @brief Parameters update accepted User Callback.
+ ****************************************************************************************
+*/
+void user_app_update_params_complete(void);
+
+/**
+ ****************************************************************************************
+ * @brief Parameters update rejected User Callback.
+ ****************************************************************************************
+*/
+void user_app_update_params_rejected(const uint8_t);
+
+/**
+ ****************************************************************************************
  * @brief Handles the messages that are not handled by the SDK internal mechanisms.
  * @param[in] msgid   Id of the message received.
  * @param[in] param   Pointer to the parameters of the message.

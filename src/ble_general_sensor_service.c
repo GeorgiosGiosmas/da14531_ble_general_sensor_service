@@ -464,14 +464,14 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 		// Cancel capture timers if they are still active after a sudden disconnection
 		if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
 		{
-				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
+				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 timer callback\r\n");
 				app_easy_timer_cancel(timer_adxl345_used);
 				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
 		}
 		
 		if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
 		{
-				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
+				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 timer callback\r\n");
 				app_easy_timer_cancel(timer_mcp9808_used);
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
 		}
@@ -656,34 +656,52 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 								arch_puts("  -> OUTSIDE preferred range\r\n");
 						}
         } break;
+				
+				case GAPC_CON_RSSI_IND:
+				{
+						/* Print the calculated RSSI */
+						struct gapc_con_rssi_ind const *msg_param = (struct gapc_con_rssi_ind const *)(param);
+					
+						arch_printf("Connection -> %u, RSSI -> %u dBm\r\n", app_connection_idx, msg_param->rssi);
+				} break;
 
-        case CUSTS1_VALUE_REQ_IND:
-        {
-            struct custs1_value_req_ind const *msg_param = (struct custs1_value_req_ind const *) param;
+				case GATTC_MTU_CHANGED_IND:
+				{
+						/* Print the newly negotiated MTU */
+						struct gattc_mtu_changed_ind const *msg_param = (struct gattc_mtu_changed_ind const *)(param);
+					
+						arch_printf("Connection -> %u, MTU negotiated: %u bytes\r\n", app_connection_idx, msg_param->mtu);
+				} break;
 
-            switch (msg_param->att_idx)
-            {
-                default:
-                {
-                    // Send Error message
-                    struct custs1_value_req_rsp *rsp = KE_MSG_ALLOC(CUSTS1_VALUE_REQ_RSP,
-                                                                    src_id,
-                                                                    dest_id,
-                                                                    custs1_value_req_rsp);
+				case GAPC_CMP_EVT:
+				{
+						struct gapc_cmp_evt const *msg_param = (struct gapc_cmp_evt const *)(param);
+					
+						if (msg_param->status != GAP_ERR_NO_ERROR)
+						{
+								arch_printf("GAPC op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
+						}
+				} break;
 
-                    // Provide the connection index.
-                    rsp->conidx  = app_env[msg_param->conidx].conidx;
-                    // Provide the attribute index.
-                    rsp->att_idx = msg_param->att_idx;
-                    // Force current length to zero.
-                    rsp->length = 0;
-                    // Set Error status
-                    rsp->status  = ATT_ERR_APP_ERROR;
-                    // Send message
-                    KE_MSG_SEND(rsp);
-                } break;
-             }
-        } break;
+				case GATTC_CMP_EVT:
+				{
+						struct gattc_cmp_evt const *msg_param = (struct gattc_cmp_evt const *)(param);
+					
+						if (msg_param->status != GAP_ERR_NO_ERROR)
+						{
+								arch_printf("GATTC op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
+						}
+				} break;
+				
+				case GAPM_CMP_EVT:
+				{
+						struct gapm_cmp_evt const *msg_param = (struct gapm_cmp_evt const *)(param);
+					
+						if (msg_param->status != GAP_ERR_NO_ERROR)
+						{
+								arch_printf("GAPM op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
+						}
+				} break;
 
         default:
             break;

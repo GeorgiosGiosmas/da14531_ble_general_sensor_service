@@ -112,20 +112,6 @@ void capture_adxl345_data_cb_handler(void);
  */
 void capture_mcp9808_data_cb_handler(void);																				 
 
-/**
- ****************************************************************************************
- * @brief Read the value of a non-database characteristic handler.
- * @param[in] msgid   Id of the message received.
- * @param[in] param   Pointer to the parameters of the message.
- * @param[in] dest_id ID of the receiving task instance.
- * @param[in] src_id  ID of the sending task instance.
- ****************************************************************************************
- */
-void user_svc3_read_non_db_val_handler(ke_msg_id_t const msgid,
-                                           struct custs1_value_req_ind const *param,
-                                           ke_task_id_t const dest_id,
-                                           ke_task_id_t const src_id);
-
 /// @} APP
 
 #endif // _USER_CUSTS1_IMPL_H_

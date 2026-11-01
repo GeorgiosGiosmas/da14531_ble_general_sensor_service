@@ -60,8 +60,6 @@ extern uint8_t app_connection_idx    __SECTION_ZERO("retention_mem_area0");
 
 timer_hnd timer_adxl345_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 timer_hnd timer_mcp9808_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint16_t indication_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint16_t non_db_val_counter 																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 extern uint16_t acc_cccd;																		
 extern uint16_t tmp_cccd;																		
 
@@ -203,7 +201,7 @@ void capture_adxl345_data_cb_handler()
 		// Check if the Central is still Connected
 		if(ke_state_get(TASK_APP) != APP_CONNECTED)
 		{
-				arch_puts("App Disconnected Upexpectedly ... disabling ADXL345 timer callback\r\n");
+				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 timer callback\r\n");
 				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
 			
 				return;
@@ -248,7 +246,7 @@ void capture_mcp9808_data_cb_handler()
 		// Check if the Central is still Connected
 		if(ke_state_get(TASK_APP) != APP_CONNECTED)
 		{
-				arch_puts("App Disconnected Upexpectedly ... disabling MCP9808 timer callback\r\n");
+				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 timer callback\r\n");
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
 			
 				return;
@@ -276,30 +274,3 @@ void capture_mcp9808_data_cb_handler()
 		timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
 }
 
-void user_svc3_read_non_db_val_handler(ke_msg_id_t const msgid,
-                                           struct custs1_value_req_ind const *param,
-                                           ke_task_id_t const dest_id,
-                                           ke_task_id_t const src_id)
-{
-    // Increase value by one
-    non_db_val_counter++;
-
-    struct custs1_value_req_rsp *rsp = KE_MSG_ALLOC_DYN(CUSTS1_VALUE_REQ_RSP,
-                                                        prf_get_task_from_id(TASK_ID_CUSTS1),
-                                                        TASK_APP,
-                                                        custs1_value_req_rsp,
-                                                        0 /*DEF_SVC3_READ_VAL_4_CHAR_LEN*/);
-
-    // Provide the connection index.
-    rsp->conidx  = app_env[param->conidx].conidx;
-    // Provide the attribute index.
-    rsp->att_idx = param->att_idx;
-    // Force current length to zero.
-    rsp->length  = sizeof(non_db_val_counter);
-    // Provide the ATT error code.
-    rsp->status  = ATT_ERR_NO_ERROR;
-    // Copy value
-    memcpy(&rsp->value, &non_db_val_counter, rsp->length);
-    // Send message
-    KE_MSG_SEND(rsp);
-}

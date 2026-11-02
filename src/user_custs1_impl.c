@@ -60,6 +60,7 @@ extern uint8_t app_connection_idx    __SECTION_ZERO("retention_mem_area0");
 
 timer_hnd timer_adxl345_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 timer_hnd timer_mcp9808_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd rssi_timer																				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 extern uint16_t acc_cccd;																		
 extern uint16_t tmp_cccd;																		
 
@@ -272,5 +273,21 @@ void capture_mcp9808_data_cb_handler()
 		
 		// Set the timer once again until Stop command is received in Control Characteristic
 		timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
+}
+
+void request_connected_rssi(void)
+{
+    if(ke_state_get(TASK_APP) == APP_CONNECTED)
+		{
+        struct gapc_get_info_cmd *cmd = KE_MSG_ALLOC(GAPC_GET_INFO_CMD, 
+																						 KE_BUILD_ID(TASK_GAPC, app_connection_idx),
+																						 TASK_APP,
+																						 gapc_get_info_cmd);
+
+        cmd->operation = GAPC_GET_CON_RSSI;
+        ke_msg_send(cmd);
+				
+				rssi_timer = app_easy_timer(RSSI_READ_PERIOD,request_connected_rssi);
+		}
 }
 

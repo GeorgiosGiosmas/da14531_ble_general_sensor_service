@@ -49,6 +49,7 @@
  * DEFINES
  ****************************************************************************************
  */
+#define RSSI_READ_PERIOD    100
 
 enum
 {
@@ -110,7 +111,14 @@ void capture_adxl345_data_cb_handler(void);
  * @brief MCP9808 Data Capture Initiation callback handler.
  ****************************************************************************************
  */
-void capture_mcp9808_data_cb_handler(void);																				 
+void capture_mcp9808_data_cb_handler(void);			
+
+/**
+ ****************************************************************************************
+ * @brief Request RSSI of the Connection helper function.
+ ****************************************************************************************
+ */
+void request_connected_rssi(void);												 
 
 /// @} APP
 

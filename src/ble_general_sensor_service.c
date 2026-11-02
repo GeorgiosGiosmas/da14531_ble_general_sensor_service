@@ -98,7 +98,8 @@ uint8_t stored_scan_rsp_data_len                __SECTION_ZERO("retention_mem_ar
 uint8_t stored_adv_data[ADV_DATA_LEN]           __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_scan_rsp_data[SCAN_RSP_DATA_LEN] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 extern timer_hnd timer_adxl345_used;      			  
-extern timer_hnd timer_mcp9808_used;     			  
+extern timer_hnd timer_mcp9808_used;  
+extern timer_hnd rssi_timer;
 uint16_t acc_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t tmp_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 
@@ -423,6 +424,8 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
         }
 				
 				arch_printf("App Connected: Index = %u\r\n", connection_idx);
+				
+				rssi_timer = app_easy_timer(RSSI_READ_PERIOD, request_connected_rssi);
     }
     else
     {
@@ -474,6 +477,14 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 timer callback\r\n");
 				app_easy_timer_cancel(timer_mcp9808_used);
 				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+		}
+		
+		// Cancel the RSSI request timer
+		if (rssi_timer != EASY_TIMER_INVALID_TIMER)
+		{
+				arch_puts("App Disconnected Unexpectedly ... disabling RSSI request timer\r\n");
+				app_easy_timer_cancel(rssi_timer);
+				rssi_timer = EASY_TIMER_INVALID_TIMER;
 		}
 		
 #if defined(CFG_PRF_SUOTAR)
@@ -662,7 +673,7 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 						/* Print the calculated RSSI */
 						struct gapc_con_rssi_ind const *msg_param = (struct gapc_con_rssi_ind const *)(param);
 					
-						arch_printf("Connection -> %u, RSSI -> %u dBm\r\n", app_connection_idx, msg_param->rssi);
+						arch_printf("Connection -> %u, RSSI -> %d dBm\r\n", app_connection_idx, (int8_t)(msg_param->rssi));
 				} break;
 
 				case GATTC_MTU_CHANGED_IND:

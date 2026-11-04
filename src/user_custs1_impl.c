@@ -78,6 +78,42 @@ extern const i2c_cfg_t i2c_cfg_ADXL345;
  * FUNCTION DEFINITIONS
  ****************************************************************************************
  */
+ 
+void power_down_adxl345(void)
+{
+		i2c_init(&i2c_cfg_ADXL345);
+		ADXL345_deinit();
+	
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("ADXL345 power-down: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else
+		{
+			i2c_release();
+		}
+}
+
+void power_down_mcp9808(void)
+{
+		i2c_init(&i2c_cfg_MCP9808);
+		MCP9808_deinit();
+	
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("MCP9808 power-down: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else
+		{
+			i2c_release();
+		}
+}
 
 void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
                                       struct custs1_val_write_ind const *param,
@@ -89,7 +125,7 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-				if (adxl345_initiate_timer == EASY_TIMER_INVALID_TIMER)
+				if (adxl345_initiate_timer == EASY_TIMER_INVALID_TIMER && adxl345_capture_timer == EASY_TIMER_INVALID_TIMER)
 				{
 						arch_puts("Control Point 1 Activated\r\n");
 						adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
@@ -103,10 +139,18 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     {
         if (adxl345_initiate_timer != EASY_TIMER_INVALID_TIMER)
         {
-						arch_puts("Control Point 1 Deactivated\r\n");
+						arch_puts("Control Point 1 Deactivated -> Stopping ADXL345 capture initiation\r\n");
             app_easy_timer_cancel(adxl345_initiate_timer);
             adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
         }
+				else if (adxl345_capture_timer != EASY_TIMER_INVALID_TIMER)
+        {
+						arch_puts("Control Point 1 Deactivated -> Stopping ADXL345 capture and notif\r\n");
+            app_easy_timer_cancel(adxl345_capture_timer);
+            adxl345_capture_timer = EASY_TIMER_INVALID_TIMER;
+        }
+				
+				power_down_adxl345();
     }
 		else
 				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
@@ -122,7 +166,7 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-				if (mcp9808_initiate_timer == EASY_TIMER_INVALID_TIMER)
+				if (mcp9808_initiate_timer == EASY_TIMER_INVALID_TIMER && mcp9808_capture_timer == EASY_TIMER_INVALID_TIMER)
 				{
 						arch_puts("Control Point 2 Activated\r\n");
 						mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
@@ -136,10 +180,18 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     {
         if (mcp9808_initiate_timer != EASY_TIMER_INVALID_TIMER)
         {
-						arch_puts("Control Point 2 Deactivated\r\n");
+						arch_puts("Control Point 2 Deactivated -> Stopping MCP9808 capture initiation\r\n");
             app_easy_timer_cancel(mcp9808_initiate_timer);
             mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
         }
+				else if (mcp9808_capture_timer != EASY_TIMER_INVALID_TIMER)
+        {
+						arch_puts("Control Point 2 Deactivated -> Stopping MCP9808 capture and notif\r\n");
+            app_easy_timer_cancel(mcp9808_capture_timer);
+            mcp9808_capture_timer = EASY_TIMER_INVALID_TIMER;
+        }
+				
+				power_down_mcp9808();
     }
 		else
 				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
@@ -147,6 +199,8 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
 void initiate_adxl345_for_data_capture()
 {
+		adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
+		
 		i2c_init(&i2c_cfg_ADXL345);
 		ADXL345_init();
 		
@@ -166,6 +220,8 @@ void initiate_adxl345_for_data_capture()
 
 void initiate_mcp9808_for_data_capture(void)
 {
+		mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
+		
 		i2c_init(&i2c_cfg_MCP9808);
 		MCP9808_init();
 	
@@ -185,6 +241,8 @@ void initiate_mcp9808_for_data_capture(void)
 
 void adxl345_data_capture_and_notif()
 {
+		adxl345_capture_timer = EASY_TIMER_INVALID_TIMER;
+
 		i2c_init(&i2c_cfg_ADXL345);
 	
 		ADXL345_read_XYZ(xyz);
@@ -243,6 +301,8 @@ void adxl345_data_capture_and_notif()
 
 void mcp9808_data_capture_and_notif()
 {
+		mcp9808_capture_timer = EASY_TIMER_INVALID_TIMER;
+
 		i2c_init(&i2c_cfg_MCP9808);
 	
     temp_tenths = MCP9808_get_temperature_tenths();
@@ -298,6 +358,8 @@ void mcp9808_data_capture_and_notif()
 
 void request_connected_rssi(void)
 {
+		rssi_timer = EASY_TIMER_INVALID_TIMER;
+	
     if(ke_state_get(TASK_APP) == APP_CONNECTED)
 		{
         struct gapc_get_info_cmd *cmd = KE_MSG_ALLOC(GAPC_GET_INFO_CMD, 

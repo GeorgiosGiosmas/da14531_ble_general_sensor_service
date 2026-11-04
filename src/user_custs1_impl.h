@@ -132,7 +132,21 @@ void mcp9808_data_capture_and_notif(void);
  * @brief Request RSSI of the Connection helper function.
  ****************************************************************************************
  */
-void request_connected_rssi(void);												 
+void request_connected_rssi(void);		
+
+/**
+ ****************************************************************************************
+ * @brief Helper Function for powering down ADXL345 to reduce power consumption
+ ****************************************************************************************
+ */
+void power_down_adxl345(void);
+
+/**
+ ****************************************************************************************
+ * @brief Helper Function for powering down MCP9808 to reduce power consumption
+ ****************************************************************************************
+ */
+void power_down_mcp9808(void);
 
 /// @} APP
 

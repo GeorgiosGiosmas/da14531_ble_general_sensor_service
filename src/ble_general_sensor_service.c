@@ -331,39 +331,6 @@ void on_suotar_status_change(const uint8_t suotar_event)
 }
 #endif
 
-static void power_down_sensors(void)
-{
-		i2c_init(&i2c_cfg_MCP9808);
-		MCP9808_deinit();
-	
-		// Wait until no master activity and if the bus is stuck reset it
-		if (!i2c_wait_idle())
-		{
-				arch_puts("MCP9808 power-down: bus stuck, recovering\r\n");
-				i2c_release();               /* release the controller BEFORE bit-banging */
-				i2c_bus_recovery();
-		}
-		else
-		{
-			i2c_release();
-		}
-		
-		i2c_init(&i2c_cfg_ADXL345);
-		ADXL345_deinit();
-	
-		// Wait until no master activity and if the bus is stuck reset it
-		if (!i2c_wait_idle())
-		{
-				arch_puts("ADXL345 power-down: bus stuck, recovering\r\n");
-				i2c_release();               /* release the controller BEFORE bit-banging */
-				i2c_bus_recovery();
-		}
-		else
-		{
-			i2c_release();
-		}
-}
-
 void user_app_init(void)
 {
     app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
@@ -382,7 +349,8 @@ void user_app_init(void)
     memcpy(stored_scan_rsp_data, USER_ADVERTISE_SCAN_RESPONSE_DATA, USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN);
     stored_scan_rsp_data_len = USER_ADVERTISE_SCAN_RESPONSE_DATA_LEN;
 	
-		power_down_sensors();
+		power_down_adxl345();
+		power_down_mcp9808();
 	
     default_app_on_init();
 		arch_puts("App Initialized\r\n");
@@ -502,6 +470,10 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 				app_easy_timer_cancel(rssi_timer);
 				rssi_timer = EASY_TIMER_INVALID_TIMER;
 		}
+		
+		// Power down sensors in case of sudden disconnect where the normal program flow disrupts
+		power_down_adxl345();
+		power_down_mcp9808();
 		
 #if defined(CFG_PRF_SUOTAR)
 		// Issue a platform reset when it is requested by the suotar procedure

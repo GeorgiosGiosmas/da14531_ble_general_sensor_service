@@ -97,8 +97,10 @@ uint8_t stored_adv_data_len                     __SECTION_ZERO("retention_mem_ar
 uint8_t stored_scan_rsp_data_len                __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_adv_data[ADV_DATA_LEN]           __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_scan_rsp_data[SCAN_RSP_DATA_LEN] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-extern timer_hnd timer_adxl345_used;      			  
-extern timer_hnd timer_mcp9808_used;  
+extern timer_hnd adxl345_initiate_timer;      			  
+extern timer_hnd mcp9808_initiate_timer;  
+extern timer_hnd adxl345_capture_timer;      			  
+extern timer_hnd mcp9808_capture_timer; 
 extern timer_hnd rssi_timer;
 uint16_t acc_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint16_t tmp_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
@@ -464,19 +466,33 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
     // Update manufacturer data for the next advertsing event
     mnf_data_update();
 		
-		// Cancel capture timers if they are still active after a sudden disconnection
-		if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
+		// Cancel initiation and capture timers if they are still active after a sudden disconnection
+		if (adxl345_initiate_timer != EASY_TIMER_INVALID_TIMER)
 		{
-				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 timer callback\r\n");
-				app_easy_timer_cancel(timer_adxl345_used);
-				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
+				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 capture initiation timer callback\r\n");
+				app_easy_timer_cancel(adxl345_initiate_timer);
+				adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
 		}
 		
-		if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
+		if (mcp9808_initiate_timer != EASY_TIMER_INVALID_TIMER)
 		{
-				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 timer callback\r\n");
-				app_easy_timer_cancel(timer_mcp9808_used);
-				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 capture initiation timer callback\r\n");
+				app_easy_timer_cancel(mcp9808_initiate_timer);
+				mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
+		}
+		
+		if (adxl345_capture_timer != EASY_TIMER_INVALID_TIMER)
+		{
+				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 capture timer callback\r\n");
+				app_easy_timer_cancel(adxl345_capture_timer);
+				adxl345_capture_timer = EASY_TIMER_INVALID_TIMER;
+		}
+		
+		if (mcp9808_capture_timer != EASY_TIMER_INVALID_TIMER)
+		{
+				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 capture timer callback\r\n");
+				app_easy_timer_cancel(mcp9808_capture_timer);
+				mcp9808_capture_timer = EASY_TIMER_INVALID_TIMER;
 		}
 		
 		// Cancel the RSSI request timer

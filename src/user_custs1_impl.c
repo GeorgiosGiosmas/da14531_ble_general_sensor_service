@@ -58,9 +58,16 @@ extern uint8_t app_connection_idx    __SECTION_ZERO("retention_mem_area0");
  ****************************************************************************************
  */
 
-timer_hnd timer_adxl345_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-timer_hnd timer_mcp9808_used      												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd adxl345_initiate_timer   												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd mcp9808_initiate_timer   												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd adxl345_capture_timer    												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd mcp9808_capture_timer      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 timer_hnd rssi_timer																				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t x																										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t y																										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t z																										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+int16_t temp_tenths																					__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+uint8_t xyz[DEF_SVC1_ACC_DATA_CHAR_LEN]											__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 extern uint16_t acc_cccd;																		
 extern uint16_t tmp_cccd;																		
 
@@ -82,10 +89,10 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-				if (timer_adxl345_used == EASY_TIMER_INVALID_TIMER)
+				if (adxl345_initiate_timer == EASY_TIMER_INVALID_TIMER)
 				{
 						arch_puts("Control Point 1 Activated\r\n");
-						timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
+						adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
 				}
 				else
 				{
@@ -94,11 +101,11 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
-        if (timer_adxl345_used != EASY_TIMER_INVALID_TIMER)
+        if (adxl345_initiate_timer != EASY_TIMER_INVALID_TIMER)
         {
 						arch_puts("Control Point 1 Deactivated\r\n");
-            app_easy_timer_cancel(timer_adxl345_used);
-            timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
+            app_easy_timer_cancel(adxl345_initiate_timer);
+            adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
         }
     }
 		else
@@ -115,10 +122,10 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 
     if (val == ENABLE_SENSOR_DATA_CAPTURING)
     {
-				if (timer_mcp9808_used == EASY_TIMER_INVALID_TIMER)
+				if (mcp9808_initiate_timer == EASY_TIMER_INVALID_TIMER)
 				{
 						arch_puts("Control Point 2 Activated\r\n");
-						timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
+						mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
 				}
 				else
 				{
@@ -127,75 +134,76 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
-        if (timer_mcp9808_used != EASY_TIMER_INVALID_TIMER)
+        if (mcp9808_initiate_timer != EASY_TIMER_INVALID_TIMER)
         {
 						arch_puts("Control Point 2 Deactivated\r\n");
-            app_easy_timer_cancel(timer_mcp9808_used);
-            timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+            app_easy_timer_cancel(mcp9808_initiate_timer);
+            mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
         }
     }
 		else
 				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
 }
 
-/** Function that initializes and captures ADXL345 data **/
-static void adxl345_capture(int16_t *x, int16_t *y, int16_t *z, uint8_t *xyz)
+void initiate_adxl345_for_data_capture()
 {
 		i2c_init(&i2c_cfg_ADXL345);
 		ADXL345_init();
+		
+	  // Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("ADXL345 initialization: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else{
+			i2c_release();
+		}
+		
+		adxl345_capture_timer = app_easy_timer(2, adxl345_data_capture_and_notif);
+}	
+
+void initiate_mcp9808_for_data_capture(void)
+{
+		i2c_init(&i2c_cfg_MCP9808);
+		MCP9808_init();
 	
-		arch_asm_delay_us(11200);
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("MCP9808 initialization: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else{
+			i2c_release();
+		}
+		
+		mcp9808_capture_timer = app_easy_timer(4, mcp9808_data_capture_and_notif);
+}
+
+void adxl345_data_capture_and_notif()
+{
+		i2c_init(&i2c_cfg_ADXL345);
 	
 		ADXL345_read_XYZ(xyz);
-		*x = (*xyz & 0xFF) | (((uint16_t)*(xyz+1)) << 8);
-		*y = (*(xyz+2) & 0xFF) | (((uint16_t)*(xyz+3)) << 8);
-		*z = (*(xyz+4) & 0xFF) | (((uint16_t)*(xyz+5)) << 8);
+		x = (xyz[0] & 0xFF) | (((uint16_t)xyz[1]) << 8);
+		y = (xyz[2] & 0xFF) | (((uint16_t)xyz[3]) << 8);
+		z = (xyz[4] & 0xFF) | (((uint16_t)xyz[5]) << 8);
 	
 		ADXL345_deinit();
 	
 	  // Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
-				arch_puts("ADXL345 capture: bus stuck, recovering\r\n");
+				arch_puts("ADXL345 capture/deinitialization: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 		}
 		else{
 			i2c_release();
 		}
-}	
-
-/** Function that initializes and captures MCP9800 data **/
-static void mcp9808_capture(int16_t *temp_tenths)
-{
-		i2c_init(&i2c_cfg_MCP9808);
-		MCP9808_init();
-	
-		arch_asm_delay_us(35000);
-	
-		*temp_tenths = MCP9808_get_temperature_tenths();
-
-		MCP9808_deinit();
-	
-		// Wait until no master activity and if the bus is stuck reset it
-		if (!i2c_wait_idle())
-		{
-				arch_puts("MCP9808 capture: bus stuck, recovering\r\n");
-				i2c_release();               /* release the controller BEFORE bit-banging */
-				i2c_bus_recovery();
-		}
-		else{
-			i2c_release();
-		}
-}
-
-void capture_adxl345_data_cb_handler()
-{
-		// ADXL345 Data capturing
-    int16_t x, y, z;
-		uint8_t xyz[DEF_SVC1_ACC_DATA_CHAR_LEN];
-	
-		adxl345_capture(&x, &y, &z, xyz);
 	
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
 
@@ -203,7 +211,7 @@ void capture_adxl345_data_cb_handler()
 		if(ke_state_get(TASK_APP) != APP_CONNECTED)
 		{
 				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 timer callback\r\n");
-				timer_adxl345_used = EASY_TIMER_INVALID_TIMER;
+				adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
 			
 				return;
 		}
@@ -230,14 +238,27 @@ void capture_adxl345_data_cb_handler()
     }
 		
 		// Set the timer once again until Stop command is received in Control Characteristic
-		timer_adxl345_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, capture_adxl345_data_cb_handler);
+		adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
 }
 
-void capture_mcp9808_data_cb_handler()
+void mcp9808_data_capture_and_notif()
 {
-    // MCP9808 Data Capturing
-    int16_t temp_tenths;
-		mcp9808_capture(&temp_tenths);
+		i2c_init(&i2c_cfg_MCP9808);
+	
+    temp_tenths = MCP9808_get_temperature_tenths();
+
+		MCP9808_deinit();
+	
+		// Wait until no master activity and if the bus is stuck reset it
+		if (!i2c_wait_idle())
+		{
+				arch_puts("MCP9808 capture/deinitialization: bus stuck, recovering\r\n");
+				i2c_release();               /* release the controller BEFORE bit-banging */
+				i2c_bus_recovery();
+		}
+		else{
+			i2c_release();
+		}
 		
 		const char *sign = (temp_tenths < 0) ? "-" : "";
 		uint16_t    mag  = (temp_tenths < 0) ? -temp_tenths : temp_tenths;
@@ -248,7 +269,7 @@ void capture_mcp9808_data_cb_handler()
 		if(ke_state_get(TASK_APP) != APP_CONNECTED)
 		{
 				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 timer callback\r\n");
-				timer_mcp9808_used = EASY_TIMER_INVALID_TIMER;
+				mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
 			
 				return;
 		}
@@ -272,7 +293,7 @@ void capture_mcp9808_data_cb_handler()
     }
 		
 		// Set the timer once again until Stop command is received in Control Characteristic
-		timer_mcp9808_used = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, capture_mcp9808_data_cb_handler);
+		mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
 }
 
 void request_connected_rssi(void)

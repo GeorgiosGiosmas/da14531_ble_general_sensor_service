@@ -104,14 +104,28 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
  * @brief ADXL345 Data Capture Initiation callback handler.
  ****************************************************************************************
  */
-void capture_adxl345_data_cb_handler(void);
+void initiate_adxl345_for_data_capture(void);
 																				 
 /**
  ****************************************************************************************
  * @brief MCP9808 Data Capture Initiation callback handler.
  ****************************************************************************************
  */
-void capture_mcp9808_data_cb_handler(void);			
+void initiate_mcp9808_for_data_capture(void);			
+
+/**
+ ****************************************************************************************
+ * @brief ADXL345 Data Capture and Notification Callback.
+ ****************************************************************************************
+ */
+void adxl345_data_capture_and_notif(void);
+																				 
+/**
+ ****************************************************************************************
+ * @brief MCP9808 Data Capture and Notification Callback.
+ ****************************************************************************************
+ */
+void mcp9808_data_capture_and_notif(void);																			 
 
 /**
  ****************************************************************************************

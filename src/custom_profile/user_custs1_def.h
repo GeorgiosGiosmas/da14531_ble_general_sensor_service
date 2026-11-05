@@ -80,6 +80,15 @@
 #define DEF_SVC2_CONTROL_POINT_2_USER_DESC   		"Control Point Temperature"
 #define DEF_SVC2_TEMPERATURE_VAL_USER_DESC   		"Temperature Data"
 
+// Service 3 (Diagnostic) of the custom server 1
+#define DEF_SVC3_UUID_128                				{0x59, 0x5a, 0x08, 0xe4, 0x86, 0x2a, 0x9e, 0x8, 0xe9, 0x11, 0xbc, 0x7c, 0xd0, 0x47, 0x42, 0x18}
+
+#define DEF_SVC3_DIAGNOSTIC_DATA_UUID_128     	{0x17, 0xB9, 0x67, 0x98, 0x4C, 0x66, 0x4C, 0x01, 0x96, 0x33, 0x31, 0xB1, 0x91, 0x59, 0x00, 0x14}
+
+#define DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN				15
+
+#define DEF_SVC3_DIAGNOSTIC_DATA_USER_DESC			"v18 | rst8 | disc8 | abort8 | rssi8 | uptime32 | i2crec16 | accCCC16 | tmpCCC16 | rssi8 | i2cer8"
+
 /// Custom1 Service Data Base Characteristic enum
 enum
 {
@@ -107,6 +116,13 @@ enum
     SVC2_IDX_TEMPERATURE_NTF_CFG,
 		SVC2_IDX_TEMPERATURE_PRES_FORMAT_DESC,
 		SVC2_IDX_TEMPERATURE_USER_DESC,
+		
+		// Custom Service 3
+		SVC3_IDX_SVC,
+		
+		SVC3_IDX_DIAGNOSTIC_DATA_CHAR,
+		SVC3_IDX_DIAGNOSTIC_DATA_VAL,
+		SVC3_IDX_DIAGNOSTIC_DATA_USER_DESC,
 
 		CUSTS1_IDX_NB
 };

@@ -88,7 +88,9 @@ void power_down_adxl345(void)
 		// Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
+#if defined(CFG_PRINTF)
 				arch_puts("ADXL345 power-down: bus stuck, recovering\r\n");
+#endif				
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 				diagnostic_data.i2c_rec_cnt++;
@@ -107,7 +109,9 @@ void power_down_mcp9808(void)
 		// Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("MCP9808 power-down: bus stuck, recovering\r\n");
+#endif				
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 				diagnostic_data.i2c_rec_cnt++;
@@ -130,33 +134,43 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     {
 				if (adxl345_initiate_timer == EASY_TIMER_INVALID_TIMER && adxl345_capture_timer == EASY_TIMER_INVALID_TIMER)
 				{
+#if defined(CFG_PRINTF)					
 						arch_puts("Control Point 1 Activated\r\n");
+#endif
 						adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_INITIATION_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
 				}
 				else
 				{
+#if defined(CFG_PRINTF)					
 						arch_puts("ADXL345 capture already running\r\n");
+#endif				
 				}
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
         if (adxl345_initiate_timer != EASY_TIMER_INVALID_TIMER)
         {
+#if defined(CFG_PRINTF)					
 						arch_puts("Control Point 1 Deactivated -> Stopping ADXL345 capture initiation\r\n");
-            app_easy_timer_cancel(adxl345_initiate_timer);
+#endif            
+						app_easy_timer_cancel(adxl345_initiate_timer);
             adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
         }
 				else if (adxl345_capture_timer != EASY_TIMER_INVALID_TIMER)
         {
+#if defined(CFG_PRINTF)					
 						arch_puts("Control Point 1 Deactivated -> Stopping ADXL345 capture and notif\r\n");
-            app_easy_timer_cancel(adxl345_capture_timer);
+#endif            
+						app_easy_timer_cancel(adxl345_capture_timer);
             adxl345_capture_timer = EASY_TIMER_INVALID_TIMER;
         }
 				
 				power_down_adxl345();
     }
+#if defined(CFG_PRINTF)		
 		else
 				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
+#endif
 }
 
 void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
@@ -171,33 +185,43 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
     {
 				if (mcp9808_initiate_timer == EASY_TIMER_INVALID_TIMER && mcp9808_capture_timer == EASY_TIMER_INVALID_TIMER)
 				{
+#if defined(CFG_PRINTF)					
 						arch_puts("Control Point 2 Activated\r\n");
+#endif						
 						mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_INITIATION_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
 				}
 				else
 				{
+#if defined(CFG_PRINTF)					
 						arch_puts("MCP9808 capture already running\r\n");
+#endif				
 				}
     }
     else if(val == DISABLE_SENSOR_DATA_CAPTURING)
     {
         if (mcp9808_initiate_timer != EASY_TIMER_INVALID_TIMER)
         {
+#if defined(CFG_PRINTF)					
 						arch_puts("Control Point 2 Deactivated -> Stopping MCP9808 capture initiation\r\n");
+#endif
             app_easy_timer_cancel(mcp9808_initiate_timer);
             mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
         }
 				else if (mcp9808_capture_timer != EASY_TIMER_INVALID_TIMER)
         {
+#if defined(CFG_PRINTF)
 						arch_puts("Control Point 2 Deactivated -> Stopping MCP9808 capture and notif\r\n");
-            app_easy_timer_cancel(mcp9808_capture_timer);
+#endif
+						app_easy_timer_cancel(mcp9808_capture_timer);
             mcp9808_capture_timer = EASY_TIMER_INVALID_TIMER;
         }
 				
 				power_down_mcp9808();
     }
+#if defined(CFG_PRINTF)		
 		else
 				arch_puts("Invalid Value...Try 0x00 or 0x01\r\n");
+#endif
 }
 
 void initiate_adxl345_for_data_capture()
@@ -210,7 +234,9 @@ void initiate_adxl345_for_data_capture()
 	  // Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("ADXL345 initialization: bus stuck, recovering\r\n");
+#endif				
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 				diagnostic_data.i2c_rec_cnt++;
@@ -232,7 +258,9 @@ void initiate_mcp9808_for_data_capture(void)
 		// Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("MCP9808 initialization: bus stuck, recovering\r\n");
+#endif				
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 				diagnostic_data.i2c_rec_cnt++;
@@ -260,7 +288,9 @@ void adxl345_data_capture_and_notif()
 	  // Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("ADXL345 capture/deinitialization: bus stuck, recovering\r\n");
+#endif				
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 				diagnostic_data.i2c_rec_cnt++;
@@ -268,13 +298,15 @@ void adxl345_data_capture_and_notif()
 		else{
 			i2c_release();
 		}
-	
+#if defined(CFG_PRINTF)
 		arch_printf("X: %d, Y: %d, Z: %d\r\n", x, y, z);
-
+#endif
 		// Check if the Central is still Connected
 		if(ke_state_get(TASK_APP) != APP_CONNECTED)
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 timer callback\r\n");
+#endif				
 				adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
 			
 				return;
@@ -318,7 +350,9 @@ void mcp9808_data_capture_and_notif()
 		// Wait until no master activity and if the bus is stuck reset it
 		if (!i2c_wait_idle())
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("MCP9808 capture/deinitialization: bus stuck, recovering\r\n");
+#endif				
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
 				diagnostic_data.i2c_rec_cnt++;
@@ -329,13 +363,15 @@ void mcp9808_data_capture_and_notif()
 		
 		const char *sign = (temp_tenths < 0) ? "-" : "";
 		uint16_t    mag  = (temp_tenths < 0) ? -temp_tenths : temp_tenths;
-
+#if defined(CFG_PRINTF)
 		arch_printf("Temp: %s%u.%u\r\n", sign, mag / 10, mag % 10);
-
+#endif
 		// Check if the Central is still Connected
 		if(ke_state_get(TASK_APP) != APP_CONNECTED)
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 timer callback\r\n");
+#endif				
 				mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
 			
 				return;
@@ -403,7 +439,8 @@ void diagnostic_char_ind_handler(ke_msg_id_t const msgid,
 	
 		// Send message
     KE_MSG_SEND(rsp);
-		
+#if defined(CFG_PRINTF)		
 		arch_puts("Diagnostic RI characteristic read\r\n");
+#endif
 }
 

@@ -51,7 +51,9 @@
 #include "user_custs1_impl.h"
 #include "user_custs1_def.h"
 #include "co_bt.h"
+#if defined(CFG_PRINTF)
 #include "arch_console.h"
+#endif
 #include "i2c.h"
 #include "MCP9808.h"
 #include "ADXL345.h"
@@ -242,12 +244,16 @@ static void param_update_request_timer_cb()
 
 void user_app_update_params_rejected(const uint8_t status)
 {
+#if defined(CFG_PRINTF)
     arch_printf("Conn param update REJECTED by master, status 0x%02X\r\n", status);
+#endif
 }
 
 void user_app_update_params_complete(void)
 {
+#if defined(CFG_PRINTF)
     arch_puts("Conn param update request accepted\r\n");
+#endif
 }
 
 bool i2c_wait_idle(void)
@@ -361,7 +367,9 @@ void user_app_init(void)
 		diagnostic_data.format_version = DIAG_FORMAT_VERSION;
 	
     default_app_on_init();
+#if defined(CFG_PRINTF)
 		arch_puts("App Initialized\r\n");
+#endif
 }
 
 void user_app_adv_start(void)
@@ -377,7 +385,9 @@ void user_app_adv_start(void)
 
     app_easy_gap_undirected_advertise_start();
 	
+#if defined(CFG_PRINTF)
 		arch_puts("Advertising Started\r\n");
+#endif
 }
 
 void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind const *param)
@@ -398,11 +408,15 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
         {
             // Connection params are not these that we expect
             app_param_update_request_timer_used = app_easy_timer(APP_PARAM_UPDATE_REQUEST_TO, param_update_request_timer_cb);
+
+#if defined(CFG_PRINTF)
 						arch_puts("Connection Parameters update initiated\r\n");
+#endif
         }
-				
+
+#if defined(CFG_PRINTF)
 				arch_printf("App Connected: Index = %u\r\n", connection_idx);
-				
+#endif
 				rssi_timer = app_easy_timer(RSSI_READ_PERIOD, request_connected_rssi);
     }
     else
@@ -416,8 +430,9 @@ void user_app_connection(uint8_t connection_idx, struct gapc_connection_req_ind 
 
 void user_app_adv_undirect_complete(uint8_t status)
 {
+#if defined(CFG_PRINTF)
 		arch_printf("Advertising Ended: %u\r\n", status);
-	
+#endif
     // If advertising was canceled then update advertising data and start advertising again
     if (status == GAP_ERR_CANCELED)
     {
@@ -427,8 +442,9 @@ void user_app_adv_undirect_complete(uint8_t status)
 
 void user_app_disconnect(struct gapc_disconnect_ind const *param)
 {
+#if defined(CFG_PRINTF)
 		arch_printf("App Disconnected: Index -> %lu, Reason: -> %u\r\n", param->conhdl, param->reason);
-	
+#endif
 		diagnostic_data.disc_reason = param->reason;
 	
 		// Clear CCCD descriptor values upon disconnection
@@ -447,28 +463,36 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 		// Cancel initiation and capture timers if they are still active after a sudden disconnection
 		if (adxl345_initiate_timer != EASY_TIMER_INVALID_TIMER)
 		{
+#if defined(CFG_PRINTF)
 				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 capture initiation timer callback\r\n");
+#endif
 				app_easy_timer_cancel(adxl345_initiate_timer);
 				adxl345_initiate_timer = EASY_TIMER_INVALID_TIMER;
 		}
 		
 		if (mcp9808_initiate_timer != EASY_TIMER_INVALID_TIMER)
 		{
+#if defined(CFG_PRINTF)
 				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 capture initiation timer callback\r\n");
+#endif
 				app_easy_timer_cancel(mcp9808_initiate_timer);
 				mcp9808_initiate_timer = EASY_TIMER_INVALID_TIMER;
 		}
 		
 		if (adxl345_capture_timer != EASY_TIMER_INVALID_TIMER)
 		{
+#if defined(CFG_PRINTF)
 				arch_puts("App Disconnected Unexpectedly ... disabling ADXL345 capture timer callback\r\n");
+#endif
 				app_easy_timer_cancel(adxl345_capture_timer);
 				adxl345_capture_timer = EASY_TIMER_INVALID_TIMER;
 		}
 		
 		if (mcp9808_capture_timer != EASY_TIMER_INVALID_TIMER)
 		{
+#if defined(CFG_PRINTF)
 				arch_puts("App Disconnected Unexpectedly ... disabling MCP9808 capture timer callback\r\n");
+#endif
 				app_easy_timer_cancel(mcp9808_capture_timer);
 				mcp9808_capture_timer = EASY_TIMER_INVALID_TIMER;
 		}
@@ -476,7 +500,9 @@ void user_app_disconnect(struct gapc_disconnect_ind const *param)
 		// Cancel the RSSI request timer
 		if (rssi_timer != EASY_TIMER_INVALID_TIMER)
 		{
+#if defined(CFG_PRINTF)			
 				arch_puts("App Disconnected Unexpectedly ... disabling RSSI request timer\r\n");
+#endif				
 				app_easy_timer_cancel(rssi_timer);
 				rssi_timer = EASY_TIMER_INVALID_TIMER;
 		}
@@ -559,7 +585,9 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 										// Check the length of the written value in CCCD of the Accelerometer
 										if (msg_param->length != sizeof(uint16_t))
 										{
+#if defined(CFG_PRINTF)											
 												arch_printf("Accelerometer CCC: bad length %u\r\n", msg_param->length);
+#endif												
 												break;
 										}
 										
@@ -570,15 +598,21 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 										
 										if (acc_cccd == PRF_CLI_START_NTF)              /* 0x0001 */
 										{
+#if defined(CFG_PRINTF)											
 												arch_puts("Accelerometer notifications enabled\r\n");
+#endif										
 										}
 										else if (acc_cccd == PRF_CLI_STOP_NTFIND)       /* 0x0000 */
 										{
+#if defined(CFG_PRINTF)											
 												arch_puts("Accelerometer notifications disabled\r\n");
+#endif										
 										}
 										else
 										{
+#if defined(CFG_PRINTF)											
 												arch_printf("Accelerometer CCC: unsupported value 0x%04X on a notify-only characteristic\r\n", acc_cccd);
+#endif										
 										}
 								}break;
 								
@@ -587,7 +621,9 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 										// Check the length of the written value in CCCD of the Temperature
 										if (msg_param->length != sizeof(uint16_t))
 										{
+#if defined(CFG_PRINTF)											
 												arch_printf("Temperature CCC: bad length %u\r\n", msg_param->length);
+#endif												
 												break;
 										}
 										
@@ -598,15 +634,21 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 										
 										if (tmp_cccd == PRF_CLI_START_NTF)              /* 0x0001 */
 										{
+#if defined(CFG_PRINTF)											
 												arch_puts("Temperature notifications enabled\r\n");
+#endif										
 										}
 										else if (tmp_cccd == PRF_CLI_STOP_NTFIND)       /* 0x0000 */
 										{
+#if defined(CFG_PRINTF)											
 												arch_puts("Temperature notifications disabled\r\n");
+#endif										
 										}
 										else
 										{
+#if defined(CFG_PRINTF)											
 												arch_printf("Temperature CCC: unsupported value 0x%04X on a notify-only characteristic\r\n", tmp_cccd);
+#endif										
 										}
 								}break;
 
@@ -649,24 +691,29 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
         {
             // Cast the "param" pointer to the appropriate message structure
             struct gapc_param_updated_ind const *msg_param = (struct gapc_param_updated_ind const *)(param);
-					
+	
+#if defined(CFG_PRINTF)					
 						// Connection Interval in 1.25ms Units, Supervision Timeout in 10 ms Units
 						arch_printf("Connection Parameters: Interval ->  %u.%02ums, Latency -> %u, Timeout -> %u | ", 
 																		(msg_param->con_interval) * 125 / 100, 
 																		((msg_param->con_interval) * 125) % 100, 
 																		msg_param->con_latency, 
 																		msg_param->sup_to * 10);
-
+#endif
             // Check if updated Conn Params filled to preferred ones
             if ((msg_param->con_interval >= user_connection_param_conf.intv_min) &&
                 (msg_param->con_interval <= user_connection_param_conf.intv_max) &&
                 (msg_param->con_latency == user_connection_param_conf.latency) &&
                 (msg_param->sup_to == user_connection_param_conf.time_out))
             {
+#if defined(CFG_PRINTF)							
 								arch_puts("  -> WITHIN preferred range\r\n");
-            }
+#endif            
+						}
 						else{
+#if defined(CFG_PRINTF)							
 								arch_puts("  -> OUTSIDE preferred range\r\n");
+#endif						
 						}
         } break;
 				
@@ -676,16 +723,18 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 						struct gapc_con_rssi_ind const *msg_param = (struct gapc_con_rssi_ind const *)(param);
 					
 						diagnostic_data.last_rssi = (int8_t)(msg_param->rssi);
-					
+#if defined(CFG_PRINTF)					
 						arch_printf("Connection -> %u, RSSI -> %d dBm\r\n", app_connection_idx, (int8_t)(msg_param->rssi));
+#endif				
 				} break;
 
 				case GATTC_MTU_CHANGED_IND:
 				{
 						/* Print the newly negotiated MTU */
 						struct gattc_mtu_changed_ind const *msg_param = (struct gattc_mtu_changed_ind const *)(param);
-					
+#if defined(CFG_PRINTF)					
 						arch_printf("Connection -> %u, MTU negotiated: %u bytes\r\n", app_connection_idx, msg_param->mtu);
+#endif				
 				} break;
 
 				case GAPC_CMP_EVT:
@@ -694,7 +743,9 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 					
 						if (msg_param->status != GAP_ERR_NO_ERROR)
 						{
+#if defined(CFG_PRINTF)							
 								arch_printf("GAPC op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
+#endif						
 						}
 				} break;
 
@@ -704,7 +755,9 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 					
 						if (msg_param->status != GAP_ERR_NO_ERROR)
 						{
+#if defined(CFG_PRINTF)							
 								arch_printf("GATTC op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
+#endif						
 						}
 				} break;
 				
@@ -714,26 +767,25 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 					
 						if (msg_param->status != GAP_ERR_NO_ERROR)
 						{
+#if defined(CFG_PRINTF)							
 								arch_printf("GAPM op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
+#endif						
 						}
 				} break;
 				
 				case CUSTS1_VALUE_REQ_IND:
         {
             struct custs1_value_req_ind const *msg_param = (struct custs1_value_req_ind const *) param;
-
-						arch_puts("CUSTS1_VALUE_REQ_IND\r\n");
-            switch (msg_param->att_idx)
+          
+						switch (msg_param->att_idx)
             {
                 case SVC3_IDX_DIAGNOSTIC_DATA_VAL:
                 {
-										arch_puts("SVC3_IDX_DIAGNOSTIC_DATA_VAL\r\n");
-                    diagnostic_char_ind_handler(msgid, msg_param, dest_id, src_id);
+										diagnostic_char_ind_handler(msgid, msg_param, dest_id, src_id);
                 } break;
 
                 default:
                 {
-										arch_puts("DEFAULT\r\n");
                     // Send Error message
                     struct custs1_value_req_rsp *rsp = KE_MSG_ALLOC(CUSTS1_VALUE_REQ_RSP,
                                                                     src_id,
@@ -756,7 +808,6 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 
         case GATTC_EVENT_REQ_IND:
         {
-						arch_puts("GATTC_EVENT_REQ_IND\r\n");
             // Confirm unhandled indication to avoid GATT timeout
             struct gattc_event_ind const *ind = (struct gattc_event_ind const *) param;
             struct gattc_event_cfm *cfm = KE_MSG_ALLOC(GATTC_EVENT_CFM, src_id, dest_id, gattc_event_cfm);

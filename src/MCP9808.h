@@ -37,6 +37,9 @@
  */
 #include "da1458x_config_basic.h"
 #include "stdint.h"
+#include "ble_general_sensor_service.h"
+#include "user_custs1_impl.h"
+#include "i2c.h"
 
 /*
  * USER TYPE DEFINITIONS

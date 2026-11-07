@@ -34,6 +34,8 @@
 #ifndef _USER_CUSTS1_IMPL_H_
 #define _USER_CUSTS1_IMPL_H_
 
+#include "stdint.h"
+
 /**
  ****************************************************************************************
  * @addtogroup APP
@@ -49,6 +51,7 @@
  * DEFINES
  ****************************************************************************************
  */
+#define DIAG_FORMAT_VERSION  0x01
 #define RSSI_READ_PERIOD    100
 
 enum
@@ -56,6 +59,19 @@ enum
     DISABLE_SENSOR_DATA_CAPTURING = 0,
 		ENABLE_SENSOR_DATA_CAPTURING
 };
+
+/* Struct for storing the data of the diagnostic characteristic */
+typedef struct{
+	uint8_t 	format_version;
+	uint8_t 	reset_cause;
+	uint8_t 	disc_reason;
+	uint8_t 	i2c_abort_code;
+	uint16_t	i2c_rec_cnt;
+	uint16_t 	acc_ccc;
+	uint16_t 	tmp_acc;
+	int8_t 		last_rssi;
+	uint8_t		i2c_err_cnt;
+}diagnostic_char_t;
 
 /*
  * INCLUDE FILES
@@ -133,6 +149,21 @@ void mcp9808_data_capture_and_notif(void);
  ****************************************************************************************
  */
 void request_connected_rssi(void);		
+
+
+/**
+ ****************************************************************************************
+ * @brief Diagnostic RI characteristic handler.
+ * @param[in] msgid   Id of the message received.
+ * @param[in] param   Pointer to the parameters of the message.
+ * @param[in] dest_id ID of the receiving task instance.
+ * @param[in] src_id  ID of the sending task instance.
+ ****************************************************************************************
+*/
+void diagnostic_char_ind_handler(ke_msg_id_t const msgid,
+																 struct custs1_value_req_ind const *param,
+																 ke_task_id_t const dest_id,
+																 ke_task_id_t const src_id);
 
 /**
  ****************************************************************************************

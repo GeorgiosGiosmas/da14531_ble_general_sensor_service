@@ -93,4 +93,7 @@
   ..\..\..\..\..\sdk\app_modules\api\app_task.h \
   ..\..\..\..\..\sdk\platform\core_modules\arch_console\arch_console.h \
   ..\..\..\..\..\sdk\app_modules\api\app_callback.h \
-  ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h
+  ..\..\..\..\..\sdk\ble_stack\host\l2c\l2cc\l2cc_task.h \
+  ..\src\user_custs1_impl.h \
+  ..\..\..\..\..\sdk\ble_stack\profiles\custom\custs\api\custs1_task.h \
+  ..\..\..\..\..\sdk\ble_stack\host\att\attm\attm_db_128.h

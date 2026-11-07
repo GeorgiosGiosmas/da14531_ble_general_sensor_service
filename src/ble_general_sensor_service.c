@@ -65,6 +65,7 @@ extern const i2c_cfg_t i2c_cfg_ADXL345;
 extern const i2c_cfg_t i2c_cfg_MCP9808;
 extern const spi_cfg_t spi_cfg;
 extern const spi_flash_cfg_t spi_flash_cfg;
+extern diagnostic_char_t diagnostic_data;
 
 /*
  * TYPE DEFINITIONS
@@ -109,6 +110,11 @@ uint16_t tmp_cccd																__SECTION_ZERO("retention_mem_area0"); //@RETEN
  * FUNCTION DEFINITIONS
  ****************************************************************************************
 */
+
+void reset_indication(uint16_t reset_stat)
+{
+    diagnostic_data.reset_cause = reset_stat;
+}
 
 /**
  ****************************************************************************************
@@ -352,6 +358,8 @@ void user_app_init(void)
 		power_down_adxl345();
 		power_down_mcp9808();
 	
+		diagnostic_data.format_version = DIAG_FORMAT_VERSION;
+	
     default_app_on_init();
 		arch_puts("App Initialized\r\n");
 }
@@ -420,6 +428,8 @@ void user_app_adv_undirect_complete(uint8_t status)
 void user_app_disconnect(struct gapc_disconnect_ind const *param)
 {
 		arch_printf("App Disconnected: Index -> %lu, Reason: -> %u\r\n", param->conhdl, param->reason);
+	
+		diagnostic_data.disc_reason = param->reason;
 	
 		// Clear CCCD descriptor values upon disconnection
 		acc_cccd = 0;
@@ -556,6 +566,8 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 										// Read the CCCD value for the Accelerometer
 										acc_cccd = co_read16p(&msg_param->value[0]);
 										
+										diagnostic_data.acc_ccc = acc_cccd;
+										
 										if (acc_cccd == PRF_CLI_START_NTF)              /* 0x0001 */
 										{
 												arch_puts("Accelerometer notifications enabled\r\n");
@@ -581,6 +593,8 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 										
 										// Read the CCCD value for the Temperature
 										tmp_cccd = co_read16p(&msg_param->value[0]);
+										
+										diagnostic_data.tmp_acc = tmp_cccd;
 										
 										if (tmp_cccd == PRF_CLI_START_NTF)              /* 0x0001 */
 										{
@@ -661,6 +675,8 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 						/* Print the calculated RSSI */
 						struct gapc_con_rssi_ind const *msg_param = (struct gapc_con_rssi_ind const *)(param);
 					
+						diagnostic_data.last_rssi = (int8_t)(msg_param->rssi);
+					
 						arch_printf("Connection -> %u, RSSI -> %d dBm\r\n", app_connection_idx, (int8_t)(msg_param->rssi));
 				} break;
 
@@ -701,6 +717,52 @@ void user_catch_rest_hndl(ke_msg_id_t const msgid,
 								arch_printf("GAPM op 0x%02X failed, status 0x%02X\r\n", msg_param->operation, msg_param->status);
 						}
 				} break;
+				
+				case CUSTS1_VALUE_REQ_IND:
+        {
+            struct custs1_value_req_ind const *msg_param = (struct custs1_value_req_ind const *) param;
+
+						arch_puts("CUSTS1_VALUE_REQ_IND\r\n");
+            switch (msg_param->att_idx)
+            {
+                case SVC3_IDX_DIAGNOSTIC_DATA_VAL:
+                {
+										arch_puts("SVC3_IDX_DIAGNOSTIC_DATA_VAL\r\n");
+                    diagnostic_char_ind_handler(msgid, msg_param, dest_id, src_id);
+                } break;
+
+                default:
+                {
+										arch_puts("DEFAULT\r\n");
+                    // Send Error message
+                    struct custs1_value_req_rsp *rsp = KE_MSG_ALLOC(CUSTS1_VALUE_REQ_RSP,
+                                                                    src_id,
+                                                                    dest_id,
+                                                                    custs1_value_req_rsp);
+
+                    // Provide the connection index.
+                    rsp->conidx  = app_env[msg_param->conidx].conidx;
+                    // Provide the attribute index.
+                    rsp->att_idx = msg_param->att_idx;
+                    // Force current length to zero.
+                    rsp->length = 0;
+                    // Set Error status
+                    rsp->status  = ATT_ERR_APP_ERROR;
+                    // Send message
+                    KE_MSG_SEND(rsp);
+                } break;
+             }
+        } break;
+
+        case GATTC_EVENT_REQ_IND:
+        {
+						arch_puts("GATTC_EVENT_REQ_IND\r\n");
+            // Confirm unhandled indication to avoid GATT timeout
+            struct gattc_event_ind const *ind = (struct gattc_event_ind const *) param;
+            struct gattc_event_cfm *cfm = KE_MSG_ALLOC(GATTC_EVENT_CFM, src_id, dest_id, gattc_event_cfm);
+            cfm->handle = ind->handle;
+            KE_MSG_SEND(cfm);
+        } break;
 
         default:
             break;

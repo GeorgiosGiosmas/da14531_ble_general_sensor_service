@@ -32,6 +32,11 @@
 #define _ADXL345_
 
 #include "gpio.h"
+#include "app_easy_timer.h"
+#include "ble_general_sensor_service.h"
+#include "user_custs1_impl.h"
+#include "i2c.h"
+#include "compiler.h"
 
 /*
  * DEFINES

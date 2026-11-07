@@ -29,11 +29,8 @@
  */
 
 #include "ADXL345.h"
-#include "gpio.h"
-#include "app_easy_timer.h"
-#include "ble_general_sensor_service.h"
-#include "i2c.h"
-#include "compiler.h"
+
+extern diagnostic_char_t diagnostic_data;
 
 /**
  ****************************************************************************************
@@ -47,22 +44,28 @@ void ADXL345_init(void){
     const uint8_t bw_rate_cmd[] = {ADXL345_REG_BW_RATE, 0x0A};          //100Hz output
 		const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x08};      //Set measure mode
 
-    i2c_abort_t abort_code; //May be used for error checking
+    i2c_abort_t abort_code = I2C_ABORT_NONE; 
     
 		i2c_master_transmit_buffer_sync(data_format_cmd, 2, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_transmit_buffer_sync(bw_rate_cmd, 2, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
 		//Initialize sensor configuration registers
     i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 }
 
@@ -70,13 +73,14 @@ void ADXL345_deinit(void){
 	
 		const uint8_t power_ctl_cmd[] = {ADXL345_REG_POWER_CTL, 0x00};      //Set measure mode
 
-    i2c_abort_t abort_code; //May be used for error checking
+    i2c_abort_t abort_code = I2C_ABORT_NONE; 
 
 		//Initialize sensor configuration registers
     i2c_master_transmit_buffer_sync(power_ctl_cmd, 2, &abort_code, I2C_F_ADD_STOP);
 		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 }
 
@@ -88,35 +92,44 @@ void ADXL345_deinit(void){
  */
 int16_t ADXL345_read_X(void)
 {
-    int16_t axis_read;                      //Readout of the sensor or dummy
+    int16_t axis_read;                      
 
-    i2c_abort_t abort_code;                 //May be used for error checking
-    uint8_t reg_addr = ADXL345_REG_DATAX0;  //Variable to hold the register address
-    uint8_t byte_received = 0;              //Intermediate storage of the received byte
+    i2c_abort_t abort_code = I2C_ABORT_NONE;                 
+    uint8_t reg_addr = ADXL345_REG_DATAX0;  
+    uint8_t byte_received = 0;              
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
     
 		i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
-    if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+    
+		if(abort_code != I2C_ABORT_NONE) {
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
 		axis_read = byte_received & 0xff;          //Store X LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAX1;
-    i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+    
+		i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
     
 		axis_read |= (byte_received & 0xff) << 8;  //Store X MSB
@@ -132,35 +145,44 @@ int16_t ADXL345_read_X(void)
  */
 int16_t ADXL345_read_Y(void)
 {
-    int16_t axis_read;                      //Readout of the sensor or dummy
+    int16_t axis_read;                      
 
-    i2c_abort_t abort_code;                 //May be used for error checking
-    uint8_t reg_addr = ADXL345_REG_DATAY0;  //Variable to hold the register address
-    uint8_t byte_received = 0;              //Intermediate storage of the received byte
+    i2c_abort_t abort_code = I2C_ABORT_NONE;                 
+    uint8_t reg_addr = ADXL345_REG_DATAY0; 
+    uint8_t byte_received = 0;              
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
 		axis_read = byte_received & 0xff;          //Store Y LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAY1;
-    i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+    
+		i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
    	axis_read |= (byte_received & 0xff) << 8;  //Store Y MSB
@@ -176,35 +198,44 @@ int16_t ADXL345_read_Y(void)
  */
 int16_t ADXL345_read_Z(void)
 {
-    int16_t axis_read;                      //Readout of the sensor or dummy
+    int16_t axis_read;                      
 
-    i2c_abort_t abort_code;                 //May be used for error checking
-    uint8_t reg_addr = ADXL345_REG_DATAZ0;  //Variable to hold the register address
-    uint8_t byte_received = 0;              //Intermediate storage of the received byte
+    i2c_abort_t abort_code = I2C_ABORT_NONE;                 
+    uint8_t reg_addr = ADXL345_REG_DATAZ0;  
+    uint8_t byte_received = 0;              
     
     //Get measurement LSB
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
 		axis_read = byte_received & 0xff;          //Store Z LSB
     
     //Get measurement MSB
     reg_addr = ADXL345_REG_DATAZ1;
-    i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+    
+		i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_receive_buffer_sync(&byte_received, 1, &abort_code, I2C_F_ADD_STOP);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
 		axis_read |= (byte_received & 0xff) << 8;  //Store Z MSB
@@ -221,17 +252,21 @@ int16_t ADXL345_read_Z(void)
  */
 void ADXL345_read_XYZ(uint8_t* xyz){
 
-		i2c_abort_t abort_code;     //May be used for error checking
+		i2c_abort_t abort_code =  I2C_ABORT_NONE;     
 	
     //Setup multiple-byte read from DATAX0 to DATAZ1 registers
     const uint8_t reg_addr = ADXL345_REG_DATAX0;
     i2c_master_transmit_buffer_sync(&reg_addr, 1, &abort_code, I2C_F_NONE);
+		
 		if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 		
     i2c_master_receive_buffer_sync(xyz, 6, &abort_code, I2C_F_ADD_STOP);
-    if(abort_code != I2C_ABORT_NONE) {
-			//insert error handler
+    
+		if(abort_code != I2C_ABORT_NONE) {
+				diagnostic_data.i2c_abort_code = abort_code;
+				diagnostic_data.i2c_err_cnt++;
 		}
 }

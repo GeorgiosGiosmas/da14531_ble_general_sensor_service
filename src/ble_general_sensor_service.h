@@ -84,9 +84,13 @@
 #define APP_AD_MSD_COMPANY_ID_LEN   (2)
 #define APP_AD_MSD_DATA_LEN         (sizeof(uint16_t))
 	
-/** Frequency of I2C Data Capturing for the sensors **/
-#define I2C_DATA_CAPTURE_PERIOD_MCP9808							(200)
-#define I2C_DATA_CAPTURE_PERIOD_ADXL345							(300)
+/** Frequency of I2C Data Capturing Initiation for the sensors **/
+#define I2C_DATA_CAPTURE_INITIATION_PERIOD_MCP9808							(200)
+#define I2C_DATA_CAPTURE_INITIATION_PERIOD_ADXL345							(300)
+
+/** Frequency of I2C Data Capturing and Notification for the sensors **/
+#define I2C_DATA_CAPTURE_NOTIF_PERIOD_MCP9808							(4)
+#define I2C_DATA_CAPTURE_NOTIF_PERIOD_ADXL345							(2)
 
 /*
  * TYPE DEFINITIONS

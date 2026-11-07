@@ -85,9 +85,9 @@
 
 #define DEF_SVC3_DIAGNOSTIC_DATA_UUID_128     	{0x17, 0xB9, 0x67, 0x98, 0x4C, 0x66, 0x4C, 0x01, 0x96, 0x33, 0x31, 0xB1, 0x91, 0x59, 0x00, 0x14}
 
-#define DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN				15
+#define DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN				12
 
-#define DEF_SVC3_DIAGNOSTIC_DATA_USER_DESC			"v18 | rst8 | disc8 | abort8 | rssi8 | uptime32 | i2crec16 | accCCC16 | tmpCCC16 | rssi8 | i2cer8"
+#define DEF_SVC3_DIAGNOSTIC_DATA_USER_DESC			"v18 | rst8 | disc8 | abort8 | i2crec16 | accCCC16 | tmpCCC16 | rssi8 | i2cercnt8"
 
 /// Custom1 Service Data Base Characteristic enum
 enum

@@ -58,16 +58,17 @@ extern uint8_t app_connection_idx    __SECTION_ZERO("retention_mem_area0");
  ****************************************************************************************
  */
 
-timer_hnd adxl345_initiate_timer   												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-timer_hnd mcp9808_initiate_timer   												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-timer_hnd adxl345_capture_timer    												  __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-timer_hnd mcp9808_capture_timer      												__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-timer_hnd rssi_timer																				__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t x																										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t y																										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t z																										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-int16_t temp_tenths																					__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
-uint8_t xyz[DEF_SVC1_ACC_DATA_CHAR_LEN]											__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+timer_hnd adxl345_initiate_timer   												  __SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+timer_hnd mcp9808_initiate_timer   												  __SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+timer_hnd adxl345_capture_timer    												  __SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+timer_hnd mcp9808_capture_timer      												__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+timer_hnd rssi_timer																				__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+int16_t x																										__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+int16_t y																										__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+int16_t z																										__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+int16_t temp_tenths																					__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+uint8_t xyz[DEF_SVC1_ACC_DATA_CHAR_LEN]											__SECTION_ZERO("retention_mem_area0"); 				 //@RETENTION MEMORY
+diagnostic_char_t diagnostic_data														__SECTION_ZERO("retention_mem_area0") = { 0 }; //@RETENTION MEMORY
 extern uint16_t acc_cccd;																		
 extern uint16_t tmp_cccd;																		
 
@@ -90,6 +91,7 @@ void power_down_adxl345(void)
 				arch_puts("ADXL345 power-down: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
+				diagnostic_data.i2c_rec_cnt++;
 		}
 		else
 		{
@@ -108,6 +110,7 @@ void power_down_mcp9808(void)
 				arch_puts("MCP9808 power-down: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
+				diagnostic_data.i2c_rec_cnt++;
 		}
 		else
 		{
@@ -128,7 +131,7 @@ void user_svc1_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 				if (adxl345_initiate_timer == EASY_TIMER_INVALID_TIMER && adxl345_capture_timer == EASY_TIMER_INVALID_TIMER)
 				{
 						arch_puts("Control Point 1 Activated\r\n");
-						adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
+						adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_INITIATION_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
 				}
 				else
 				{
@@ -169,7 +172,7 @@ void user_svc2_ctrl_wr_ind_handler(ke_msg_id_t const msgid,
 				if (mcp9808_initiate_timer == EASY_TIMER_INVALID_TIMER && mcp9808_capture_timer == EASY_TIMER_INVALID_TIMER)
 				{
 						arch_puts("Control Point 2 Activated\r\n");
-						mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
+						mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_INITIATION_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
 				}
 				else
 				{
@@ -210,12 +213,13 @@ void initiate_adxl345_for_data_capture()
 				arch_puts("ADXL345 initialization: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
+				diagnostic_data.i2c_rec_cnt++;
 		}
 		else{
 			i2c_release();
 		}
 		
-		adxl345_capture_timer = app_easy_timer(2, adxl345_data_capture_and_notif);
+		adxl345_capture_timer = app_easy_timer(I2C_DATA_CAPTURE_NOTIF_PERIOD_ADXL345, adxl345_data_capture_and_notif);
 }	
 
 void initiate_mcp9808_for_data_capture(void)
@@ -231,12 +235,13 @@ void initiate_mcp9808_for_data_capture(void)
 				arch_puts("MCP9808 initialization: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
+				diagnostic_data.i2c_rec_cnt++;
 		}
 		else{
 			i2c_release();
 		}
 		
-		mcp9808_capture_timer = app_easy_timer(4, mcp9808_data_capture_and_notif);
+		mcp9808_capture_timer = app_easy_timer(I2C_DATA_CAPTURE_NOTIF_PERIOD_MCP9808, mcp9808_data_capture_and_notif);
 }
 
 void adxl345_data_capture_and_notif()
@@ -258,6 +263,7 @@ void adxl345_data_capture_and_notif()
 				arch_puts("ADXL345 capture/deinitialization: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
+				diagnostic_data.i2c_rec_cnt++;
 		}
 		else{
 			i2c_release();
@@ -296,7 +302,7 @@ void adxl345_data_capture_and_notif()
     }
 		
 		// Set the timer once again until Stop command is received in Control Characteristic
-		adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
+		adxl345_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_INITIATION_PERIOD_ADXL345, initiate_adxl345_for_data_capture);
 }
 
 void mcp9808_data_capture_and_notif()
@@ -315,6 +321,7 @@ void mcp9808_data_capture_and_notif()
 				arch_puts("MCP9808 capture/deinitialization: bus stuck, recovering\r\n");
 				i2c_release();               /* release the controller BEFORE bit-banging */
 				i2c_bus_recovery();
+				diagnostic_data.i2c_rec_cnt++;
 		}
 		else{
 			i2c_release();
@@ -353,7 +360,7 @@ void mcp9808_data_capture_and_notif()
     }
 		
 		// Set the timer once again until Stop command is received in Control Characteristic
-		mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
+		mcp9808_initiate_timer = app_easy_timer(I2C_DATA_CAPTURE_INITIATION_PERIOD_MCP9808, initiate_mcp9808_for_data_capture);
 }
 
 void request_connected_rssi(void)
@@ -368,9 +375,35 @@ void request_connected_rssi(void)
 																						 gapc_get_info_cmd);
 
         cmd->operation = GAPC_GET_CON_RSSI;
-        ke_msg_send(cmd);
+        KE_MSG_SEND(cmd);
 				
 				rssi_timer = app_easy_timer(RSSI_READ_PERIOD,request_connected_rssi);
 		}
+}
+
+void diagnostic_char_ind_handler(ke_msg_id_t const msgid,
+																 struct custs1_value_req_ind const *param,
+																 ke_task_id_t const dest_id,
+																 ke_task_id_t const src_id)
+{
+
+		struct custs1_value_req_rsp *rsp = KE_MSG_ALLOC_DYN(CUSTS1_VALUE_REQ_RSP,
+                                                        prf_get_task_from_id(TASK_ID_CUSTS1),
+                                                        TASK_APP,
+                                                        custs1_value_req_rsp,
+                                                        DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN);
+		
+		
+    rsp->conidx  = app_connection_idx;
+    rsp->att_idx = param->att_idx;
+    rsp->length  = DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN;
+    rsp->status  = ATT_ERR_NO_ERROR;
+    
+    memcpy(&rsp->value, &diagnostic_data, rsp->length);
+	
+		// Send message
+    KE_MSG_SEND(rsp);
+		
+		arch_puts("Diagnostic RI characteristic read\r\n");
 }
 

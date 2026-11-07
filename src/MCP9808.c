@@ -33,7 +33,8 @@
  ****************************************************************************************
  */
 #include "MCP9808.h"
-#include "i2c.h"
+
+extern diagnostic_char_t diagnostic_data;
 
 const uint16_t constant_temp = (uint16_t)((1U << TEMPERATURE_REGISTER_SIZE) - 1);
 const uint16_t constant_reso = (uint16_t)((1U << RESOLUTION_CONFIG_REGISTER_SIZE) - 1);
@@ -54,6 +55,11 @@ void MCP9808_init(void){
 	
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
 	
+	if(abort_code != I2C_ABORT_NONE) {
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
+	}
+	
 	MCP9808_set_resolution_register(USED_TEMPERATURE_RESOLUTION);
 }
 
@@ -72,6 +78,11 @@ void MCP9808_deinit(void){
 	buffer[2] = 0x00;
 	
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
+	
+	if(abort_code != I2C_ABORT_NONE) {
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
+	}
 }
 
 /**
@@ -91,7 +102,8 @@ void MCP9808_set_resolution_register(const temperature_resolution resolution){
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
 	
 	if(abort_code != I2C_ABORT_NONE) {
-		//insert error handler
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
 	}
 }
 
@@ -109,13 +121,15 @@ temperature_resolution MCP9808_get_resolution_register(void){
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer,sizeof(buffer), &abort_code, I2C_F_NONE);
 	
 	if(abort_code != I2C_ABORT_NONE) {
-		//insert error handler
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
 	}
 	
 	i2c_master_receive_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
 	
 	if(abort_code != I2C_ABORT_NONE) {
-		//insert error handler
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
 	}
 	
 	return (temperature_resolution)( buffer[0] & constant_reso ); 
@@ -135,13 +149,16 @@ uint16_t MCP9808_read_temperature_register(void){
 	buffer[0] = TEMPERATURE_DATA_REGISTER; 
 	
 	i2c_master_transmit_buffer_sync((uint8_t*)buffer, 1, &abort_code, I2C_F_NONE);
+	
 	if(abort_code != I2C_ABORT_NONE) {
-		//insert error handler
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
 	}
 	
 	i2c_master_receive_buffer_sync((uint8_t*)buffer, sizeof(buffer), &abort_code, I2C_F_ADD_STOP);
 	if(abort_code != I2C_ABORT_NONE) {
-		//insert error handler
+			diagnostic_data.i2c_abort_code = abort_code;
+			diagnostic_data.i2c_err_cnt++;
 	}
 	
 	return ((buffer[0] << 8) + buffer[1]); 

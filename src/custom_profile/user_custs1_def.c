@@ -199,8 +199,8 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
 																								0, 0, NULL},
 
     // Diagnostic Characteristic Value
-    [SVC3_IDX_DIAGNOSTIC_DATA_VAL]            = {SVC3_DIAGNOSTIC_DATA_UUID_128, ATT_UUID_128_LEN, PERM(RI, ENABLE), 
-																								DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN, 0, NULL},
+    [SVC3_IDX_DIAGNOSTIC_DATA_VAL]            = {SVC3_DIAGNOSTIC_DATA_UUID_128, ATT_UUID_128_LEN, PERM(RD, ENABLE), 
+																								PERM(RI, ENABLE) | DEF_SVC3_DIAGNOSTIC_DATA_CHAR_LEN, 0, NULL},
 
 		// Diagnostic Characteristic User Description
     [SVC3_IDX_DIAGNOSTIC_DATA_USER_DESC]      = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),

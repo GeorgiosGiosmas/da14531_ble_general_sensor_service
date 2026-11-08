@@ -51,6 +51,7 @@
 #include "user_custs1_impl.h"
 #include "user_custs1_def.h"
 #include "co_bt.h"
+#include "app.h"
 #if defined(CFG_PRINTF)
 #include "arch_console.h"
 #endif
@@ -294,20 +295,44 @@ static void boot_flash_init_power_down(void)
 #endif // CFG_SPI_FLASH_ENABLE
 
 #if defined(CFG_PRF_SUOTAR)
-/*
 static void update_parameters_for_SUOTA()
 {
-		struct gapc_param_update_cmd* cmd;
-    cmd = app_easy_gap_param_update_msg_create(conidx);
+		struct gapc_param_update_cmd* cmd = KE_MSG_ALLOC(GAPC_PARAM_UPDATE_CMD,
+                                                     KE_BUILD_ID(TASK_GAPC, app_connection_idx),
+                                                     TASK_APP,
+                                                     gapc_param_update_cmd);
 
-    // Send the message
-    app_param_update_msg_send(cmd);
-    param_update_cmd[conidx] = NULL;
+    cmd->operation = GAPC_UPDATE_PARAMS;
+
+		cmd->intv_max = MS_TO_DOUBLESLOTS(10);
+		cmd->intv_min = MS_TO_DOUBLESLOTS(10);
+		cmd->latency = 0;
+		cmd->time_out = MS_TO_TIMERUNITS(1250);
+		cmd->ce_len_min = MS_TO_DOUBLESLOTS(0);
+		cmd->ce_len_max = MS_TO_DOUBLESLOTS(0);
+
+		// Send the message
+    KE_MSG_SEND(cmd);
 }
-*/
+
 static void restore_parameters_after_SUOTA()
 {
-		app_easy_gap_param_update_start(app_connection_idx);
+		struct gapc_param_update_cmd* cmd = KE_MSG_ALLOC(GAPC_PARAM_UPDATE_CMD,
+                                                     KE_BUILD_ID(TASK_GAPC, app_connection_idx),
+                                                     TASK_APP,
+                                                     gapc_param_update_cmd);
+
+    cmd->operation = GAPC_UPDATE_PARAMS;
+
+		cmd->intv_max = MS_TO_DOUBLESLOTS(200);
+		cmd->intv_min = MS_TO_DOUBLESLOTS(250);
+		cmd->latency = 4;
+		cmd->time_out = MS_TO_TIMERUNITS(4000);
+		cmd->ce_len_min = MS_TO_DOUBLESLOTS(0);
+		cmd->ce_len_max = MS_TO_DOUBLESLOTS(0);
+
+		// Send the message
+    KE_MSG_SEND(cmd);
 }
 
 void on_suotar_status_change(const uint8_t suotar_event)
@@ -331,7 +356,7 @@ void on_suotar_status_change(const uint8_t suotar_event)
 
 		if (suotar_event == SUOTAR_START)
 		{
-				//update_parameters_for_SUOTA();
+				update_parameters_for_SUOTA();
 		}
     else if (suotar_event == SUOTAR_END)
     {

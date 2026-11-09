@@ -356,6 +356,12 @@ void on_suotar_status_change(const uint8_t suotar_event)
 
 		if (suotar_event == SUOTAR_START)
 		{
+				if (app_param_update_request_timer_used != EASY_TIMER_INVALID_TIMER)
+				{
+						app_easy_timer_cancel(app_param_update_request_timer_used);
+						app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
+				}
+
 				update_parameters_for_SUOTA();
 		}
     else if (suotar_event == SUOTAR_END)

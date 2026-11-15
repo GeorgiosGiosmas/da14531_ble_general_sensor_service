@@ -93,9 +93,9 @@
 /* Custom heap sizes                                                                                            */
 /****************************************************************************************************************/
 #define DB_HEAP_SZ 								 (2300)
-// #define ENV_HEAP_SZ             4928
-// #define MSG_HEAP_SZ             6880
-// #define NON_RET_HEAP_SZ         2048
+#define ENV_HEAP_SZ             	 (1500)
+#define MSG_HEAP_SZ                (1000)
+#define NON_RET_HEAP_SZ            (1000)
 
 /****************************************************************************************************************/
 /* NVDS configuration                                                                                           */

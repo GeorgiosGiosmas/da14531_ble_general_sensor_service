@@ -101,6 +101,7 @@ uint8_t stored_adv_data_len                     __SECTION_ZERO("retention_mem_ar
 uint8_t stored_scan_rsp_data_len                __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_adv_data[ADV_DATA_LEN]           __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 uint8_t stored_scan_rsp_data[SCAN_RSP_DATA_LEN] __SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
+uint8_t on_going_SUOTA_update										__SECTION_ZERO("retention_mem_area0"); //@RETENTION MEMORY
 extern timer_hnd adxl345_initiate_timer;      			  
 extern timer_hnd mcp9808_initiate_timer;  
 extern timer_hnd adxl345_capture_timer;      			  
@@ -232,24 +233,6 @@ static void adv_data_update_timer_cb()
     app_adv_data_update_timer_used = app_easy_timer(APP_ADV_DATA_UPDATE_TO, adv_data_update_timer_cb);
 }
 
-/**
- ****************************************************************************************
- * @brief Parameter update request timer callback function.
- ****************************************************************************************
-*/
-static void param_update_request_timer_cb()
-{
-    app_easy_gap_param_update_start(app_connection_idx);
-    app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
-}
-
-void user_app_update_params_rejected(const uint8_t status)
-{
-#if defined(CFG_PRINTF)
-    arch_printf("Conn param update REJECTED by master, status 0x%02X\r\n", status);
-#endif
-}
-
 void user_app_update_params_complete(void)
 {
 #if defined(CFG_PRINTF)
@@ -280,7 +263,6 @@ static void boot_flash_init_power_down(void)
 		GPIO_Disable_HW_Reset();
 	
 		// Initialize interface to SPI flash so we can use it from within the application
-		spi_flash_configure_env(&spi_flash_cfg);
 		spi_initialize(&spi_cfg);
 	
     // Release the SPI flash memory from power down
@@ -324,8 +306,8 @@ static void restore_parameters_after_SUOTA()
 
     cmd->operation = GAPC_UPDATE_PARAMS;
 
-		cmd->intv_max = MS_TO_DOUBLESLOTS(200);
-		cmd->intv_min = MS_TO_DOUBLESLOTS(250);
+		cmd->intv_min = MS_TO_DOUBLESLOTS(200);
+		cmd->intv_max = MS_TO_DOUBLESLOTS(250);
 		cmd->latency = 4;
 		cmd->time_out = MS_TO_TIMERUNITS(4000);
 		cmd->ce_len_min = MS_TO_DOUBLESLOTS(0);
@@ -339,12 +321,13 @@ void on_suotar_status_change(const uint8_t suotar_event)
 {
     uint8_t dev_id;
 	
+		arch_printf("SUOTA Status: %u\r\n", suotar_event);
+	
 		// Disable HW Reset functionality of P0_0
 		GPIO_Disable_HW_Reset();
 	
 #if defined(CFG_SPI_FLASH_ENABLE)
 		// Initialize interface to SPI flash so we can use it from within the application
-		spi_flash_configure_env(&spi_flash_cfg);
 		spi_initialize(&spi_cfg);
 #endif
 
@@ -362,17 +345,47 @@ void on_suotar_status_change(const uint8_t suotar_event)
 						app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
 				}
 
-				update_parameters_for_SUOTA();
+				on_going_SUOTA_update = 1;
+				//update_parameters_for_SUOTA();
 		}
     else if (suotar_event == SUOTAR_END)
     {
         // Power down SPI Flash
         spi_flash_power_down();
-			
-				restore_parameters_after_SUOTA();
+				
+				on_going_SUOTA_update = 0;
+				//restore_parameters_after_SUOTA();
     }
 }
 #endif
+
+/**
+ ****************************************************************************************
+ * @brief Parameter update request timer callback function.
+ ****************************************************************************************
+*/
+static void param_update_request_timer_cb()
+{
+    app_easy_gap_param_update_start(app_connection_idx);
+    app_param_update_request_timer_used = EASY_TIMER_INVALID_TIMER;
+}
+
+void user_app_update_params_rejected(const uint8_t status)
+{
+		if (status == LL_ERR_LMP_COLLISION)
+    {
+#if defined(CFG_PRINTF)
+				arch_puts("LL_ERR_LMP_COLLISION detected ... Retrying with SUOTA connection parameters...\r\n");
+			  update_parameters_for_SUOTA();
+#endif
+    }
+    else
+    {
+#if defined(CFG_PRINTF)
+				arch_printf("Conn param update REJECTED by master, status 0x%02X\r\n", status);
+#endif
+    }
+}
 
 void user_app_init(void)
 {

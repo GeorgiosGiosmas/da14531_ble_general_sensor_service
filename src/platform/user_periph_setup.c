@@ -49,11 +49,13 @@
 #include "arch_console.h"
 #include "app_easy_timer.h"
 #include "app_easy_crypto.h"
+#include "ble_general_sensor_service.h"
 
 /*
  * GLOBAL VARIABLE DEFINITIONS
  ****************************************************************************************
  */
+extern uint8_t on_going_SUOTA_update;
 
 /**
  ****************************************************************************************
@@ -156,13 +158,6 @@ const spi_cfg_t spi_cfg = {
 #endif
 };
 
-/* SPI flash configuration - assumes use of a Macronix MXR2035F as this is
-   present on the DA145xx PRO development kit */
-const spi_flash_cfg_t spi_flash_cfg = {
-    .dev_index = MX25R2035F_DEV_INDEX,
-    .jedec_id  = MX25V2035F_JEDEC_ID,
-    .chip_size = MX25V2035F_CHIP_SIZE,
-};
 #endif // CFG_SPI_FLASH_ENABLE
 
 const i2c_cfg_t i2c_cfg_MCP9808 = {
@@ -240,6 +235,11 @@ void periph_init(void)
     // Initialize UART2
     uart_initialize(UART2, &uart_cfg);
 #endif
+
+		if(on_going_SUOTA_update)
+		{
+				spi_initialize(&spi_cfg);
+		}
 
     // Set pad functionality
     set_pad_functions();

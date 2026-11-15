@@ -206,7 +206,7 @@ static const struct advertise_configuration user_adv_conf = {
  ****************************************************************************************
  */
 /// Device name
-#define USER_DEVICE_NAME        "DA14531-SENSOR-1"
+#define USER_DEVICE_NAME        "DA14531-SENSOR-2"
 
 /// Device name length
 #define USER_DEVICE_NAME_LEN    (sizeof(USER_DEVICE_NAME)-1)
@@ -297,18 +297,18 @@ static const struct gapm_configuration user_gapm_conf = {
 static const struct connection_param_configuration user_connection_param_conf = {
     /// Connection interval minimum measured in ble double slots (1.25ms)
     /// use the macro MS_TO_DOUBLESLOTS to convert from milliseconds (ms) to double slots
-    .intv_min = MS_TO_DOUBLESLOTS(200),
+    .intv_min = MS_TO_DOUBLESLOTS(20), // 200
 
     /// Connection interval maximum measured in ble double slots (1.25ms)
     /// use the macro MS_TO_DOUBLESLOTS to convert from milliseconds (ms) to double slots
-    .intv_max = MS_TO_DOUBLESLOTS(250),
+    .intv_max = MS_TO_DOUBLESLOTS(20), // 250
 
     /// Latency measured in connection events
-    .latency = 4,
+    .latency = 0, // 4
 
     /// Supervision timeout measured in timer units (10 ms)
     /// use the macro MS_TO_TIMERUNITS to convert from milliseconds (ms) to timer units
-    .time_out = MS_TO_TIMERUNITS(4000),
+    .time_out = MS_TO_TIMERUNITS(1250), // 4000
 
     /// Minimum Connection Event Duration measured in ble double slots (1.25ms)
     /// use the macro MS_TO_DOUBLESLOTS to convert from milliseconds (ms) to double slots

@@ -328,6 +328,7 @@ void on_suotar_status_change(const uint8_t suotar_event)
 	
 #if defined(CFG_SPI_FLASH_ENABLE)
 		// Initialize interface to SPI flash so we can use it from within the application
+		spi_flash_configure_env(&spi_flash_cfg);
 		spi_initialize(&spi_cfg);
 #endif
 
@@ -336,6 +337,9 @@ void on_suotar_status_change(const uint8_t suotar_event)
 
     // Try to auto-detect the device
     spi_flash_auto_detect(&dev_id);
+	
+		// Disable the SPI flash memory protection (unprotect all sectors)
+    spi_flash_configure_memory_protection(SPI_FLASH_MEM_PROT_NONE);
 
 		if (suotar_event == SUOTAR_START)
 		{

@@ -143,6 +143,9 @@ static const uart_cfg_t uart_cfg = {
 #endif
 
 #if defined (CFG_SPI_FLASH_ENABLE)
+const spi_flash_cfg_t spi_flash_cfg = {
+    .chip_size = SPI_FLASH_DEV_SIZE,
+};
 const spi_cfg_t spi_cfg = {
     .spi_ms = SPI_MS_MODE,
     .spi_cp = SPI_CP_MODE,
@@ -238,6 +241,7 @@ void periph_init(void)
 
 		if(on_going_SUOTA_update)
 		{
+				spi_flash_configure_env(&spi_flash_cfg);
 				spi_initialize(&spi_cfg);
 		}
 
